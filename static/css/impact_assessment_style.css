@@ -1,0 +1,104 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e0f7fa;
+    color: #005b96;
+    margin: 10px;
+    padding: 15px;
+}
+
+/* Container */
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Headings */
+h1 {
+    text-align: center;
+    color: #007bb5;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #b3e5fc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+input[type="file"] {
+    padding: 5px;
+    border: 1px solid #b3e5fc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Fieldsets */
+fieldset {
+    border: 1px solid #b3e5fc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-size: 16px;
+    font-weight: bold;
+    color: #005b96;
+}
+
+input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* Button */
+button {
+    background-color: #007bb5;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #005b96;
+    transform: translateY(-2px);
+}
+
+button:active {
+    background-color: #003f6e;
+    transform: translateY(0);
+}
+
+button:focus {
+    outline: 2px solid #80d0ff;
+    outline-offset: 2px;
+}

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Impact Assessment</title>
+    <link rel="stylesheet" href="{% static 'css/impact_assessment_style.css' %}">
+</head>
+<body>
+    <h1>Assess Emotional Impact</h1>
+    <form method="post" action="{% url 'impact_assessment' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <label for="news_item">News Item:</label>
+        <textarea id="news_item" name="news_item" rows="4" cols="50" placeholder="Enter the news content here..." required></textarea>
+        <br><br>
+        
+        <label for="news_file">OR Upload News File:</label>
+        <input type="file" id="news_file" name="news_file" accept=".txt,.pdf">
+        <br><br>
+
+        <fieldset>
+            <legend>Select Personas:</legend>
+            {% for persona in personas %}
+            <label>
+                <input type="checkbox" name="persona_ids[]" value="{{ persona.id }}">
+                {{ persona.name }} ({{ persona.age_group }}, {{ persona.income_level }}, {{ persona.religion }})
+            </label>
+            <br>
+            {% endfor %}
+        </fieldset>
+        <br>
+
+        <button type="submit">Assess Impact</button>
+    </form>
+</body>
+</html>

@@ -16,17 +16,18 @@ class Persona(models.Model):
         ('hindu', 'Hindu'),
         ('muslim', 'Muslim'),
         ('christian', 'Christian'),
-        ('other', 'Other'),
+        ('others', 'Others'),
     ]
     name = models.CharField(max_length=100)
     age_group = models.CharField(max_length=10, choices=AGE_GROUP_CHOICES)
+    city = models.CharField(max_length=255,blank=True, null=True)
     income_level = models.CharField(max_length=10, choices=INCOME_LEVEL_CHOICES)
     religion = models.CharField(max_length=20, choices=RELIGION_CHOICES)
     occupation = models.CharField(max_length=100, blank=True, null=True)
     personality_traits = models.JSONField(default=dict)
 
     def __str__(self):
-        return f"{self.name} ({self.age_group}, {self.income_level}, {self.religion})"
+        return f"{self.name} ({self.city}, {self.age_group}, {self.income_level}, {self.religion})"
 
 class NewsItem(models.Model):
     title = models.CharField(max_length=255)

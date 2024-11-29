@@ -1,3 +1,6 @@
+"""
+Url paths for persona_generation and impact assesmment
+"""
 from django.urls import path
 from . import views
 

@@ -1,6 +1,18 @@
+"""
+This module defines the models for the simulator application.
+
+It includes:
+- Persona: Represents an individual with demographic and personality traits.
+- NewsItem: Represents news articles that can elicit emotional responses.
+- EmotionalResponse: Links personas to news items with emotional reactions.
+- AggregateEmotion: Summarizes emotional responses for a news item.
+"""
 from django.db import models
 
 class Persona(models.Model):
+    """
+    Represents an individual with demographic details and personality traits.
+    """
     AGE_GROUP_CHOICES = [
         ('18-25', '18-25'),
         ('26-40', '26-40'),
@@ -30,14 +42,21 @@ class Persona(models.Model):
         return f"{self.name} ({self.city}, {self.age_group}, {self.income_level}, {self.religion})"
 
 class NewsItem(models.Model):
+    """
+    Represents a news article with a title, content, and upload date.
+    """
     title = models.CharField(max_length=255)
     content = models.TextField()
     upload_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return str(f"Aggregate Emotion for {self.title}")
 
 class EmotionalResponse(models.Model):
+    """
+    Represents an emotional response by a Persona to a specific NewsItem.
+    Includes the type and intensity of emotion, as well as an optional explanation.
+    """
     EMOTION_CHOICES = [
         ('joy', 'Joy'),
         ('sadness', 'Sadness'),
@@ -60,6 +79,10 @@ class EmotionalResponse(models.Model):
         return f"Response of {self.persona} to {self.news_item}: {self.emotion} ({self.intensity})"
 
 class AggregateEmotion(models.Model):
+    """
+    Represents a summary of emotional responses for a specific NewsItem.
+    Stores a JSON representation of aggregated emotions.
+    """
     news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE)
     summary = models.JSONField(default=dict)
 

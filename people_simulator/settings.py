@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'people_simulator.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'expense_tracker_db',  # Name of the PostgreSQL database
+        'NAME': 'people_web_server',  # Name of the PostgreSQL database
         'USER': 'postgres',            # PostgreSQL username
         'PASSWORD': 'Vidyulps@1',      # Your PostgreSQL password
         'HOST': 'localhost',           # Database host (localhost for local development)

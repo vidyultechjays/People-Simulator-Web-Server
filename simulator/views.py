@@ -119,7 +119,6 @@ def persona_generation(request):
         messages.success(request, f"Personas for {city_name} generated successfully.")
 
         return redirect("impact_assessment")
-        # return HttpResponse(f"Personas for {city_name} generated successfully.")
 
     return render(request, "persona_generation.html")
 
@@ -162,9 +161,8 @@ def impact_assessment(request):
         return render(request, "impact_assessment.html", context)
 
     if request.method == "POST":
-        # Fetch inputs
         news_content = request.POST.get("news_item", "")
-        persona_ids = request.POST.getlist("persona_ids[]")  # IDs as a list
+        persona_ids = request.POST.getlist("persona_ids[]")
 
         print("News Content:", news_content)
         print("Persona IDs:", persona_ids)
@@ -184,7 +182,6 @@ def impact_assessment(request):
         for persona in personas:
             emotion, intensity, explanation = generate_emotional_response(persona, news_content)
 
-            # Append the response
             if emotion:
                 responses.append({
                     "persona_id": persona.id,

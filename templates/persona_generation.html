@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -6,6 +7,10 @@
     <link rel="stylesheet" href="{% static 'css/persona_generation_style.css' %}">
 </head>
 <body>
+    <div class="navbar">
+        <a href="{% url 'persona_generation' %}">Persona Generation</a>
+        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
+    </div>
     <h1>GENERATE PERSONAS</h1>
     <form method="post" action="{% url 'persona_generation' %}">
         {% csrf_token %}

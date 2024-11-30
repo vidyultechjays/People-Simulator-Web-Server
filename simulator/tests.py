@@ -1,5 +1,5 @@
 """
-Unit tests for the persona generation functionality in the simulator app.
+Unit tests for the persona generation and impact assessment functionalities in the simulator app.
 These tests cover valid and invalid persona generation, demographic validation,
 and template rendering.
 """
@@ -7,11 +7,13 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
 from faker import Faker
+from .models import Persona,EmotionalResponse
+
 
 class PersonaGenerationTest(TestCase):
     """
-    Test cases for generating personas in the simulator app. 
-    This includes tests for valid persona generation, invalid demographic inputs, 
+    Test cases for generating personas in the simulator app.
+    This includes tests for valid persona generation, invalid demographic inputs,
     zero population handling, and GET request rendering.
     """
 
@@ -41,8 +43,8 @@ class PersonaGenerationTest(TestCase):
 
         response = self.client.post(self.url, data)
 
-        self.assertEqual(response.status_code, 200)  # Should be 200 OK
-        self.assertIn("Personas for Test City generated successfully.", response.content.decode())
+        self.assertEqual(response.status_code, 302)  # Should redirect to impact_assessment
+        self.assertRedirects(response, reverse("impact_assessment"))
         mock_bulk_create.assert_called()  # Check that Persona.objects.bulk_create was called
 
     def test_invalid_demographics_sum(self):
@@ -89,9 +91,9 @@ class PersonaGenerationTest(TestCase):
 
         response = self.client.post(self.url, data)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Personas for Test City generated successfully.", response.content.decode())
-        mock_bulk_create.assert_not_called()
+        self.assertEqual(response.status_code, 302)  # Should redirect to impact_assessment
+        self.assertRedirects(response, reverse("impact_assessment"))
+        mock_bulk_create.assert_not_called()  # No personas should be created
 
     def test_get_request_renders_template(self):
         """Test that GET requests render the persona generation template."""
@@ -100,3 +102,58 @@ class PersonaGenerationTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "persona_generation.html")
         self.assertIn("<h1>GENERATE PERSONAS</h1>", response.content.decode())
+
+
+class ImpactAssessmentTest(TestCase):
+    """
+    Test cases for the impact_assessment view that handles the emotional impact of news on personas.
+    """
+
+    def setUp(self):
+        """Set up any data that will be used in the tests."""
+        self.url = reverse('impact_assessment')  # Ensure this matches your URL pattern
+        self.city_name = 'Test City'
+        self.news_content = "Test news content"
+        self.persona = Persona.objects.create(
+            name="John Doe", city=self.city_name, age_group="26-40", occupation="Engineer"
+        )
+
+    @patch('simulator.views.Persona.objects.filter')
+    def test_impact_assessment_get(self, mock_filter):
+        """Test for GET request to the impact_assessment view."""
+        mock_filter.return_value = Persona.objects.all()
+
+        response = self.client.get(self.url, {'city': self.city_name, 'news_item': self.news_content})
+
+        self.assertEqual(response.status_code, 200)  # Should return OK status
+        self.assertTemplateUsed(response, "impact_assessment.html")  # Check the correct template is rendered
+        self.assertIn(self.city_name, response.content.decode())  # Ensure city is passed to context
+
+    @patch('simulator.views.Persona.objects.filter')
+    def test_impact_assessment_post_valid(self, mock_filter):
+        """Test for POST request with valid persona selection."""
+        mock_filter.return_value = Persona.objects.all()
+
+        # Prepare POST data
+        data = {
+            'news_item': self.news_content,
+            'persona_ids[]': [self.persona.id]
+        }
+
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, 200)  # Should return OK status
+        self.assertIn("responses", response.content.decode())  # Ensure responses are returned
+        self.assertEqual(EmotionalResponse.objects.count(), 1)  # Ensure response is saved
+
+    def test_impact_assessment_post_invalid(self):
+        """Test for POST request with missing news item or persona selection."""
+        data = {
+            'news_item': '',
+            'persona_ids[]': []
+        }
+
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("Both news content and persona selection are required.", response.content.decode())

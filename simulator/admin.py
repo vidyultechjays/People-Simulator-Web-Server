@@ -8,4 +8,3 @@ from . models import Persona,EmotionalResponse,NewsItem
 admin.site.register(Persona)
 admin.site.register(EmotionalResponse)
 admin.site.register(NewsItem)
-

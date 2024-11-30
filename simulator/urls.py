@@ -7,6 +7,7 @@ from . import views
 urlpatterns = [
     path('persona_generation/', views.persona_generation, name='persona_generation'),
     path('impact-assessment/', views.impact_assessment, name='impact_assessment'),
-    # path('aggregate_emotion/', views.aggregate_emotion, name='aggregate_emotion'),
+    path('aggregate-impact/', views.aggregate_emotion, name='aggregate_emotion'),
+    # path('results/', views.results_view, name='results'),
 
 ]

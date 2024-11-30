@@ -74,6 +74,15 @@ legend {
 input[type="checkbox"] {
     margin-right: 8px;
 }
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    text-align: center;
+}
 
 /* Button */
 button {
@@ -101,4 +110,27 @@ button:active {
 button:focus {
     outline: 2px solid #80d0ff;
     outline-offset: 2px;
+}
+.navbar {
+    background-color: #007bb5;
+    overflow: hidden;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #ffffff;
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    text-decoration: none;
+    padding: 14px 20px;
+    display: block;
+    text-align: center;
+}
+
+.navbar a:hover {
+    background-color: #005b96;
+    color: #e0f7fa;
 }

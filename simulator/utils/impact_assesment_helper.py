@@ -1,4 +1,8 @@
-# utils/emotional_response.py
+"""
+This module contains utility functions related to the assessment of emotional responses
+for personas based on news content. It includes functions to generate an emotional response
+using an external service (e.g., Gemini API), process the responses, and handle related data.
+"""
 from .ask_gemini import ask_gemini
 
 def generate_emotional_response(persona, news_content):
@@ -27,7 +31,8 @@ def generate_emotional_response(persona, news_content):
         f"Life Goals: {', '.join(life_goals)}.\n"
         f"Hobbies: {', '.join(hobbies)}.\n"
         f"Daily Routine: Morning - {daily_routine.get('morning', 'N/A')}, "
-        f"Afternoon - {daily_routine.get('afternoon', 'N/A')}, Evening - {daily_routine.get('evening', 'N/A')}.\n"
+        f"Afternoon - {daily_routine.get('afternoon', 'N/A')}, "
+        f"Evening - {daily_routine.get('evening', 'N/A')}.\n"
         f"Dominant Emotion: {dominant_emotion}.\n"
     )
 
@@ -43,10 +48,8 @@ def generate_emotional_response(persona, news_content):
         "Person: {persona_name}\nEmotion: {emotion}\nIntensity: {intensity}\nExplanation: {explanation}"
     )
 
-    # Get the response from the Gemini API
     gemini_response = ask_gemini(prompt)
 
-    # Parse the response
     emotion = None
     intensity = None
     explanation = None

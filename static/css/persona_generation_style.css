@@ -79,3 +79,27 @@ button {
 button:hover {
     background-color: #005b96;
 }
+/* Navigation Bar Styles */
+.navbar {
+    background-color: #007bb5;
+    overflow: hidden;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #ffffff;
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    text-decoration: none;
+    padding: 14px 20px;
+    display: block;
+    text-align: center;
+}
+
+.navbar a:hover {
+    background-color: #005b96;
+    color: #e0f7fa;
+}

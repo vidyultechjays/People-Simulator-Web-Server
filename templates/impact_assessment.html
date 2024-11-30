@@ -4,33 +4,72 @@
 <head>
     <title>Impact Assessment</title>
     <link rel="stylesheet" href="{% static 'css/impact_assessment_style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
     <h1>Assess Emotional Impact</h1>
-    <form method="post" action="{% url 'impact_assessment' %}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'impact_assessment' %}">
         {% csrf_token %}
-        
         <label for="news_item">News Item:</label>
-        <textarea id="news_item" name="news_item" rows="4" cols="50" placeholder="Enter the news content here..." required></textarea>
+        <textarea id="news_item" name="news_item" rows="4" cols="50" placeholder="Enter the news content here..." required>
+            {{ news_item_content|default_if_none:"" }}
+        </textarea>
         <br><br>
         
-        <label for="news_file">OR Upload News File:</label>
+        <label for="news_file">Upload News File:</label>
         <input type="file" id="news_file" name="news_file" accept=".txt,.pdf">
+        <br><br>
+
+        <label for="city">Select City:</label>
+        <select name="city" id="city" style="width: 100%;">
+            <option value="">Select a City</option>
+            {% for city in cities %}
+                <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>
+                    {{ city }}
+                </option>
+            {% endfor %}
+        </select>
         <br><br>
 
         <fieldset>
             <legend>Select Personas:</legend>
-            {% for persona in personas %}
-            <label>
-                <input type="checkbox" name="persona_ids[]" value="{{ persona.id }}">
-                {{ persona.name }} ({{ persona.age_group }}, {{ persona.income_level }}, {{ persona.religion }})
-            </label>
-            <br>
-            {% endfor %}
+            <select name="persona_ids[]" id="persona_ids" multiple="multiple" style="width: 100%;">
+                {% for persona in personas %}
+                    <option value="{{ persona.id }}" class="{{ persona.city }}">
+                        {{ persona.name }} ({{ persona.age_group }}, {{ persona.income_level }}, {{ persona.religion }})
+                    </option>
+                {% endfor %}
+            </select>
         </fieldset>
         <br>
-
         <button type="submit">Assess Impact</button>
     </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#city').select2({
+                placeholder: "Select a city",
+                allowClear: true
+            });
+    
+            $('#persona_ids').select2({
+                placeholder: "Select personas", 
+                allowClear: true
+            });
+    
+            $('#city').on('change', function () {
+                var selectedCity = $(this).val();
+                var newsContent = $('#news_item').val(); 
+
+                if (selectedCity) {
+                    window.location.href = '?city=' + encodeURIComponent(selectedCity) + '&news_item=' + encodeURIComponent(newsContent);
+                } else {
+                    window.location.href = '?news_item=' + encodeURIComponent(newsContent);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

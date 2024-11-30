@@ -6,15 +6,16 @@ Views:
     - `impact_assessment`: Displays the impact assessment interface.
 """
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from faker import Faker
-from .models import Persona
+from .models import Persona,EmotionalResponse,NewsItem
 from .utils.persona_helper import (
     generate_persona_traits,
     validate_demographics,
     get_occupation_by_income,
     extract_demographics
 )
+from .utils.impact_assesment_helper import generate_emotional_response
 
 def persona_generation(request):
     """
@@ -118,8 +119,86 @@ def persona_generation(request):
 
     return render(request, "persona_generation.html")
 
+
 def impact_assessment(request):
     """
-    Impact assesment based on News 
+    Handle the assessment of the emotional impact of news items on personas.
+
+    Generates an emotional response for each selected persona based on the news item.
+    The response includes:
+        - Emotion: The emotional response of the persona (e.g., joy, sadness, anger, etc.).
+        - Intensity: A numeric value representing the intensity of the emotion (0 to 1).
+        - Explanation: A brief explanation of why the persona reacts emotionally in that way.
     """
-    return render(request, "impact_assessment.html")
+    city_name = request.GET.get('city', None)
+    news_content = request.GET.get('news_item', '')
+
+    if city_name:
+        personas = Persona.objects.filter(city=city_name)
+        print(f"Filtered City: {city_name}")
+        print(f"Filtered Personas: {list(personas)}")
+    else:
+        personas = Persona.objects.all()
+        print("No city selected. Showing all personas.")
+
+    cities = (
+        Persona.objects.exclude(city__isnull=True)
+        .exclude(city="")
+        .values_list("city", flat=True)
+        .distinct()
+        .order_by("city")
+    )
+    if request.method == "GET":
+        context = {
+            "personas": personas,
+            "cities": cities,
+            "selected_city": city_name,
+            "news_item_content": news_content,
+        }
+        return render(request, "impact_assessment.html", context)
+
+    if request.method == "POST":
+        # Fetch inputs
+        news_content = request.POST.get("news_item", "")
+        persona_ids = request.POST.getlist("persona_ids[]")  # IDs as a list
+
+        print("News Content:", news_content)
+        print("Persona IDs:", persona_ids)
+
+        if not news_content or not persona_ids:
+            return JsonResponse({"error": "Both news content and persona selection are required."},
+                                status=400
+                                )
+        responses = []
+        news_item, created = NewsItem.objects.get_or_create(
+        title=news_content,
+        content=news_content
+        )
+
+        print("News Item created:", news_item)
+        personas = Persona.objects.filter(id__in=persona_ids)
+        for persona in personas:
+            emotion, intensity, explanation = generate_emotional_response(persona, news_content)
+
+            # Append the response
+            if emotion:
+                responses.append({
+                    "persona_id": persona.id,
+                    "persona_name": persona.name,
+                    "emotion": emotion,
+                    "intensity": intensity,
+                    "explanation": explanation,
+                })
+
+                EmotionalResponse.objects.create(
+                    persona=persona,
+                    news_item=news_item,
+                    emotion=emotion,
+                    intensity=intensity,
+                    explanation=explanation,
+                )
+
+        return JsonResponse({"responses": responses})
+
+    personas = Persona.objects.all()
+    return render(request, "impact_assessment.html", {"personas": personas})

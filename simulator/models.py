@@ -50,7 +50,7 @@ class NewsItem(models.Model):
     upload_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(f"Aggregate Emotion for {self.title}")
+        return str(f"News about {self.title}")
 
 class EmotionalResponse(models.Model):
     """

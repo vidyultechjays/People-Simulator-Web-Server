@@ -118,6 +118,8 @@ unsafe-load-any-extension=no
 
 [MASTER]
 ignore=migrations
+load-plugins=pylint_django
+
 
 [BASIC]
 

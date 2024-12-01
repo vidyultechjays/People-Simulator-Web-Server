@@ -7,28 +7,25 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
+    <div class="navbar">
+        <a href="{% url 'persona_generation' %}">Persona Generation</a>
+        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
+    </div><br>
     {% if messages %}
     <div class="message-container">
         {% for message in messages %}
-        <div class="alert alert-success">
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
             {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
-    <div class="navbar">
-        <a href="{% url 'persona_generation' %}">Persona Generation</a>
-        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
-    </div>
-    <h1>Assess Emotional Impact</h1>
+
     <form method="post" action="{% url 'impact_assessment' %}">
         {% csrf_token %}
         <label for="news_item">News Item:</label>
-        <textarea id="news_item" name="news_item" rows="4" cols="50" placeholder="Enter the news content here..." required>
-            {{ news_item_content|default_if_none:"" }}
-        </textarea>
+        <textarea id="news_item" name="news_item" rows="4" cols="50" placeholder="Enter the news content here..." required>{{ news_item_content|default_if_none:"" }}</textarea>
         <br><br>
-
         <label for="news_file">Upload News File:</label>
         <input type="file" id="news_file" name="news_file" accept=".txt,.pdf">
         <br><br>
@@ -55,10 +52,11 @@
             </select>
         </fieldset>
         <br>
-        <button type="submit">Assess Impact</button>
+        <button type="submit" class="btn-primary">Assess Persona Impact</button>
     </form>
 
-    <button id="aggregate-emotion-button" style="margin-top: 20px;">Aggregate Emotional Impact</button>
+    <button id="aggregate-emotion-button" class="btn-primary" style="margin-top: 20px;">
+        Aggregate Emotional Impact</button>
 
     <div id="aggregate-result" style="margin-top: 20px; display: none;">
         <h2>Aggregate Emotion Summary</h2>
@@ -109,14 +107,7 @@
                         news_item: newsItem
                     },
                     success: function (data) {
-                        if (data.summary) {
-                            $('#aggregate-result').show();
-                            $('#positive-summary').text('Positive: ' + data.summary.positive + '%');
-                            $('#negative-summary').text('Negative: ' + data.summary.negative + '%');
-                            $('#neutral-summary').text('Neutral: ' + data.summary.neutral + '%');
-                        } else {
-                            alert("No summary data available.");
-                        }
+                        window.location.href = '/results-summary/';
                     },
                     error: function (error) {
                         console.error("Error fetching aggregate emotion:", error);

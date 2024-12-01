@@ -74,6 +74,20 @@ legend {
 input[type="checkbox"] {
     margin-right: 8px;
 }
+.message-container {
+    margin-bottom: 15px;
+}
+
+.alert {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
 .alert-success {
     color: #155724;
     background-color: #d4edda;
@@ -84,8 +98,8 @@ input[type="checkbox"] {
     text-align: center;
 }
 
-/* Button */
-button {
+/* General Button Styles */
+button, .btn-primary {
     background-color: #007bb5;
     color: #ffffff;
     border: none;
@@ -95,22 +109,27 @@ button {
     cursor: pointer;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%; /* Ensure buttons span the same width */
+    max-width: 400px; /* Optional: Set a maximum width */
+    display: block; /* Ensure buttons align properly */
+    margin: 0 auto; /* Center-align buttons */
 }
 
-button:hover {
+button:hover, .btn-primary:hover {
     background-color: #005b96;
     transform: translateY(-2px);
 }
 
-button:active {
+button:active, .btn-primary:active {
     background-color: #003f6e;
     transform: translateY(0);
 }
 
-button:focus {
+button:focus, .btn-primary:focus {
     outline: 2px solid #80d0ff;
     outline-offset: 2px;
 }
+
 .navbar {
     background-color: #007bb5;
     overflow: hidden;
@@ -133,4 +152,25 @@ button:focus {
 .navbar a:hover {
     background-color: #005b96;
     color: #e0f7fa;
+}
+
+/*Results styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #b3e5fc;
+}
+
+th {
+    background-color: #007bb5;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
 }

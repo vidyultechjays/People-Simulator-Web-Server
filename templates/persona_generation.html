@@ -11,6 +11,15 @@
         <a href="{% url 'persona_generation' %}">Persona Generation</a>
         <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
     </div>
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <h1>GENERATE PERSONAS</h1>
     <form method="post" action="{% url 'persona_generation' %}">
         {% csrf_token %}

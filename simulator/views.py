@@ -1,12 +1,16 @@
 """
-This module contains views for the Persona Simulator application.
+This module handles persona generation, emotional impact assessment, and response aggregation.
 
-Views:
-    - `persona_generation`: Handles persona generation based on demographic inputs.
-    - `impact_assessment`: Displays the impact assessment interface.
+Features:
+1. **Persona Generation**: Generates personas based on demographic inputs like age, religion,personality traits and income distribution.
+2. **Impact Assessment**: Analyzes the emotional impact of a news item on selected personas, generating responses with emotion, intensity, and explanation.
+3. **Response Aggregation**: Categorizes and summarizes emotional responses (positive, negative, neutral) across personas, grouped by city and news item.
+4. **Result Presentation**: Displays individual emotional responses and aggregated summaries in a user-friendly format.
+
+Primarily supports city-specific analysis of emotional responses to user-provided news items.
 """
+
 from django.shortcuts import render,redirect
-from django.http import HttpResponse,JsonResponse
 from django.contrib import messages
 from faker import Faker
 from .models import Persona,EmotionalResponse,NewsItem
@@ -18,17 +22,44 @@ from .utils.persona_helper import (
 )
 from .utils.impact_assesment_helper import generate_emotional_response
 
+
+def results(request, news_item_id):
+    """
+    Display emotional responses for a specific news item.
+    Retrieves and shows details like persona, emotion, intensity, and explanation.
+    """
+    news_item = request.session.get('news_item', 'No news item')
+
+    assessment_results = EmotionalResponse.objects.filter(
+    news_item_id=news_item_id
+    ).select_related('persona', 'news_item')
+
+    return render(request, "results.html", {
+        "results": assessment_results,
+        "news_item": news_item,
+    })
+
+def results_summary(request):
+    """
+    Show aggregated emotional responses.
+    Displays a summary table with emotion percentages and contextual data.
+    """
+    summary = request.session.get('summary')
+    news_item_title = request.session.get('news_item')
+    city_name = request.session.get('city_name')
+
+    return render(request, "results_summary.html", {
+        "summary": summary,
+        "news_item": news_item_title,
+        "city_name": city_name
+
+    })
+
 def persona_generation(request):
     """
-    Handle the generation of personas based on user-defined demographic inputs.
-
-    Inputs:
-        - City name
-        - Population size
-        - Demographic distribution (age groups, religions, and income groups)
-
-    Outputs:
-        - Generates personas and saves them to the database.
+    Generate personas based on demographic inputs.
+    Accepts city, population, and demographic data to create weighted personas.
+    Saves generated personas to the database for future analysis.
     """
     if request.method == "POST":
         city_name = request.POST.get("city_name")
@@ -36,7 +67,8 @@ def persona_generation(request):
         demographics = extract_demographics(request)
 
         if not validate_demographics(demographics):
-            return HttpResponse("Demographic percentages must sum up to 100.", status=400)
+            messages.error(request, "Demographic percentages must sum up to 100.")
+            return redirect("persona_generation")
 
         def generate_personas_with_weights(population):
             faker = Faker()
@@ -125,24 +157,17 @@ def persona_generation(request):
 
 def impact_assessment(request):
     """
-    Handle the assessment of the emotional impact of news items on personas.
-
-    Generates an emotional response for each selected persona based on the news item.
-    The response includes:
-        - Emotion: The emotional response of the persona (e.g., joy, sadness, anger, etc.).
-        - Intensity: A numeric value representing the intensity of the emotion (0 to 1).
-        - Explanation: A brief explanation of why the persona reacts emotionally in that way.
+    Assess the emotional impact of a news item on personas.
+    Filters personas by city, generates emotional responses, and stores results.
+    Redirects to the results page after processing.
     """
     city_name = request.GET.get('city', None)
     news_content = request.GET.get('news_item', '')
 
     if city_name:
         personas = Persona.objects.filter(city=city_name)
-        print(f"Filtered City: {city_name}")
-        print(f"Filtered Personas: {list(personas)}")
     else:
         personas = Persona.objects.all()
-        print("No city selected. Showing all personas.")
 
     cities = (
         Persona.objects.exclude(city__isnull=True)
@@ -164,67 +189,51 @@ def impact_assessment(request):
         news_content = request.POST.get("news_item", "")
         persona_ids = request.POST.getlist("persona_ids[]")
 
-        print("News Content:", news_content)
-        print("Persona IDs:", persona_ids)
-
         if not news_content or not persona_ids:
-            return JsonResponse({"error": "Both news content and persona selection are required."},
-                                status=400
-                                )
+            messages.error(request, "Both news content and persona selection are required.")
+            return redirect('impact_assessment')
+
         responses = []
         news_item, created = NewsItem.objects.get_or_create(
         title=news_content,
         content=news_content
         )
 
-        print("News Item created:", news_item)
         personas = Persona.objects.filter(id__in=persona_ids)
         for persona in personas:
             emotion, intensity, explanation = generate_emotional_response(persona, news_content)
 
             if emotion:
-                responses.append({
-                    "persona_id": persona.id,
-                    "persona_name": persona.name,
-                    "emotion": emotion,
-                    "intensity": intensity,
-                    "explanation": explanation,
-                })
-
-                EmotionalResponse.objects.create(
+                response=EmotionalResponse.objects.create(
                     persona=persona,
                     news_item=news_item,
                     emotion=emotion,
                     intensity=intensity,
                     explanation=explanation,
                 )
+                responses.append(response)
 
-        return JsonResponse({"responses": responses})
-
-    personas = Persona.objects.all()
-    return render(request, "impact_assessment.html", {"personas": personas})
-
-
+        request.session['news_item'] = news_content
+        return redirect('results', news_item_id=news_item.id)
 
 def aggregate_emotion(request):
     """
-    Aggregate and categorize the emotional responses of personas based on a specific news item.
-    Returns:
-        - A JSON response containing the aggregated emotional response summary:
-            - "positive": Percentage of personas showing positive emotions.
-            - "negative": Percentage of personas showing negative emotions.
-            - "neutral": Percentage of personas showing neutral emotions.
+    Categorize and summarize emotional responses to a news item by city.
+    Calculates percentages of positive, negative, and neutral responses.
+    Stores the summary in the session and redirects to the summary page.
     """
     city_name = request.GET.get('city', None)
     news_item_title = request.GET.get('news_item', None)
 
     if not city_name or not news_item_title:
-        return JsonResponse({"error": "Both 'city' and 'news_item' parameters are required."}, status=400)
+        messages.error(request, "Both 'city' and 'news_item' parameters are required.")
+        return redirect('impact_assessment')
 
     personas = Persona.objects.filter(city=city_name)
 
     if not personas.exists():
-        return JsonResponse({"error": f"No personas found in city '{city_name}'."}, status=404)
+        messages.error(request, f"No personas found in city '{city_name}'.")
+        return redirect('impact_assessment')
 
     emotion_categories = {
         "positive": {"joy", "optimism", "compassion"},
@@ -237,7 +246,6 @@ def aggregate_emotion(request):
     for persona in personas:
         emotion, intensity, explanation = generate_emotional_response(persona, news_item_title)
 
-        # Categorize the emotion
         if emotion in emotion_categories["positive"]:
             summary["positive"] += 1
         elif emotion in emotion_categories["negative"]:
@@ -251,4 +259,8 @@ def aggregate_emotion(request):
         for key in summary:
             summary[key] = round((summary[key] / total_responses) * 100, 2)
 
-    return JsonResponse({"summary": summary})
+    request.session['summary'] = summary
+    request.session['news_item'] = news_item_title
+    request.session['city_name'] = city_name
+
+    return redirect('results_summary')

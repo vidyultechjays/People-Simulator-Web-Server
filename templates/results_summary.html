@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aggregate Emotion Summary</title>
+    <link rel="stylesheet" href="{% static 'css/impact_assessment_style.css' %}">
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'persona_generation' %}">Persona Generation</a>
+        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
+    </div>
+
+    <div class="results-summary">
+        <h2>Aggregate Emotion Summary</h2>
+        <h4>City: {{ city_name }}</h3>    
+        <h4>News Item: {{ news_item }}</h3>
+        {% if summary.positive > 0 or summary.negative > 0 or summary.neutral > 0 %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Emotion Category</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Positive</td>
+                        <td>{{ summary.positive }}%</td>
+                    </tr>
+                    <tr>
+                        <td>Negative</td>
+                        <td>{{ summary.negative }}%</td>
+                    </tr>
+                    <tr>
+                        <td>Neutral</td>
+                        <td>{{ summary.neutral }}%</td>
+                    </tr>
+                </tbody>
+            </table>
+        {% else %}
+            <p>No summary data available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

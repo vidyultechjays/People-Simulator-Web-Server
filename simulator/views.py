@@ -2,18 +2,22 @@
 This module handles persona generation, emotional impact assessment, and response aggregation.
 
 Features:
-1. **Persona Generation**: Generates personas based on demographic inputs like age, religion,personality traits and income distribution.
-2. **Impact Assessment**: Analyzes the emotional impact of a news item on selected personas, generating responses with emotion, intensity, and explanation.
-3. **Response Aggregation**: Categorizes and summarizes emotional responses (positive, negative, neutral) across personas, grouped by city and news item.
-4. **Result Presentation**: Displays individual emotional responses and aggregated summaries in a user-friendly format.
+1. **Persona Generation**: Generates personas based on demographic inputs like age, 
+    religion,personality traits and income distribution.
+2. **Impact Assessment**: Analyzes the emotional impact of a news item on selected personas, 
+    generating responses with emotion, intensity, and explanation.
+3. **Response Aggregation**: Categorizes and summarizes emotional responses (positive,
+     negative, neutral) across personas, grouped by city and news item.
+4. **Result Presentation**: Displays individual emotional responses and aggregated summaries
+     in a user-friendly format.
 
 Primarily supports city-specific analysis of emotional responses to user-provided news items.
 """
-
 from django.shortcuts import render,redirect
 from django.contrib import messages
+from django.db.models import Count,Avg
 from faker import Faker
-from .models import Persona,EmotionalResponse,NewsItem
+from .models import Persona,EmotionalResponse,NewsItem,AggregateEmotion
 from .utils.persona_helper import (
     generate_persona_traits,
     validate_demographics,
@@ -21,38 +25,68 @@ from .utils.persona_helper import (
     extract_demographics
 )
 from .utils.impact_assesment_helper import generate_emotional_response
-
+from .utils.results_visualization_helper import create_emotion_intensity_bar_chart,create_pie_chart
 
 def results(request, news_item_id):
     """
-    Display emotional responses for a specific news item.
-    Retrieves and shows details like persona, emotion, intensity, and explanation.
+    Display emotional responses with multiple visualizations:
+    - Pie chart for emotion breakdown
+    - Bar chart for emotion intensity
     """
-    news_item = request.session.get('news_item', 'No news item')
+    news_item = NewsItem.objects.get(id=news_item_id)
 
+    emotion_breakdown = EmotionalResponse.objects.filter(
+        news_item_id=news_item_id
+    ).values('emotion').annotate(count=Count('emotion'))
+
+    emotion_intensity = EmotionalResponse.objects.filter(
+        news_item_id=news_item_id
+    ).values('emotion').annotate(
+        avg_intensity=Avg('intensity'),
+        count=Count('emotion')
+    )
+
+    emotion_chart = create_pie_chart(emotion_breakdown, f'Pie chart for news - "{news_item.title}"')
+    emotion_intensity_bar_chart = create_emotion_intensity_bar_chart(
+        emotion_intensity,
+        f'Bar chart for news - "{news_item.title}"'
+    )
     assessment_results = EmotionalResponse.objects.filter(
-    news_item_id=news_item_id
+        news_item_id=news_item_id
     ).select_related('persona', 'news_item')
 
     return render(request, "results.html", {
         "results": assessment_results,
-        "news_item": news_item,
+        "news_item": news_item.title,
+        "emotion_chart": emotion_chart,
+        "emotion_intensity_bar_chart": emotion_intensity_bar_chart
     })
 
 def results_summary(request):
     """
-    Show aggregated emotional responses.
-    Displays a summary table with emotion percentages and contextual data.
+    Show aggregated emotional responses with visualizations.
+    Displays a summary table and Plotly charts.
     """
     summary = request.session.get('summary')
     news_item_title = request.session.get('news_item')
     city_name = request.session.get('city_name')
 
+    emotion_pie_chart = None
+
+    if summary:
+        emotion_data = [
+            {'emotion': 'Positive', 'count': summary['positive']},
+            {'emotion': 'Negative', 'count': summary['negative']},
+            {'emotion': 'Neutral', 'count': summary['neutral']}
+        ]
+
+        emotion_pie_chart = create_pie_chart(emotion_data, f'Emotion Distribution in {city_name}')
+
     return render(request, "results_summary.html", {
         "summary": summary,
         "news_item": news_item_title,
-        "city_name": city_name
-
+        "city_name": city_name,
+        "emotion_pie_chart": emotion_pie_chart,
     })
 
 def persona_generation(request):
@@ -201,6 +235,9 @@ def impact_assessment(request):
 
         personas = Persona.objects.filter(id__in=persona_ids)
         for persona in personas:
+            if EmotionalResponse.objects.filter(news_item=news_item, persona=persona).exists():
+                continue
+
             emotion, intensity, explanation = generate_emotional_response(persona, news_content)
 
             if emotion:
@@ -256,11 +293,25 @@ def aggregate_emotion(request):
         total_responses += 1
 
     if total_responses > 0:
+        total = summary["positive"] + summary["negative"] + summary["neutral"]
         for key in summary:
-            summary[key] = round((summary[key] / total_responses) * 100, 2)
+            summary[key] = round((summary[key] / total) * 100, 2)
 
     request.session['summary'] = summary
     request.session['news_item'] = news_item_title
     request.session['city_name'] = city_name
 
+    try:
+        news_item, created = NewsItem.objects.get_or_create(
+            title=news_item_title,
+            content=news_item_title
+        )
+        AggregateEmotion.objects.update_or_create(
+            news_item=news_item,
+            city=city_name,
+            defaults={"summary": summary}
+        )
+    except Exception as e:
+        messages.error(request, f"Error processing the news item: {str(e)}")
+        return redirect('impact_assessment')
     return redirect('results_summary')

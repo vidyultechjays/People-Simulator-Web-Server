@@ -21,7 +21,6 @@ def generate_emotional_response(persona, news_content):
     life_goals = traits.get("life_goals", [])
     daily_routine = traits.get("daily_routine", {})
 
-    # Compose the persona details for the prompt
     persona_details = (
         f"Persona: Name {persona.name}, Age {persona.age_group}, Income {persona.income_level}, "
         f"Religion {persona.religion}, Occupation {persona.occupation}.\n"

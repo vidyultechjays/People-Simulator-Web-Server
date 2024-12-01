@@ -37,10 +37,17 @@
                         <td>{{ summary.neutral }}%</td>
                     </tr>
                 </tbody>
-            </table>
+            </table><br>
         {% else %}
             <p>No summary data available.</p>
         {% endif %}
+        {% if emotion_pie_chart %}
+        <div class="chart-item">
+            <h3>Emotion Distribution</h3>
+            {{ emotion_pie_chart|safe }}
+        </div><br>
+        {% endif %}
     </div>
+    
 </body>
 </html>

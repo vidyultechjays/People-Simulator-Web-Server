@@ -12,7 +12,7 @@
     </div>
 
     <h2>Impact Assessment on persons</h2>
-    <h4>News Item: {{ news_item }}</h4>
+    <h4>News : {{ news_item }}</h4>
     {% if results %}
     <table border="1" style="width: 100%; border-collapse: collapse;">
         <thead>
@@ -35,9 +35,22 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table><br>
     {% else %}
     <p>No results available.</p>
+    {% endif %}
+    {% if emotion_chart %}
+    <div class="emotion-chart">
+        <h3>Emotional Breakdown</h3>
+        {{ emotion_chart|safe }}
+    </div><br>
+    {% endif %}
+
+    {% if emotion_intensity_bar_chart %}
+    <div class="chart-item">
+        <h3>Average Emotion Intensity</h3>
+        {{ emotion_intensity_bar_chart|safe }}
+    </div><br>
     {% endif %}
 </body>
 </html>

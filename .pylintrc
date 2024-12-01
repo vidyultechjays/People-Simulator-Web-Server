@@ -120,6 +120,8 @@ unsafe-load-any-extension=no
 ignore=migrations
 load-plugins=pylint_django
 
+[DJANGO]
+django-settings-module=people_simulator.settings
 
 [BASIC]
 

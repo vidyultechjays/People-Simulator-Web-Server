@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import sys
+
 
 load_dotenv()
 
@@ -29,6 +31,9 @@ CELERY_TASK_SERIALIZER = 'json'
 # Celery Result Backend (optional, for task status tracking)
 CELERY_RESULT_BACKEND = 'django-db'
 
+if 'test' in sys.argv:
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
 #For celery running use the following command
 #celery -A people_simulator worker --loglevel=info --pool=solo
 

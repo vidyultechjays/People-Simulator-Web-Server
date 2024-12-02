@@ -73,5 +73,5 @@ def aggregate_emotion_task(city_name, news_item_title):
                 f"news_item: {news_item_title}"
             )
     except Exception as e:
-        logger.exception(f"Error during task execution: {str(e)}")
+        logger.exception("Error during task execution: %s", str(e))
         return f"Error during task execution: {str(e)}"

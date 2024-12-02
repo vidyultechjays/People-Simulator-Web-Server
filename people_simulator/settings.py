@@ -21,6 +21,17 @@ API_KEY = os.getenv("API_KEY")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# Celery Settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Use Redis as a message broker
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# Celery Result Backend (optional, for task status tracking)
+CELERY_RESULT_BACKEND = 'django-db'
+
+#For celery running use the following command
+#celery -A people_simulator worker --loglevel=info --pool=solo
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -42,7 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'simulator'
+    'simulator',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [

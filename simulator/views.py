@@ -13,19 +13,27 @@ Features:
 
 Primarily supports city-specific analysis of emotional responses to user-provided news items.
 """
+import logging
 from django.shortcuts import render,redirect
+from django.http import JsonResponse
 from django.contrib import messages
 from django.db.models import Count,Avg
 from faker import Faker
-from .models import Persona,EmotionalResponse,NewsItem,AggregateEmotion
-from .utils.persona_helper import (
+from simulator.models import Persona,EmotionalResponse,NewsItem,AggregateEmotion
+from simulator.utils.persona_helper import (
     generate_persona_traits,
     validate_demographics,
     get_occupation_by_income,
     extract_demographics
 )
-from .utils.impact_assesment_helper import generate_emotional_response
-from .utils.results_visualization_helper import create_emotion_intensity_bar_chart,create_pie_chart
+from simulator.utils.impact_assesment_helper import generate_emotional_response
+from simulator.utils.results_visualization_helper import (
+    create_emotion_intensity_bar_chart,
+    create_pie_chart
+)
+from simulator.tasks import aggregate_emotion_task
+
+logger = logging.getLogger(__name__)
 
 def results(request, news_item_id):
     """
@@ -67,13 +75,21 @@ def results_summary(request):
     Show aggregated emotional responses with visualizations.
     Displays a summary table and Plotly charts.
     """
-    summary = request.session.get('summary')
     news_item_title = request.session.get('news_item')
     city_name = request.session.get('city_name')
 
+    try:
+        aggregate_emotion = AggregateEmotion.objects.get(
+            city=city_name,
+            news_item__title=news_item_title
+        )
+        summary = aggregate_emotion.summary
+    except AggregateEmotion.DoesNotExist:
+        summary = None
+
     emotion_pie_chart = None
 
-    if summary:
+    if summary and summary != "Processing...":
         emotion_data = [
             {'emotion': 'Positive', 'count': summary['positive']},
             {'emotion': 'Negative', 'count': summary['negative']},
@@ -253,11 +269,12 @@ def impact_assessment(request):
         request.session['news_item'] = news_content
         return redirect('results', news_item_id=news_item.id)
 
+
 def aggregate_emotion(request):
     """
-    Categorize and summarize emotional responses to a news item by city.
-    Calculates percentages of positive, negative, and neutral responses.
-    Stores the summary in the session and redirects to the summary page.
+    Initiates the aggregation of emotional responses for a specific news item and city.
+    It triggers a background Celery task to process the emotional analysis and stores 
+    the current status in the session.
     """
     city_name = request.GET.get('city', None)
     news_item_title = request.GET.get('news_item', None)
@@ -266,52 +283,128 @@ def aggregate_emotion(request):
         messages.error(request, "Both 'city' and 'news_item' parameters are required.")
         return redirect('impact_assessment')
 
-    personas = Persona.objects.filter(city=city_name)
-
-    if not personas.exists():
-        messages.error(request, f"No personas found in city '{city_name}'.")
-        return redirect('impact_assessment')
-
-    emotion_categories = {
-        "positive": {"joy", "optimism", "compassion"},
-        "negative": {"sadness", "anger", "fear", "disgust", "anxiety", "outrage"},
-        "neutral": {"surprise"}
-    }
-    summary = {"positive": 0, "negative": 0, "neutral": 0}
-
-    total_responses = 0
-    for persona in personas:
-        emotion, intensity, explanation = generate_emotional_response(persona, news_item_title)
-
-        if emotion in emotion_categories["positive"]:
-            summary["positive"] += 1
-        elif emotion in emotion_categories["negative"]:
-            summary["negative"] += 1
-        elif emotion in emotion_categories["neutral"]:
-            summary["neutral"] += 1
-
-        total_responses += 1
-
-    if total_responses > 0:
-        total = summary["positive"] + summary["negative"] + summary["neutral"]
-        for key in summary:
-            summary[key] = round((summary[key] / total) * 100, 2)
-
-    request.session['summary'] = summary
-    request.session['news_item'] = news_item_title
-    request.session['city_name'] = city_name
-
     try:
-        news_item, created = NewsItem.objects.get_or_create(
+        news_item, _ = NewsItem.objects.get_or_create(
             title=news_item_title,
             content=news_item_title
         )
-        AggregateEmotion.objects.update_or_create(
+        aggregate_emotion_obj, created = AggregateEmotion.objects.update_or_create(
             news_item=news_item,
             city=city_name,
-            defaults={"summary": summary}
+            defaults={"summary": "Processing..."}
         )
+
+        logger.info("Triggering Celery task for city: %s, news_item: %s",city_name, news_item_title)
+
+        request.session['city_name'] = city_name
+        request.session['news_item'] = news_item_title
+        request.session['summary'] = aggregate_emotion_obj.summary
+
+        aggregate_emotion_task.delay(city_name, news_item_title)
     except Exception as e:
-        messages.error(request, f"Error processing the news item: {str(e)}")
+        messages.error(request, f"Error initializing the aggregation process: {str(e)}")
         return redirect('impact_assessment')
+
     return redirect('results_summary')
+
+
+def fetch_summary_api(request):
+    """
+    Fetches the emotional summary for a given city and news item.
+
+    This function retrieves the 'city' and 'news_item' parameters from the request and 
+    checks the status of the emotional aggregation for the corresponding `AggregateEmotion` object.
+    If the summary is completed,it returns the summary data in a JSON response. If the summary is 
+    still being processed, it returns a 'processing' status.
+    """
+    city = request.GET.get('city')
+    news_item = request.GET.get('news_item')
+
+    if not city or not news_item:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "City and news item are required."
+            },
+            status=400
+        )
+    try:
+        aggregate_emotion_record = AggregateEmotion.objects.filter(
+            city=city,
+            news_item__title=news_item
+        ).first()
+        if aggregate_emotion_record:
+            summary = aggregate_emotion_record.summary
+            if summary and summary != "Processing...":
+                return JsonResponse({
+                    "status": "completed",
+                    "summary": summary,  
+                    "city": city  
+                })
+        return JsonResponse({"status": "processing"})
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+# def aggregate_emotion(request):
+#     """
+#     Categorize and summarize emotional responses to a news item by city.
+#     Calculates percentages of positive, negative, and neutral responses.
+#     Stores the summary in the session and redirects to the summary page.
+#     """
+#     city_name = request.GET.get('city', None)
+#     news_item_title = request.GET.get('news_item', None)
+
+#     if not city_name or not news_item_title:
+#         messages.error(request, "Both 'city' and 'news_item' parameters are required.")
+#         return redirect('impact_assessment')
+
+#     personas = Persona.objects.filter(city=city_name)
+
+#     if not personas.exists():
+#         messages.error(request, f"No personas found in city '{city_name}'.")
+#         return redirect('impact_assessment')
+
+#     emotion_categories = {
+#         "positive": {"joy", "optimism", "compassion"},
+#         "negative": {"sadness", "anger", "fear", "disgust", "anxiety", "outrage"},
+#         "neutral": {"surprise"}
+#     }
+#     summary = {"positive": 0, "negative": 0, "neutral": 0}
+
+#     total_responses = 0
+#     for persona in personas:
+#         emotion, intensity, explanation = generate_emotional_response(persona, news_item_title)
+
+#         if emotion in emotion_categories["positive"]:
+#             summary["positive"] += 1
+#         elif emotion in emotion_categories["negative"]:
+#             summary["negative"] += 1
+#         elif emotion in emotion_categories["neutral"]:
+#             summary["neutral"] += 1
+
+#         total_responses += 1
+
+#     if total_responses > 0:
+#         total = summary["positive"] + summary["negative"] + summary["neutral"]
+#         for key in summary:
+#             summary[key] = round((summary[key] / total) * 100, 2)
+
+#     request.session['summary'] = summary
+#     request.session['news_item'] = news_item_title
+#     request.session['city_name'] = city_name
+
+#     try:
+#         news_item, created = NewsItem.objects.get_or_create(
+#             title=news_item_title,
+#             content=news_item_title
+#         )
+#         AggregateEmotion.objects.update_or_create(
+#             news_item=news_item,
+#             city=city_name,
+#             defaults={"summary": summary}
+#         )
+#     except Exception as e:
+#         messages.error(request, f"Error processing the news item: {str(e)}")
+#         return redirect('impact_assessment')
+#     return redirect('results_summary')

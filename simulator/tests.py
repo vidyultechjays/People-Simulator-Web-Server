@@ -7,7 +7,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
 from faker import Faker
-from .models import Persona,EmotionalResponse
+from simulator.models import Persona,EmotionalResponse
 
 
 class PersonaGenerationTest(TestCase):

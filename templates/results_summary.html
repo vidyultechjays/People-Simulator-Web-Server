@@ -4,6 +4,54 @@
 <head>
     <title>Aggregate Emotion Summary</title>
     <link rel="stylesheet" href="{% static 'css/impact_assessment_style.css' %}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        function fetchSummary() {
+            fetch("{% url 'fetch_summary_api' %}?city={{ city_name }}&news_item={{ news_item }}")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data); 
+                    if (data.status === 'completed') {
+                        document.getElementById('summary-status').innerText = 'Summary: Processed';
+                        document.getElementById('positive').innerText = data.summary.positive + '%';
+                        document.getElementById('negative').innerText = data.summary.negative + '%';
+                        document.getElementById('neutral').innerText = data.summary.neutral + '%';
+                        
+                        const emotionData = [
+                            { emotion: 'Positive', count: data.summary.positive },
+                            { emotion: 'Negative', count: data.summary.negative },
+                            { emotion: 'Neutral', count: data.summary.neutral }
+                        ];
+
+                        const pieChartData = {
+                            labels: emotionData.map(item => item.emotion),
+                            values: emotionData.map(item => item.count),
+                            type: 'pie'
+                        };
+
+                        const layout = { 
+                            title: `Emotion Distribution in ${data.city}`,
+                            height: 400,
+                            width: 400
+                        };
+
+                        Plotly.newPlot('chart-container', [pieChartData], layout);
+
+                        clearInterval(pollingInterval);
+                    } else if (data.status === 'processing') {
+                        document.getElementById('summary-status').innerText = 'Summary: Processing...';
+                    }
+                })
+                .catch(error => console.error('Error fetching summary:', error));
+        }
+
+        const pollingInterval = setInterval(fetchSummary, 3000);
+    </script>
 </head>
 <body>
     <div class="navbar">
@@ -13,41 +61,33 @@
 
     <div class="results-summary">
         <h2>Aggregate Emotion Summary</h2>
-        <h4>City: {{ city_name }}</h3>    
-        <h4>News Item: {{ news_item }}</h3>
-        {% if summary.positive > 0 or summary.negative > 0 or summary.neutral > 0 %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Emotion Category</th>
-                        <th>Percentage</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Positive</td>
-                        <td>{{ summary.positive }}%</td>
-                    </tr>
-                    <tr>
-                        <td>Negative</td>
-                        <td>{{ summary.negative }}%</td>
-                    </tr>
-                    <tr>
-                        <td>Neutral</td>
-                        <td>{{ summary.neutral }}%</td>
-                    </tr>
-                </tbody>
-            </table><br>
-        {% else %}
-            <p>No summary data available.</p>
-        {% endif %}
-        {% if emotion_pie_chart %}
-        <div class="chart-item">
-            <h3>Emotion Distribution</h3>
-            {{ emotion_pie_chart|safe }}
-        </div><br>
-        {% endif %}
+        <h4>City: {{ city_name }}</h4>
+        <h4>News Item: {{ news_item }}</h4>
+        <p id="summary-status">Summary: Processing...</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Emotion Category</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Positive</td>
+                    <td id="positive">--</td>
+                </tr>
+                <tr>
+                    <td>Negative</td>
+                    <td id="negative">--</td>
+                </tr>
+                <tr>
+                    <td>Neutral</td>
+                    <td id="neutral">--</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <div id="chart-container"></div>
     </div>
-    
 </body>
 </html>

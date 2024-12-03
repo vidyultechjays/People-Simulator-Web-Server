@@ -40,6 +40,7 @@
         <fieldset>
             <legend>Select Personas:</legend>
             <select name="persona_ids[]" id="persona_ids" multiple="multiple" style="width: 100%;">
+                <option value="select_all" id="select_all_option">Select All</option>
                 {% for persona in personas %}
                     <option value="{{ persona.id }}" class="{{ persona.city }}">
                         {{ persona.name }} ({{ persona.age_group }}, {{ persona.income_level }}, {{ persona.religion }})
@@ -111,7 +112,18 @@
                     }
                 });
             });
+
+            $('#persona_ids').on('change', function () {
+                var selectedValues = $(this).val();
+                var selectAllSelected = selectedValues && selectedValues.includes("select_all");
+
+                if (selectAllSelected) {
+                    $(this).val(null); 
+                    $('#persona_ids > option').not('#select_all_option').prop('selected', true).trigger('change');
+                }
+            });
         });
+
     </script>
 </body>
 </html>

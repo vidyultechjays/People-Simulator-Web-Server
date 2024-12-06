@@ -80,12 +80,26 @@ class EmotionalResponse(models.Model):
 
 class AggregateEmotion(models.Model):
     """
-    Represents a summary of emotional responses for a specific NewsItem.
-    Stores a JSON representation of aggregated emotions.
+    Model to store aggregate emotional responses with demographic breakdown
     """
-    news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE)
+    news_item = models.ForeignKey('NewsItem', on_delete=models.CASCADE)
     city = models.CharField(max_length=255,blank=True, null=True)
-    summary = models.JSONField(default=dict)
+    summary = models.JSONField(default=dict)  # Overall summary
+    demographic_summary = models.JSONField(default=dict,blank=True, null=True)  # Detailed demographic breakdown
+    created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True,blank=True, null=True)
 
     def __str__(self):
-        return f"Aggregate Emotion for {self.news_item}"
+        return f"{self.city} - {self.news_item}"
+    
+# class AggregateEmotion(models.Model):
+#     """
+#     Represents a summary of emotional responses for a specific NewsItem.
+#     Stores a JSON representation of aggregated emotions.
+#     """
+#     news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE)
+#     city = models.CharField(max_length=255,blank=True, null=True)
+#     summary = models.JSONField(default=dict)
+
+#     def __str__(self):
+#         return f"Aggregate Emotion for {self.news_item}"

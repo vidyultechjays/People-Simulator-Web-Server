@@ -1,5 +1,200 @@
 {% load static %}
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results Summary</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/results_summary_style.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Results Summary</h1>
+        <h3>News Item: {{ news_item }}</h3>
+        <h3>City: {{ city_name }}</h3>  
+
+        <div id="status-message" class="alert alert-info">
+            Fetching the latest summary... Please wait.
+        </div>
+
+        <h2>Overall Summary</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <table id="overall-summary-table" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Emotion</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="overall-positive-row">
+                            <td>Positive</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr id="overall-negative-row">
+                            <td>Negative</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr id="overall-neutral-row">
+                            <td>Neutral</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <canvas id="overall-summary-chart"></canvas>
+            </div>
+        </div>
+
+        <h2>Demographic Breakdown</h2>
+        <div id="demographic-breakdown">
+        </div>
+    </div>
+
+    <script>
+        function createPieChart(ctx, data) {
+            return new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Positive', 'Negative', 'Neutral'],
+                    datasets: [{
+                        data: [data.positive_percentage, data.negative_percentage, data.neutral_percentage],
+                        backgroundColor: ['#4CAF50', '#F44336', '#FFC107'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTableAndChart(title, data, container) {
+            // Skip rendering if all values are zero
+            const total = (data.positive || 0) + (data.negative || 0) + (data.neutral || 0);
+            if (total === 0) {
+                return; // Don't render if the total count is zero
+            }
+
+            const tableId = `${title.replace(/ /g, "-").toLowerCase()}-table`;
+            const chartId = `${title.replace(/ /g, "-").toLowerCase()}-chart`;
+
+            container.append(`
+                <div class="row mt-4">
+                    <h4>${title}</h4>
+                    <div class="col-md-6">
+                        <table id="${tableId}" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Emotion</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Positive</td>
+                                    <td>${data.positive || 0}</td>
+                                    <td>${data.positive_percentage ? data.positive_percentage + "%" : "0%"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Negative</td>
+                                    <td>${data.negative || 0}</td>
+                                    <td>${data.negative_percentage ? data.negative_percentage + "%" : "0%"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Neutral</td>
+                                    <td>${data.neutral || 0}</td>
+                                    <td>${data.neutral_percentage ? data.neutral_percentage + "%" : "0%"}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="${chartId}"></canvas>
+                    </div>
+                </div>
+            `);
+
+            const ctx = document.getElementById(chartId).getContext('2d');
+            createPieChart(ctx, data);
+        }
+
+        function fetchSummary() {
+            $.ajax({
+                url: "{% url 'fetch_summary_api' %}",
+                type: "GET",
+                data: {
+                    city: "{{ city_name|escapejs }}",
+                    news_item: "{{ news_item|escapejs }}"
+                },
+                success: function (response) {
+                    if (response.status === "completed") {
+                        $("#status-message").removeClass("alert-info").addClass("alert-success").text("Summary fetched successfully!");
+
+                        const overall = response.summary;
+                        const demographicSummary = response.demographic_summary;
+
+                        const overallTable = $("#overall-summary-table");
+                        const overallChartCanvas = document.getElementById("overall-summary-chart");
+
+                        overallTable.find("#overall-positive-row td:nth-child(2)").text(overall.positive || 0);
+                        overallTable.find("#overall-positive-row td:nth-child(3)").text(overall.positive_percentage ? overall.positive_percentage + "%" : "0%");
+                        overallTable.find("#overall-negative-row td:nth-child(2)").text(overall.negative || 0);
+                        overallTable.find("#overall-negative-row td:nth-child(3)").text(overall.negative_percentage ? overall.negative_percentage + "%" : "0%");
+                        overallTable.find("#overall-neutral-row td:nth-child(2)").text(overall.neutral || 0);
+                        overallTable.find("#overall-neutral-row td:nth-child(3)").text(overall.neutral_percentage ? overall.neutral_percentage + "%" : "0%");
+
+                        if (window.overallChart) {
+                            // If the chart already exists, update its data
+                            window.overallChart.data.datasets[0].data = [
+                                overall.positive_percentage || 0,
+                                overall.negative_percentage || 0,
+                                overall.neutral_percentage || 0
+                            ];
+                            window.overallChart.update();
+                        } else {
+                            window.overallChart = createPieChart(overallChartCanvas.getContext("2d"), overall);
+                        }
+
+                        const demographicContainer = $("#demographic-breakdown");
+                        demographicContainer.empty(); // Clear previous data
+
+                        for (const [categoryType, categories] of Object.entries(demographicSummary)) {
+                            for (const [categoryName, data] of Object.entries(categories)) {
+                                createTableAndChart(`${categoryType.replace("_", " ").toUpperCase()} - ${categoryName}`, data, demographicContainer);
+                            }
+                        }
+                    } else if (response.status === "processing") {
+                        $("#status-message").text("Processing... Please wait.");
+                    }
+                },
+                error: function () {
+                    $("#status-message").removeClass("alert-info").addClass("alert-danger").text("Error fetching summary. Please try again later.");
+                }
+            });
+        }
+        setInterval(fetchSummary, 3000);
+    </script>
+</body>
+</html>
+
+
+<!-- {% load static %}
+<!DOCTYPE html>
 <html>
 <head>
     <title>Aggregate Emotion Summary</title>
@@ -90,4 +285,4 @@
         <div id="chart-container"></div>
     </div>
 </body>
-</html>
+</html> -->

@@ -72,8 +72,7 @@ def results(request, news_item_id):
 
 def results_summary(request):
     """
-    Show aggregated emotional responses with visualizations.
-    Displays a summary table and Plotly charts.
+    Display detailed emotional summary with demographic breakdowns
     """
     news_item_title = request.session.get('news_item')
     city_name = request.session.get('city_name')
@@ -83,27 +82,89 @@ def results_summary(request):
             city=city_name,
             news_item__title=news_item_title
         )
-        summary = aggregate_emotion.summary
+        
+        # Prepare charts and tables
+        charts = {}
+        
+        # Overall chart
+        if aggregate_emotion.summary and aggregate_emotion.summary.get('total', 0) > 0:
+            overall_data = [
+                {'emotion': 'Positive', 'count': aggregate_emotion.summary.get('positive_percentage', 0)},
+                {'emotion': 'Negative', 'count': aggregate_emotion.summary.get('negative_percentage', 0)},
+                {'emotion': 'Neutral', 'count': aggregate_emotion.summary.get('neutral_percentage', 0)}
+            ]
+            charts['overall'] = create_pie_chart(overall_data, f'Overall Emotion Distribution in {city_name}')
+        
+        # Demographic charts
+        demographic_summary = aggregate_emotion.demographic_summary
+        
+        # Function to create demographic charts
+        def create_demographic_charts(category_type, categories):
+            category_charts = {}
+            for category, data in categories.items():
+                if data.get('total', 0) > 0:
+                    chart_data = [
+                        {'emotion': 'Positive', 'count': data.get('positive_percentage', 0)},
+                        {'emotion': 'Negative', 'count': data.get('negative_percentage', 0)},
+                        {'emotion': 'Neutral', 'count': data.get('neutral_percentage', 0)}
+                    ]
+                    category_charts[category] = create_pie_chart(
+                        chart_data, 
+                        f'{category_type.replace("_", " ").title()} - {category}'
+                    )
+            return category_charts
+        
+        # Generate charts for each demographic category
+        charts.update(create_demographic_charts('Age Categories', demographic_summary['age_categories']))
+        charts.update(create_demographic_charts('Income Categories', demographic_summary['income_categories']))
+        charts.update(create_demographic_charts('Religion Categories', demographic_summary['religion_categories']))
+
     except AggregateEmotion.DoesNotExist:
-        summary = None
-
-    emotion_pie_chart = None
-
-    if summary and summary != "Processing...":
-        emotion_data = [
-            {'emotion': 'Positive', 'count': summary['positive']},
-            {'emotion': 'Negative', 'count': summary['negative']},
-            {'emotion': 'Neutral', 'count': summary['neutral']}
-        ]
-
-        emotion_pie_chart = create_pie_chart(emotion_data, f'Emotion Distribution in {city_name}')
+        aggregate_emotion = None
+        charts = {}
 
     return render(request, "results_summary.html", {
-        "summary": summary,
+        "summary": aggregate_emotion.summary if aggregate_emotion else {},
+        "demographic_summary": aggregate_emotion.demographic_summary if aggregate_emotion else {},
         "news_item": news_item_title,
         "city_name": city_name,
-        "emotion_pie_chart": emotion_pie_chart,
+        "charts": charts,
     })
+
+# def results_summary(request):
+#     """
+#     Show aggregated emotional responses with visualizations.
+#     Displays a summary table and Plotly charts.
+#     """
+#     news_item_title = request.session.get('news_item')
+#     city_name = request.session.get('city_name')
+
+#     try:
+#         aggregate_emotion = AggregateEmotion.objects.get(
+#             city=city_name,
+#             news_item__title=news_item_title
+#         )
+#         summary = aggregate_emotion.summary
+#     except AggregateEmotion.DoesNotExist:
+#         summary = None
+
+#     emotion_pie_chart = None
+
+#     if summary and summary != "Processing...":
+#         emotion_data = [
+#             {'emotion': 'Positive', 'count': summary['positive']},
+#             {'emotion': 'Negative', 'count': summary['negative']},
+#             {'emotion': 'Neutral', 'count': summary['neutral']}
+#         ]
+
+#         emotion_pie_chart = create_pie_chart(emotion_data, f'Emotion Distribution in {city_name}')
+
+#     return render(request, "results_summary.html", {
+#         "summary": summary,
+#         "news_item": news_item_title,
+#         "city_name": city_name,
+#         "emotion_pie_chart": emotion_pie_chart,
+#     })
 
 def persona_generation(request):
     """
@@ -273,8 +334,6 @@ def impact_assessment(request):
 def aggregate_emotion(request):
     """
     Initiates the aggregation of emotional responses for a specific news item and city.
-    It triggers a background Celery task to process the emotional analysis and stores 
-    the current status in the session.
     """
     city_name = request.GET.get('city', None)
     news_item_title = request.GET.get('news_item', None)
@@ -288,60 +347,154 @@ def aggregate_emotion(request):
             title=news_item_title,
             content=news_item_title
         )
-        aggregate_emotion_obj, created = AggregateEmotion.objects.update_or_create(
+
+        initial_demographic_summary = {
+            "age_categories": {
+                "18-25": {"positive": 0, "negative": 0, "neutral": 0},
+                "26-40": {"positive": 0, "negative": 0, "neutral": 0},
+                "41-60": {"positive": 0, "negative": 0, "neutral": 0},
+                "60+": {"positive": 0, "negative": 0, "neutral": 0}
+            },
+            "income_categories": {
+                "low": {"positive": 0, "negative": 0, "neutral": 0},
+                "medium": {"positive": 0, "negative": 0, "neutral": 0},
+                "high": {"positive": 0, "negative": 0, "neutral": 0}
+            },
+            "religion_categories": {
+                "hindu": {"positive": 0, "negative": 0, "neutral": 0},
+                "muslim": {"positive": 0, "negative": 0, "neutral": 0},
+                "christian": {"positive": 0, "negative": 0, "neutral": 0},
+                "others": {"positive": 0, "negative": 0, "neutral": 0}
+            }
+        }
+
+        aggregate_emotion_obj, _ = AggregateEmotion.objects.update_or_create(
             news_item=news_item,
             city=city_name,
-            defaults={"summary": "Processing..."}
+            defaults={
+                "summary": {"status": "Processing"},
+                "demographic_summary": initial_demographic_summary
+            }
         )
 
-        logger.info("Triggering Celery task for city: %s, news_item: %s",city_name, news_item_title)
+        # Trigger background task
+        aggregate_emotion_task.delay(
+            city_name,
+            news_item_title, 
+            aggregate_emotion_obj.id
+        )
 
+        # Store in session
         request.session['city_name'] = city_name
         request.session['news_item'] = news_item_title
-        request.session['summary'] = aggregate_emotion_obj.summary
 
-        aggregate_emotion_task.delay(city_name, news_item_title)
+        messages.success(request, "Emotion aggregation started. Please wait.")
+        return redirect('results_summary')
+
     except Exception as e:
-        messages.error(request, f"Error initializing the aggregation process: {str(e)}")
+        messages.error(request, f"Error starting aggregation: {str(e)}")
         return redirect('impact_assessment')
+    
+# def aggregate_emotion(request):
+#     """
+#     Initiates the aggregation of emotional responses for a specific news item and city.
+#     It triggers a background Celery task to process the emotional analysis and stores 
+#     the current status in the session.
+#     """
+#     city_name = request.GET.get('city', None)
+#     news_item_title = request.GET.get('news_item', None)
 
-    return redirect('results_summary')
+#     if not city_name or not news_item_title:
+#         messages.error(request, "Both 'city' and 'news_item' parameters are required.")
+#         return redirect('impact_assessment')
 
+#     try:
+#         news_item, _ = NewsItem.objects.get_or_create(
+#             title=news_item_title,
+#             content=news_item_title
+#         )
+#         aggregate_emotion_obj, created = AggregateEmotion.objects.update_or_create(
+#             news_item=news_item,
+#             city=city_name,
+#             defaults={"summary": "Processing..."}
+#         )
+
+#         logger.info("Triggering Celery task for city: %s, news_item: %s",city_name, news_item_title)
+
+#         request.session['city_name'] = city_name
+#         request.session['news_item'] = news_item_title
+#         request.session['summary'] = aggregate_emotion_obj.summary
+
+#         aggregate_emotion_task.delay(city_name, news_item_title)
+#     except Exception as e:
+#         messages.error(request, f"Error initializing the aggregation process: {str(e)}")
+#         return redirect('impact_assessment')
+
+#     return redirect('results_summary')
 
 def fetch_summary_api(request):
     """
-    Fetches the emotional summary for a given city and news item.
-
-    This function retrieves the 'city' and 'news_item' parameters from the request and 
-    checks the status of the emotional aggregation for the corresponding `AggregateEmotion` object.
-    If the summary is completed,it returns the summary data in a JSON response. If the summary is 
-    still being processed, it returns a 'processing' status.
+    API to fetch the latest summary and demographic data for charts and tables.
     """
     city = request.GET.get('city')
     news_item = request.GET.get('news_item')
 
-    if not city or not news_item:
-        return JsonResponse(
-            {
-                "status": "error",
-                "message": "City and news item are required."
-            },
-            status=400
-        )
     try:
-        aggregate_emotion_record = AggregateEmotion.objects.filter(
+        aggregate_emotion = AggregateEmotion.objects.get(
             city=city,
             news_item__title=news_item
-        ).first()
-        if aggregate_emotion_record:
-            summary = aggregate_emotion_record.summary
-            if summary and summary != "Processing...":
-                return JsonResponse({
-                    "status": "completed",
-                    "summary": summary,  
-                    "city": city  
-                })
+        )
+        
+        # Check if processing is complete
+        if aggregate_emotion.summary.get('total', 0) > 0:
+            return JsonResponse({
+                "status": "completed",
+                "summary": aggregate_emotion.summary,
+                "demographic_summary": aggregate_emotion.demographic_summary,
+                "city": city,
+                "news_item": news_item
+            })
+        
         return JsonResponse({"status": "processing"})
 
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    except AggregateEmotion.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Summary not found"}, status=404)
+
+
+# def fetch_summary_api(request):
+#     """
+#     Fetches the emotional summary for a given city and news item.
+
+#     This function retrieves the 'city' and 'news_item' parameters from the request and 
+#     checks the status of the emotional aggregation for the corresponding `AggregateEmotion` object.
+#     If the summary is completed,it returns the summary data in a JSON response. If the summary is 
+#     still being processed, it returns a 'processing' status.
+#     """
+#     city = request.GET.get('city')
+#     news_item = request.GET.get('news_item')
+
+#     if not city or not news_item:
+#         return JsonResponse(
+#             {
+#                 "status": "error",
+#                 "message": "City and news item are required."
+#             },
+#             status=400
+#         )
+#     try:
+#         aggregate_emotion_record = AggregateEmotion.objects.filter(
+#             city=city,
+#             news_item__title=news_item
+#         ).first()
+#         if aggregate_emotion_record:
+#             summary = aggregate_emotion_record.summary
+#             if summary and summary != "Processing...":
+#                 return JsonResponse({
+#                     "status": "completed",
+#                     "summary": summary,  
+#                     "city": city  
+#                 })
+#         return JsonResponse({"status": "processing"})
+
+#     except Exception as e:
+#         return JsonResponse({"status": "error", "message": str(e)}, status=500)

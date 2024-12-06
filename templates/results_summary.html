@@ -57,10 +57,55 @@
 
         <h2>Demographic Breakdown</h2>
         <div id="demographic-breakdown">
+            {% for category_type, categories in demographic_summary.items %}
+                {% for category_name, data in categories.items %}
+                    <div class="row mt-4">
+                        <h4>{{ category_type|title }} - {{ category_name }}</h4>
+                        <div class="col-md-6">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Emotion</th>
+                                        <th>Count</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Positive</td>
+                                        <td>{{ data.positive }}</td>
+                                        <td>{{ data.positive_percentage }}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Negative</td>
+                                        <td>{{ data.negative }}</td>
+                                        <td>{{ data.negative_percentage }}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Neutral</td>
+                                        <td>{{ data.neutral }}</td>
+                                        <td>{{ data.neutral_percentage }}%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas id="{{ category_type|slugify }}-{{ category_name|slugify }}-chart"></canvas>
+                        </div>
+                        <!-- Link to sample profiles page -->
+                        <div class="col-md-12 mt-2">
+                            <a href="{% url 'sample_profiles' 'age_categories' category_name city_name news_item %}">
+                                View Sample Profiles
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
         </div>
     </div>
 
     <script>
+        
         function createPieChart(ctx, data) {
             return new Chart(ctx, {
                 type: 'pie',
@@ -134,155 +179,92 @@
         }
 
         function fetchSummary() {
-            $.ajax({
-                url: "{% url 'fetch_summary_api' %}",
-                type: "GET",
-                data: {
-                    city: "{{ city_name|escapejs }}",
-                    news_item: "{{ news_item|escapejs }}"
-                },
-                success: function (response) {
-                    if (response.status === "completed") {
-                        $("#status-message").removeClass("alert-info").addClass("alert-success").text("Summary fetched successfully!");
+    $.ajax({
+        url: "{% url 'fetch_summary_api' %}",
+        type: "GET",
+        data: {
+            city: "{{ city_name|escapejs }}",
+            news_item: "{{ news_item|escapejs }}"
+        },
+        success: function (response) {
+            if (response.status === "completed") {
+                $("#status-message").removeClass("alert-info").addClass("alert-success").text("Summary fetched successfully!");
 
-                        const overall = response.summary;
-                        const demographicSummary = response.demographic_summary;
+                const overall = response.summary;
+                const demographicSummary = response.demographic_summary;
 
-                        const overallTable = $("#overall-summary-table");
-                        const overallChartCanvas = document.getElementById("overall-summary-chart");
+                const overallTable = $("#overall-summary-table");
+                const overallChartCanvas = document.getElementById("overall-summary-chart");
 
-                        overallTable.find("#overall-positive-row td:nth-child(2)").text(overall.positive || 0);
-                        overallTable.find("#overall-positive-row td:nth-child(3)").text(overall.positive_percentage ? overall.positive_percentage + "%" : "0%");
-                        overallTable.find("#overall-negative-row td:nth-child(2)").text(overall.negative || 0);
-                        overallTable.find("#overall-negative-row td:nth-child(3)").text(overall.negative_percentage ? overall.negative_percentage + "%" : "0%");
-                        overallTable.find("#overall-neutral-row td:nth-child(2)").text(overall.neutral || 0);
-                        overallTable.find("#overall-neutral-row td:nth-child(3)").text(overall.neutral_percentage ? overall.neutral_percentage + "%" : "0%");
+                overallTable.find("#overall-positive-row td:nth-child(2)").text(overall.positive || 0);
+                overallTable.find("#overall-positive-row td:nth-child(3)").text(overall.positive_percentage ? overall.positive_percentage + "%" : "0%");
+                overallTable.find("#overall-negative-row td:nth-child(2)").text(overall.negative || 0);
+                overallTable.find("#overall-negative-row td:nth-child(3)").text(overall.negative_percentage ? overall.negative_percentage + "%" : "0%");
+                overallTable.find("#overall-neutral-row td:nth-child(2)").text(overall.neutral || 0);
+                overallTable.find("#overall-neutral-row td:nth-child(3)").text(overall.neutral_percentage ? overall.neutral_percentage + "%" : "0%");
 
-                        if (window.overallChart) {
-                            // If the chart already exists, update its data
-                            window.overallChart.data.datasets[0].data = [
-                                overall.positive_percentage || 0,
-                                overall.negative_percentage || 0,
-                                overall.neutral_percentage || 0
-                            ];
-                            window.overallChart.update();
-                        } else {
-                            window.overallChart = createPieChart(overallChartCanvas.getContext("2d"), overall);
-                        }
-
-                        const demographicContainer = $("#demographic-breakdown");
-                        demographicContainer.empty(); // Clear previous data
-
-                        for (const [categoryType, categories] of Object.entries(demographicSummary)) {
-                            for (const [categoryName, data] of Object.entries(categories)) {
-                                createTableAndChart(`${categoryType.replace("_", " ").toUpperCase()} - ${categoryName}`, data, demographicContainer);
-                            }
-                        }
-                    } else if (response.status === "processing") {
-                        $("#status-message").text("Processing... Please wait.");
-                    }
-                },
-                error: function () {
-                    $("#status-message").removeClass("alert-info").addClass("alert-danger").text("Error fetching summary. Please try again later.");
+                if (window.overallChart) {
+                    window.overallChart.data.datasets[0].data = [
+                        overall.positive_percentage || 0,
+                        overall.negative_percentage || 0,
+                        overall.neutral_percentage || 0
+                    ];
+                    window.overallChart.update();
+                } else {
+                    window.overallChart = createPieChart(overallChartCanvas.getContext("2d"), overall);
                 }
-            });
+
+                const demographicContainer = $("#demographic-breakdown");
+                demographicContainer.empty(); // Clear previous data
+
+                // Track the categories to add sample profile links
+                const categoriesWithData = [];
+
+                for (const [categoryType, categories] of Object.entries(demographicSummary)) {
+                    for (const [categoryName, data] of Object.entries(categories)) {
+                        // Only add data if total is greater than 0
+                        if (data.total > 0) {
+                            createTableAndChart(
+                                `${categoryType.replace("_", " ").toUpperCase()} - ${categoryName}`, 
+                                data, 
+                                demographicContainer
+                            );
+
+                            // Store category details for adding sample profile links
+                            categoriesWithData.push({
+                                type: categoryType,
+                                name: categoryName
+                            });
+                        }
+                    }
+                }
+
+                // Add sample profile links after tables and charts
+                categoriesWithData.forEach(category => {
+                    const sampleProfileLink = `
+                        <div class="col-md-12 mt-2">
+                            <a href="/sample-profiles/${category.type}/${category.name}/{{ city_name }}/{{ news_item|urlencode }}/" 
+                               class="btn btn-secondary btn-sm sample-profiles-link">
+                                View Sample Profiles
+                            </a>
+                        </div>
+                    `;
+                    
+                    // Find the last chart container for this category and append the link
+                    const categorySelector = `h4:contains("${category.type.replace("_", " ").toUpperCase()} - ${category.name}")`;
+                    const categoryContainer = $(categorySelector).closest('.row');
+                    categoryContainer.append(sampleProfileLink);
+                });
+            } else if (response.status === "processing") {
+                $("#status-message").text("Processing... Please wait.");
+            }
+        },
+        error: function () {
+            $("#status-message").removeClass("alert-info").addClass("alert-danger").text("Error fetching summary. Please try again later.");
         }
+    });
+}
         setInterval(fetchSummary, 3000);
     </script>
 </body>
 </html>
-
-
-<!-- {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Aggregate Emotion Summary</title>
-    <link rel="stylesheet" href="{% static 'css/impact_assessment_style.css' %}">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script>
-        function fetchSummary() {
-            fetch("{% url 'fetch_summary_api' %}?city={{ city_name }}&news_item={{ news_item }}")
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Received data:', data); 
-                    if (data.status === 'completed') {
-                        document.getElementById('summary-status').innerText = 'Summary: Processed';
-                        document.getElementById('positive').innerText = data.summary.positive + '%';
-                        document.getElementById('negative').innerText = data.summary.negative + '%';
-                        document.getElementById('neutral').innerText = data.summary.neutral + '%';
-                        
-                        const emotionData = [
-                            { emotion: 'Positive', count: data.summary.positive },
-                            { emotion: 'Negative', count: data.summary.negative },
-                            { emotion: 'Neutral', count: data.summary.neutral }
-                        ];
-
-                        const pieChartData = {
-                            labels: emotionData.map(item => item.emotion),
-                            values: emotionData.map(item => item.count),
-                            type: 'pie'
-                        };
-
-                        const layout = { 
-                            title: `Emotion Distribution in ${data.city}`,
-                            height: 400,
-                            width: 400
-                        };
-
-                        Plotly.newPlot('chart-container', [pieChartData], layout);
-
-                        clearInterval(pollingInterval);
-                    } else if (data.status === 'processing') {
-                        document.getElementById('summary-status').innerText = 'Summary: Processing...';
-                    }
-                })
-                .catch(error => console.error('Error fetching summary:', error));
-        }
-
-        const pollingInterval = setInterval(fetchSummary, 3000);
-    </script>
-</head>
-<body>
-    <div class="navbar">
-        <a href="{% url 'persona_generation' %}">Persona Generation</a>
-        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
-    </div>
-
-    <div class="results-summary">
-        <h2>Aggregate Emotion Summary</h2>
-        <h4>City: {{ city_name }}</h4>
-        <h4>News Item: {{ news_item }}</h4>
-        <p id="summary-status">Summary: Processing...</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Emotion Category</th>
-                    <th>Percentage</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Positive</td>
-                    <td id="positive">--</td>
-                </tr>
-                <tr>
-                    <td>Negative</td>
-                    <td id="negative">--</td>
-                </tr>
-                <tr>
-                    <td>Neutral</td>
-                    <td id="neutral">--</td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        <div id="chart-container"></div>
-    </div>
-</body>
-</html> -->

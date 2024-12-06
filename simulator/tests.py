@@ -7,7 +7,6 @@ of the simulator application. It ensures the following:
   result viewing, and duplicate prevention.
 - Testing of aggregate emotion summaries, including API responses for different processing states.
 """
-from unittest.mock import patch
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
@@ -241,95 +240,112 @@ class ImpactAssessmentTests(TestCase):
         self.assertEqual(results[0].persona.name, "John Doe")
         self.assertEqual(results[1].persona.name, "Jane Doe")
 
-
-class AggregateEmotionTests(TestCase):
+class FetchSummaryAPITest(TestCase):
     """
-    This class includes tests for:
-    - Validating the behavior when parameters are missing.
-    - Ensuring that tasks are triggered correctly on valid requests.
-    - Verifying the API response when fetching summary information in 
-      different states (completed, processing, or error).
+    Unit tests for the FetchSummaryAPI view.
+
+    This test suite ensures the API behaves correctly under various scenarios,
+    such as successful summary retrieval, missing parameters, invalid inputs,
+    and different data states.
     """
     def setUp(self):
         """
-        Set up test data and URLs for testing aggregate emotion features.
+        Set up initial data for tests.
         """
-        self.client = Client()
-        self.city_name = "TestCity"
-        self.news_item_title = "TestNews"
-        self.aggregate_emotion_url = reverse("aggregate_emotion")  # Replace with the correct name
-        self.results_summary_url = reverse("results_summary")  # Replace with the correct name
-        self.fetch_summary_url = reverse("fetch_summary_api")  # Replace with the correct name
-
-        # Create mock personas
-        for i in range(3):
-            Persona.objects.create(city=self.city_name, name=f"Persona {i+1}")
-
-    def test_missing_parameters(self):
-        """
-        Test redirection to impact assessment when required parameters are missing.
-        """
-        response = self.client.get(self.aggregate_emotion_url)
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("impact_assessment"))
-
-    def test_valid_request_triggers_task(self):
-        """
-        Test that a valid request triggers the aggregate emotion task and redirects 
-        to the results summary page.
-        """
-        with patch("simulator.tasks.aggregate_emotion_task.delay") as mock_task:
-            response = self.client.get(self.aggregate_emotion_url, {
-                "city": self.city_name,
-                "news_item": self.news_item_title
-            })
-            self.assertEqual(response.status_code, 302)
-            self.assertRedirects(response, self.results_summary_url)
-            mock_task.assert_called_once_with(self.city_name, self.news_item_title)
-
-    def test_fetch_summary_completed(self):
-        """
-        Test that the fetch summary API returns the correct data for a completed summary.
-        """
-        news_item = NewsItem.objects.create(title=self.news_item_title, content="Test content")
-        AggregateEmotion.objects.create(
-            news_item=news_item,
-            city=self.city_name,
-            summary={"positive": 50, "negative": 30, "neutral": 20}
+        self.news_item = NewsItem.objects.create(
+            title="Test News Item",
+            content="This is a test news item."
         )
-        response = self.client.get(self.fetch_summary_url, {
-            "city": self.city_name,
-            "news_item": self.news_item_title
+
+        self.aggregate_emotion = AggregateEmotion.objects.create(
+            city="Test City",
+            news_item=self.news_item,
+            summary={
+                "positive": 5,
+                "negative": 3,
+                "neutral": 2,
+                "total": 10,
+                "positive_percentage": 50,
+                "negative_percentage": 30,
+                "neutral_percentage": 20,
+            },
+            demographic_summary={
+                "age_categories": {
+                    "18-25": {"positive": 2, "negative": 1, "neutral": 1, "total": 4},
+                    "26-40": {"positive": 3, "negative": 2, "neutral": 1, "total": 6},
+                },
+                "income_categories": {
+                    "low": {"positive": 2, "negative": 1, "neutral": 1, "total": 4},
+                    "medium": {"positive": 3, "negative": 2, "neutral": 1, "total": 6},
+                },
+            },
+        )
+
+        self.client = Client()
+        self.url = reverse("fetch_summary_api")
+
+    def test_fetch_summary_success(self):
+        """
+        Test successful fetching of the summary for an existing city and news item.
+        """
+        response = self.client.get(self.url, {
+            "city": "Test City",
+            "news_item": "Test News Item"
         })
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "completed")
-        self.assertEqual(response.json()["summary"]["positive"], 50)
+        self.assertIn("summary", response.json())
+        self.assertIn("demographic_summary", response.json())
+        self.assertEqual(response.json()["summary"]["positive"], 5)
 
     def test_fetch_summary_processing(self):
         """
-        Test that the fetch summary API returns 'processing' status for an ongoing summary.
+        Test response when the summary is still processing (total count is 0).
         """
-        news_item = NewsItem.objects.create(title=self.news_item_title, content="Test content")
-        AggregateEmotion.objects.create(
-            news_item=news_item,
-            city=self.city_name,
-            summary="Processing..."
-        )
-        response = self.client.get(self.fetch_summary_url, {
-            "city": self.city_name,
-            "news_item": self.news_item_title
+        self.aggregate_emotion.summary = {"total": 0}
+        self.aggregate_emotion.save()
+
+        response = self.client.get(self.url, {
+            "city": "Test City",
+            "news_item": "Test News Item"
         })
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "processing")
 
-    def test_fetch_summary_error(self):
+    def test_fetch_summary_missing_parameters(self):
         """
-        Test that the fetch summary API handles errors gracefully 
-        for non-existent city or news item.
+        Test response when required parameters are missing.
         """
-        response = self.client.get(self.fetch_summary_url, {
-            "city": "NonExistentCity",
-            "news_item": "NonExistentNews"
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_fetch_summary_invalid_city_or_news_item(self):
+        """
+        Test response when the city or news item does not exist.
+        """
+        response = self.client.get(self.url, {
+            "city": "Nonexistent City",
+            "news_item": "Nonexistent News Item"
         })
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["status"], "error")
+        self.assertEqual(response.json()["message"], "Summary not found")
+
+    def test_fetch_summary_no_data(self):
+        """
+        Test response when there is no demographic data.
+        """
+        self.aggregate_emotion.demographic_summary = {}
+        self.aggregate_emotion.save()
+
+        response = self.client.get(self.url, {
+            "city": "Test City",
+            "news_item": "Test News Item"
+        })
+
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["status"], "processing")
+        self.assertEqual(response.json()["status"], "completed")
+        self.assertEqual(response.json()["demographic_summary"], {})

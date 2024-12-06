@@ -91,15 +91,3 @@ class AggregateEmotion(models.Model):
 
     def __str__(self):
         return f"{self.city} - {self.news_item}"
-    
-# class AggregateEmotion(models.Model):
-#     """
-#     Represents a summary of emotional responses for a specific NewsItem.
-#     Stores a JSON representation of aggregated emotions.
-#     """
-#     news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE)
-#     city = models.CharField(max_length=255,blank=True, null=True)
-#     summary = models.JSONField(default=dict)
-
-#     def __str__(self):
-#         return f"Aggregate Emotion for {self.news_item}"

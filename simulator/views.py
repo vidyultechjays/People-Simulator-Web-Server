@@ -1,17 +1,29 @@
 """
-This module handles persona generation, emotional impact assessment, and response aggregation.
+This module manages persona generation, emotional impact assessment, and response aggregation for analyzing the influence of news items on diverse demographics.
 
-Features:
-1. **Persona Generation**: Generates personas based on demographic inputs like age, 
-    religion,personality traits and income distribution.
-2. **Impact Assessment**: Analyzes the emotional impact of a news item on selected personas, 
-    generating responses with emotion, intensity, and explanation.
-3. **Response Aggregation**: Categorizes and summarizes emotional responses (positive,
-     negative, neutral) across personas, grouped by city and news item.
-4. **Result Presentation**: Displays individual emotional responses and aggregated summaries
-     in a user-friendly format.
+**Features:**
+1. **Persona Generation**: 
+   - Generates personas based on user-provided demographic inputs, such as age, religion, personality traits, and income levels.
+   - Personas are weighted to match population distributions and are stored in the database for analysis.
 
-Primarily supports city-specific analysis of emotional responses to user-provided news items.
+2. **Emotional Impact Assessment**: 
+   - Analyzes how news items affect personas' emotions (e.g., positive, negative, or neutral).
+   - Generates emotional responses for each persona, including emotion type, intensity, and a contextual explanation.
+   - Filters responses by city or selected personas.
+
+3. **Response Aggregation**: 
+   - Aggregates emotional responses by demographics (age, income, religion) and city.
+   - Summarizes emotional trends across personas for a given news item.
+
+4. **Results Visualization**: 
+   - Provides detailed, user-friendly visualizations (pie charts, bar charts) of emotional distributions and intensities.
+   - Displays summaries grouped by city and demographics.
+
+5. **Dynamic Data Access**:
+   - API endpoints for retrieving real-time summaries and sample persona profiles with their corresponding emotional responses.
+
+**Primary Use Case**:
+Enables city-specific and demographic-focused emotional analysis of user-provided news items, supporting detailed insights into the impact on different groups.
 """
 import logging
 from django.shortcuts import render,redirect

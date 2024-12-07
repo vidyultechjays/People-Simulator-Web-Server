@@ -1,11 +1,30 @@
 """
-This module contains unit tests for the persona generation and impact assessment functionalities
-of the simulator application. It ensures the following:
-- Proper validation and creation of personas based on demographic data.
-- Handling of special cases and error scenarios in persona generation.
-- Verification of the impact assessment process, including emotional response creation,
-  result viewing, and duplicate prevention.
-- Testing of aggregate emotion summaries, including API responses for different processing states.
+Unit tests for the simulator application.
+
+This test suite ensures the correctness of the following functionalities:
+
+1. **Persona Generation**:
+   - Proper creation of personas based on valid demographic input data.
+   - Validation and error handling for demographic percentages that do not sum to 100%.
+   - Special cases, such as zero population, are correctly handled.
+   - Feedback messages and database updates are verified.
+
+2. **Impact Assessment**:
+   - Verification of the impact assessment process, including emotional response creation.
+   - Ensures no duplicate emotional responses are generated for the same persona and news item.
+   - Handling of success and error cases in submitting impact assessment data.
+   - Retrieval of assessment results with emotional response summaries and charts.
+
+3. **Results Viewing**:
+   - Proper display of results, including emotional responses and visualizations like charts.
+   - Validation of emotional response data linked to personas and news items.
+
+4. **Fetch Summary API**:
+   - Verification of API responses for summary data retrieval.
+   - Ensures handling of missing parameters, invalid inputs, and processing states.
+   - Tests summary and demographic breakdown accuracy and formatting.
+
+These tests cover essential functionalities of persona generation, emotional impact assessment, and the summary API, ensuring data integrity, error handling, and user experience consistency.
 """
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -200,13 +219,10 @@ class ImpactAssessmentTests(TestCase):
             "persona_ids[]": [self.persona1.id, self.persona2.id]
         })
 
-        # Dynamically get the actual news item ID
         actual_news_item = NewsItem.objects.get(title=self.news_content)
 
-        # Use the actual news item ID in the redirect check
         self.assertRedirects(response, reverse("results", args=[actual_news_item.id]))
 
-        # Verify that only two emotional responses are created (no duplicates)
         emotional_responses = EmotionalResponse.objects.filter(news_item=news_item)
         self.assertEqual(emotional_responses.count(), 2)
 

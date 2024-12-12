@@ -103,6 +103,32 @@ button, a {
 button:hover, a:hover {
     background-color: #1d6fa5; /* Darker blue on hover */
 }
+/* Navigation Bar Styles */
+.navbar {
+    background-color: #007bb5; /* Blue background */
+    overflow: hidden;
+    display: flex;
+    justify-content: space-around; /* Even spacing for links */
+    align-items: center;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.navbar a {
+    color: #ffffff; /* White text color */
+    font-size: 20px;
+    font-family: 'Times New Roman', Times, serif;
+    text-decoration: none;
+    padding: 10px 20px; /* More padding for clickable area */
+    border-radius: 5px; /* Rounded corners for buttons */
+    background-color: #007bb5; /* Same as navbar background */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar a:hover {
+    background-color: #005b96; /* Slightly darker blue on hover */
+    color: #e0f7fa; /* Lighter text color on hover */
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {

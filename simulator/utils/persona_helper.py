@@ -5,29 +5,29 @@ and generating random personality traits, occupations, and life details.
 """
 import random
 
-def extract_demographics(request):
-    """
-    Extracts and validates demographic data from a request.
-    """
-    return {
-        "age_groups": {
-            "18-25": int(request.POST.get("demographics[age_groups][18-25]")),
-            "26-40": int(request.POST.get("demographics[age_groups][26-40]")),
-            "41-60": int(request.POST.get("demographics[age_groups][41-60]")),
-            "60+": int(request.POST.get("demographics[age_groups][60+]")),
-        },
-        "religions": {
-            "hindu": int(request.POST.get("demographics[religions][hindu]")),
-            "muslim": int(request.POST.get("demographics[religions][muslim]")),
-            "christian": int(request.POST.get("demographics[religions][christian]")),
-            "others": int(request.POST.get("demographics[religions][others]")),
-        },
-        "income_groups": {
-            "low": int(request.POST.get("demographics[income_groups][low]")),
-            "medium": int(request.POST.get("demographics[income_groups][medium]")),
-            "high": int(request.POST.get("demographics[income_groups][high]")),
-        },
-    }
+# def extract_demographics(request):
+#     """
+#     Extracts and validates demographic data from a request.
+#     """
+#     return {
+#         "age_groups": {
+#             "18-25": int(request.POST.get("demographics[age_groups][18-25]")),
+#             "26-40": int(request.POST.get("demographics[age_groups][26-40]")),
+#             "41-60": int(request.POST.get("demographics[age_groups][41-60]")),
+#             "60+": int(request.POST.get("demographics[age_groups][60+]")),
+#         },
+#         "religions": {
+#             "hindu": int(request.POST.get("demographics[religions][hindu]")),
+#             "muslim": int(request.POST.get("demographics[religions][muslim]")),
+#             "christian": int(request.POST.get("demographics[religions][christian]")),
+#             "others": int(request.POST.get("demographics[religions][others]")),
+#         },
+#         "income_groups": {
+#             "low": int(request.POST.get("demographics[income_groups][low]")),
+#             "medium": int(request.POST.get("demographics[income_groups][medium]")),
+#             "high": int(request.POST.get("demographics[income_groups][high]")),
+#         },
+#     }
 
 def validate_demographics(demographics):
     """Validate that demographic percentages sum to 100."""

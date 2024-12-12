@@ -7,39 +7,57 @@ It includes:
 - EmotionalResponse: Links personas to news items with emotional reactions.
 - AggregateEmotion: Summarizes emotional responses for a news item.
 """
+import uuid
 from django.db import models
+
+import uuid
+from django.db import models
+from django.apps import apps
+
+class Category(models.Model):
+    """
+    Represents a demographic category.
+    """
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class SubCategory(models.Model):
+    """
+    Represents a demographic subcategory under a category.
+    """
+    category = models.ForeignKey(Category, related_name='subcategories', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.category})"
 
 class Persona(models.Model):
     """
-    Represents an individual with demographic details and personality traits.
+    Represents a persona with demographic attributes.
     """
-    AGE_GROUP_CHOICES = [
-        ('18-25', '18-25'),
-        ('26-40', '26-40'),
-        ('41-60', '41-60'),
-        ('60+', '60+'),
-    ]
-    INCOME_LEVEL_CHOICES = [
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
-    ]
-    RELIGION_CHOICES = [
-        ('hindu', 'Hindu'),
-        ('muslim', 'Muslim'),
-        ('christian', 'Christian'),
-        ('others', 'Others'),
-    ]
     name = models.CharField(max_length=100)
-    age_group = models.CharField(max_length=10, choices=AGE_GROUP_CHOICES)
     city = models.CharField(max_length=255,blank=True, null=True)
-    income_level = models.CharField(max_length=10, choices=INCOME_LEVEL_CHOICES)
-    religion = models.CharField(max_length=20, choices=RELIGION_CHOICES)
-    occupation = models.CharField(max_length=100, blank=True, null=True)
     personality_traits = models.JSONField(default=dict)
 
     def __str__(self):
-        return f"{self.name} ({self.city}, {self.age_group}, {self.income_level}, {self.religion})"
+        return f"{self.name} ({self.city})"
+
+class PersonaSubCategoryMapping(models.Model):
+    """
+    Maps personas to their specific subcategories.
+    """
+    persona = models.ForeignKey(Persona, related_name='subcategory_mappings', on_delete=models.CASCADE)
+    subcategory = models.ForeignKey(SubCategory, related_name='personas', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.persona.name} - {self.subcategory.name}"
+
 
 class NewsItem(models.Model):
     """
@@ -91,3 +109,35 @@ class AggregateEmotion(models.Model):
 
     def __str__(self):
         return f"{self.city} - {self.news_item}"
+    
+# class Persona(models.Model):
+#     """
+#     Represents an individual with demographic details and personality traits.
+#     """
+#     AGE_GROUP_CHOICES = [
+#         ('18-25', '18-25'),
+#         ('26-40', '26-40'),
+#         ('41-60', '41-60'),
+#         ('60+', '60+'),
+#     ]
+#     INCOME_LEVEL_CHOICES = [
+#         ('low', 'Low'),
+#         ('medium', 'Medium'),
+#         ('high', 'High'),
+#     ]
+#     RELIGION_CHOICES = [
+#         ('hindu', 'Hindu'),
+#         ('muslim', 'Muslim'),
+#         ('christian', 'Christian'),
+#         ('others', 'Others'),
+#     ]
+#     name = models.CharField(max_length=100)
+#     age_group = models.CharField(max_length=10, choices=AGE_GROUP_CHOICES)
+#     city = models.CharField(max_length=255,blank=True, null=True)
+#     income_level = models.CharField(max_length=10, choices=INCOME_LEVEL_CHOICES)
+#     religion = models.CharField(max_length=20, choices=RELIGION_CHOICES)
+#     occupation = models.CharField(max_length=100, blank=True, null=True)
+#     personality_traits = models.JSONField(default=dict)
+
+#     def __str__(self):
+#         return f"{self.name} ({self.city}, {self.age_group}, {self.income_level}, {self.religion})"

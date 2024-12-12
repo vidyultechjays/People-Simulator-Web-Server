@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Define Demographics</title>
+    <link rel="stylesheet" href="{% static 'css/demographic_input_style.css' %}">
+    <script>
+        let categoryCount = 0;
+
+        function addCategory() {
+            categoryCount++;
+            const categoryDiv = document.createElement("div");
+            categoryDiv.id = `category_${categoryCount}`;
+            categoryDiv.innerHTML = `
+                <label>Category Name:</label>
+                <input type="text" name="category_${categoryCount}" required>
+                <button type="button" onclick="addSubCategory(${categoryCount})">+ Add Subcategory</button>
+                <div id="subcategories_${categoryCount}"></div>
+            `;
+            document.getElementById("categories").appendChild(categoryDiv);
+        }
+
+        function addSubCategory(categoryId) {
+            const subcategoryDiv = document.createElement("div");
+            subcategoryDiv.classList.add("subcategory");
+            const subcategoryCount = document.querySelectorAll(`#subcategories_${categoryId} > div`).length + 1;
+            subcategoryDiv.innerHTML = `
+                <label>Subcategory Name:</label>
+                <input type="text" name="subcategory_${categoryId}_${subcategoryCount}" required>
+                <label>Percentage:</label>
+                <input type="number" name="percentage_${categoryId}_${subcategoryCount}" required>
+            `;
+            document.getElementById(`subcategories_${categoryId}`).appendChild(subcategoryDiv);
+        }
+
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'persona_input' %}">Persona Generation</a>
+        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
+    </div><br>
+    <h1>Define Demographics</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div id="categories"></div>
+        <button type="button" onclick="addCategory()">+ Add Category</button>
+        <br><br>
+        <button type="submit">Generate Personas</button>
+    </form>
+</body>
+</html>

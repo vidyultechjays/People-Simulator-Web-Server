@@ -8,7 +8,7 @@ def ask_gemini(prompt):
     try:
         model = genai.GenerativeModel("gemini-1.5-flash-002")
         response = model.generate_content(prompt)
-        
+        print(response)
         if response and hasattr(response, 'text'):
             return response.text  
         elif response and hasattr(response, 'candidates'):

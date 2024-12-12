@@ -42,12 +42,14 @@ label {
 
 input[type="text"],
 input[type="number"] {
-    width: 30%;
+    width: 100%;
+    max-width: 400px;
     padding: 8px;
     border: 1px solid #b3e5fc;
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
+    margin-bottom: 10px;
 }
 
 /* Fieldsets */
@@ -74,11 +76,13 @@ button {
     border-radius: 4px;
     cursor: pointer;
     text-align: center;
+    margin: 5px 0;
 }
 
 button:hover {
     background-color: #005b96;
 }
+
 /* Navigation Bar Styles */
 .navbar {
     background-color: #007bb5;
@@ -94,15 +98,18 @@ button:hover {
     font-size: 25px;
     font-family: 'Times New Roman', Times, serif;
     text-decoration: none;
-    padding: 14px 20px;
+    padding: 10px 15px;
     display: block;
     text-align: center;
+    border-radius: 5px;
+    margin: 0 5px;
 }
 
 .navbar a:hover {
     background-color: #005b96;
     color: #e0f7fa;
 }
+
 /* Messages Container */
 .messages-container {
     max-width: 600px;
@@ -132,7 +139,7 @@ button:hover {
 .alert-error {
     background-color: #f8d7da;
     color: #721c24; 
-    border: 1px solid #120305; 
+    border: 1px solid #f5c6cb; 
 }
 
 .alert-info {
@@ -161,4 +168,53 @@ button:hover {
 
 .alert .close:hover {
     color: #000;
+}
+
+/* Subcategory Styling */
+#categories > div {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #b3e5fc;
+    border-radius: 8px;
+}
+
+/* Subcategory Inputs in a Single Row */
+/* Flexbox for Subcategory Div */
+.subcategory {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between elements */
+    margin-bottom: 10px;
+}
+
+.subcategory label {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.subcategory input[type="text"],
+.subcategory input[type="number"] {
+    width: auto; /* Adjust width to fit content */
+    flex: 1; /* Ensure the inputs grow to fit available space */
+    padding: 5px;
+    border: 1px solid #b3e5fc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+
+.subcategory button {
+    margin-left: auto;
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.subcategory button:hover {
+    background-color: #e68a00;
 }

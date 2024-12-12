@@ -7,12 +7,7 @@ It includes:
 - EmotionalResponse: Links personas to news items with emotional reactions.
 - AggregateEmotion: Summarizes emotional responses for a news item.
 """
-import uuid
 from django.db import models
-
-import uuid
-from django.db import models
-from django.apps import apps
 
 class Category(models.Model):
     """
@@ -33,6 +28,7 @@ class SubCategory(models.Model):
     name = models.CharField(max_length=100)
     percentage = models.DecimalField(max_digits=5, decimal_places=2)
     description = models.TextField(blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.category})"
@@ -109,35 +105,4 @@ class AggregateEmotion(models.Model):
 
     def __str__(self):
         return f"{self.city} - {self.news_item}"
-    
-# class Persona(models.Model):
-#     """
-#     Represents an individual with demographic details and personality traits.
-#     """
-#     AGE_GROUP_CHOICES = [
-#         ('18-25', '18-25'),
-#         ('26-40', '26-40'),
-#         ('41-60', '41-60'),
-#         ('60+', '60+'),
-#     ]
-#     INCOME_LEVEL_CHOICES = [
-#         ('low', 'Low'),
-#         ('medium', 'Medium'),
-#         ('high', 'High'),
-#     ]
-#     RELIGION_CHOICES = [
-#         ('hindu', 'Hindu'),
-#         ('muslim', 'Muslim'),
-#         ('christian', 'Christian'),
-#         ('others', 'Others'),
-#     ]
-#     name = models.CharField(max_length=100)
-#     age_group = models.CharField(max_length=10, choices=AGE_GROUP_CHOICES)
-#     city = models.CharField(max_length=255,blank=True, null=True)
-#     income_level = models.CharField(max_length=10, choices=INCOME_LEVEL_CHOICES)
-#     religion = models.CharField(max_length=20, choices=RELIGION_CHOICES)
-#     occupation = models.CharField(max_length=100, blank=True, null=True)
-#     personality_traits = models.JSONField(default=dict)
-
-#     def __str__(self):
-#         return f"{self.name} ({self.city}, {self.age_group}, {self.income_level}, {self.religion})"
+ 

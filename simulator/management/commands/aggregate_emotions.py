@@ -1,19 +1,95 @@
-"""
-This module contains the Celery tasks for processing emotional aggregation 
-based on personas in a given city in response to a specific news item.
-"""
-import json
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+import threading
+import time
 import logging
-from celery import shared_task
-from simulator.models import AggregateEmotion, Persona,Category
+
+# Import your existing models and functions
+from simulator.models import (
+    AggregateEmotion, 
+    NewsItem, 
+    Persona, 
+    Category
+)
 from simulator.utils.impact_assesment_helper import generate_emotional_response
 
+# Logging setup
 logger = logging.getLogger(__name__)
 
-@shared_task
+class Command(BaseCommand):
+    help = 'Run emotion aggregation as a background process'
+
+    def add_arguments(self, parser):
+        # Optional arguments
+        parser.add_argument(
+            '--city', 
+            type=str, 
+            help='Specify a city to process'
+        )
+        parser.add_argument(
+            '--interval', 
+            type=int, 
+            default=30, 
+            help='Interval between processing cycles (in seconds)'
+        )
+
+    def handle(self, *args, **options):
+        # Retrieve command options
+        specified_city = options.get('city')
+        interval = options.get('interval')
+
+        def process_pending_aggregations():
+            while True:
+                try:
+                    # Find pending aggregation requests
+                    pending_query = AggregateEmotion.objects.filter(
+                        summary__status='Processing'
+                    )
+
+                    # Filter by city if specified
+                    if specified_city:
+                        pending_query = pending_query.filter(city=specified_city)
+
+                    # Process each pending aggregation
+                    for aggregate_emotion in pending_query:
+                        try:
+                            # Your existing emotion aggregation logic
+                            aggregate_emotion_task(
+                                aggregate_emotion.city, 
+                                aggregate_emotion.news_item.title, 
+                                aggregate_emotion.id
+                            )
+                        except Exception as e:
+                            logger.error(
+                                f"Error processing aggregation for {aggregate_emotion.city}: {e}"
+                            )
+
+                    # Wait before next cycle
+                    time.sleep(interval)
+
+                except Exception as e:
+                    logger.error(f"Unexpected error in aggregation process: {e}")
+                    time.sleep(interval)
+
+        # Create and start the thread
+        aggregation_thread = threading.Thread(
+            target=process_pending_aggregations, 
+            daemon=True
+        )
+        aggregation_thread.start()
+
+        # Keep the main thread running
+        try:
+            while aggregation_thread.is_alive():
+                aggregation_thread.join(1)
+        except KeyboardInterrupt:
+            self.stdout.write(
+                self.style.SUCCESS('Stopping emotion aggregation')
+            )
+
 def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
     """
-    Detailed emotional aggregation across demographics with consideration of city field.
+    Existing emotion aggregation logic
     """
     try:
         aggregate_emotion = AggregateEmotion.objects.get(id=aggregate_emotion_id)
@@ -101,13 +177,21 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
 
         calculate_overall_percentages(overall_summary)
 
-        # Save results to AggregateEmotion
         aggregate_emotion.summary = overall_summary
         aggregate_emotion.demographic_summary = demographic_summary
+        logger.info(f"Saving aggregate emotion for {aggregate_emotion.city}")
         aggregate_emotion.save()
 
         return "Aggregation completed successfully"
 
     except Exception as e:
         logger.error("Emotion aggregation failed: %s", str(e))
+        try:
+            aggregate_emotion = AggregateEmotion.objects.get(id=aggregate_emotion_id)
+            aggregate_emotion.summary['status'] = 'failed'
+            aggregate_emotion.summary['error'] = str(e)
+            aggregate_emotion.save()
+        except Exception as save_error:
+            logger.error(f"Could not update aggregation status: {save_error}")
+        
         return f"Aggregation failed: {str(e)}"

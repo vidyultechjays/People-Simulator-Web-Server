@@ -1,14 +1,18 @@
 """
-This module manages persona generation, emotional impact assessment, and response aggregation for analyzing the influence of news items on diverse demographics.
+This module manages persona generation, emotional impact assessment,
+and response aggregation for analyzing the influence of news items on diverse demographics.
 
 **Features:**
 1. **Persona Generation**: 
-   - Generates personas based on user-provided demographic inputs, such as age, religion, personality traits, and income levels.
-   - Personas are weighted to match population distributions and are stored in the database for analysis.
+   - Generates personas based on user-provided demographic inputs,
+   such as age, religion, personality traits, and income levels.
+   - Personas are weighted to match population distributions and 
+   are stored in the database for analysis.
 
 2. **Emotional Impact Assessment**: 
    - Analyzes how news items affect personas' emotions (e.g., positive, negative, or neutral).
-   - Generates emotional responses for each persona, including emotion type, intensity, and a contextual explanation.
+   - Generates emotional responses for each persona, including emotion type, intensity, and a
+     contextual explanation.
    - Filters responses by city or selected personas.
 
 3. **Response Aggregation**: 
@@ -16,36 +20,39 @@ This module manages persona generation, emotional impact assessment, and respons
    - Summarizes emotional trends across personas for a given news item.
 
 4. **Results Visualization**: 
-   - Provides detailed, user-friendly visualizations (pie charts, bar charts) of emotional distributions and intensities.
+   - Provides detailed, user-friendly visualizations (pie charts, bar charts) of 
+   emotional distributions and intensities.
    - Displays summaries grouped by city and demographics.
 
 5. **Dynamic Data Access**:
-   - API endpoints for retrieving real-time summaries and sample persona profiles with their corresponding emotional responses.
+   - API endpoints for retrieving real-time summaries and sample persona profiles 
+   with their corresponding emotional responses.
 
 **Primary Use Case**:
-Enables city-specific and demographic-focused emotional analysis of user-provided news items, supporting detailed insights into the impact on different groups.
+Enables city-specific and demographic-focused emotional analysis of user-provided 
+news items, supporting detailed insights into the impact on different groups.
 """
-import json
 import logging
-from urllib.parse import unquote
+from itertools import product
 from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from django.contrib import messages
-from django.db.models import Count,Avg
 from faker import Faker
-from simulator.models import Persona,Category,SubCategory,PersonaSubCategoryMapping,EmotionalResponse,NewsItem,AggregateEmotion
+from simulator.models import (
+    Persona,Category,
+    SubCategory,
+    PersonaSubCategoryMapping,
+    EmotionalResponse,
+    NewsItem,
+    AggregateEmotion
+)
 from simulator.utils.persona_helper import (
     generate_persona_traits,
-    validate_demographics,
-    get_occupation_by_income,
 )
 from simulator.utils.impact_assesment_helper import generate_emotional_response
 from simulator.utils.results_visualization_helper import (
-    create_emotion_intensity_bar_chart,
     create_pie_chart
 )
-from simulator.tasks import aggregate_emotion_task
-
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +116,10 @@ def results_summary(request):
     })
 
 def persona_input(request):
+    """
+    Handles the initial input of city and population for personas.
+    Redirects to demographics_input for further data collection.
+    """
     if request.method == "POST":
         city_name = request.POST.get("city_name")
         population = int(request.POST.get("population"))
@@ -118,6 +129,10 @@ def persona_input(request):
     return render(request, "persona_input.html")
 
 def demographics_input(request):
+    """
+    Handles the input for categories and subcategories, including validation.
+    Creates categories, subcategories, and generates personas with weighted distributions.
+    """
     if request.method == "POST":
         data = request.POST.dict()
         categories = {}
@@ -154,11 +169,10 @@ def demographics_input(request):
             messages.error(request, "City name is required. Please start from the beginning.")
             return redirect("persona_input")
 
-        # Create and save categories with city association
         for category_data in categories.values():
             category = Category.objects.create(
                 name=category_data["name"],
-                city=city_name  # Associate category with city
+                city=city_name
             )
             saved_categories.append(category)
             for subcategory_data in category_data["subcategories"]:
@@ -166,7 +180,7 @@ def demographics_input(request):
                     name=subcategory_data["name"],
                     percentage=subcategory_data["percentage"],
                     category=category,
-                    city=city_name  # Associate subcategory with city
+                    city=city_name
                 )
 
         population = request.session.get("population")
@@ -181,23 +195,18 @@ def demographics_input(request):
 
             def generate_all_subcategory_combinations(categories):
                 """Generate all possible subcategory combinations."""
-                from itertools import product
-                
-                # Collect subcategories for each category
+
                 category_subcategories = {}
                 for category in categories:
                     category_subcategories[category.name] = list(category.subcategories.all())
-                
-                # Generate all possible combinations of subcategories
+
                 keys = list(category_subcategories.keys())
                 combinations = list(product(*[category_subcategories[key] for key in keys]))
-                
+
                 return combinations
 
-            # Generate all possible subcategory combinations
             subcategory_combinations = generate_all_subcategory_combinations(saved_categories)
 
-            # Calculate weights for each combination
             combination_weights = []
             for combination in subcategory_combinations:
                 weight = population
@@ -208,54 +217,47 @@ def demographics_input(request):
                     'weight': weight
                 })
 
-            # Sort combinations by fractional part of weight to distribute personas more evenly
             combination_weights.sort(key=lambda x: x['weight'] % 1, reverse=True)
 
-            # Generate personas
             total_assigned = 0
             for combo_data in combination_weights:
                 combination = combo_data['combination']
                 exact_count = round(combo_data['weight'])
-                
+
                 if total_assigned + exact_count > population:
                     exact_count = population - total_assigned
 
-                # Create personas for this combination, with city association
                 for _ in range(exact_count):
                     persona = Persona(
                         name=faker.name(),
-                        city=city_name,  # Associate persona with city
+                        city=city_name,
                         personality_traits=generate_persona_traits()
                     )
                     personas.append(persona)
-                    
-                    # Prepare subcategory mappings for this persona
+
                     all_combinations.append({
                         'persona': persona,
                         'subcategories': combination
                     })
-                
+
                 total_assigned += exact_count
 
                 if total_assigned >= population:
                     break
 
-            # Bulk create personas
             Persona.objects.bulk_create(personas)
 
-            # Create persona-subcategory mappings
             persona_subcategory_mappings = []
             for combo in all_combinations:
                 persona = combo['persona']
                 for subcategory in combo['subcategories']:
                     persona_subcategory_mappings.append(
                         PersonaSubCategoryMapping(
-                            persona=persona, 
+                            persona=persona,
                             subcategory=subcategory
                         )
                     )
 
-            # Bulk create mappings
             PersonaSubCategoryMapping.objects.bulk_create(persona_subcategory_mappings)
 
             return personas
@@ -352,8 +354,15 @@ def aggregate_emotion(request):
 
         categories = Category.objects.prefetch_related('subcategories')
         initial_demographic_summary = {
-            category.name: {subcategory.name: {"positive": 0, "negative": 0, "neutral": 0, "total": 0} 
-                            for subcategory in category.subcategories.all()}
+            category.name: {
+                subcategory.name.lower(): {
+                    "positive": 0, 
+                    "negative": 0, 
+                    "neutral": 0, 
+                    "total": 0
+                }
+                for subcategory in category.subcategories.filter(city=city_name)
+            }
             for category in categories
         }
 
@@ -361,17 +370,16 @@ def aggregate_emotion(request):
             news_item=news_item,
             city=city_name,
             defaults={
-                "summary": {"status": "Processing"},
+                "summary": {
+                    "status": "Processing",
+                    "positive": 0,
+                    "negative": 0,
+                    "neutral": 0,
+                    "total": 0
+                },
                 "demographic_summary": initial_demographic_summary
             }
         )
-
-        aggregate_emotion_task.delay(
-            city_name,
-            news_item_title,
-            aggregate_emotion_obj.id
-        )
-
         request.session['city_name'] = city_name
         request.session['news_item'] = news_item_title
 
@@ -410,15 +418,17 @@ def fetch_summary_api(request):
         return JsonResponse({"status": "error", "message": "Summary not found"}, status=404)
 
 def fetch_sample_profiles(request, category_type, category_name, city_name, news_item_title):
+    """
+    Fetch sample profiles for a given category, subcategory, and city 
+    based on a specific news item, generating emotional responses as needed.
+    """
     try:
-        # Fetch the NewsItem object by title
         try:
             news_item = NewsItem.objects.get(title=news_item_title)
         except NewsItem.DoesNotExist:
             messages.error(request, "News item not found")
             return redirect('results_summary')
-        
-        # Fetch the Category object by its name and city
+
         try:
             category = Category.objects.get(
                 name__iexact=category_type,
@@ -431,12 +441,11 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
             )
             return redirect('results_summary')
 
-        # Fetch the SubCategory object by category, name, and city
         try:
             subcategory = SubCategory.objects.get(
                 category=category,
                 name__iexact=category_name,
-                city__iexact=city_name  # Ensure it matches the city as well
+                city__iexact=city_name
             )
         except SubCategory.DoesNotExist:
             messages.error(
@@ -469,7 +478,7 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
             else:
                 emotion, intensity, explanation = generate_emotional_response(
                     persona,
-                    news_item.content  
+                    news_item.content
                 )
 
                 EmotionalResponse.objects.create(
@@ -480,7 +489,6 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
                     explanation=explanation
                 )
 
-            # Prepare persona data for template
             persona_info = {
                 'name': persona.name,
                 'city': persona.city,
@@ -507,7 +515,7 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
         })
 
     except Exception as e:
-        logger.error(f"Error in fetch_sample_profiles: {str(e)}")
+        logger.error("Error in fetch_sample_profiles: %s", str(e))
         messages.error(request, "An unexpected error occurred while fetching sample profiles")
         return redirect('results_summary')
 
@@ -517,7 +525,7 @@ def _parse_personality_traits(traits_dict):
     """
     if not traits_dict:
         return {}
-    
+
     formatted_traits = {}
     for key, value in traits_dict.items():
         if isinstance(value, list):
@@ -526,5 +534,5 @@ def _parse_personality_traits(traits_dict):
             formatted_traits[key] = ", ".join(f"{k}: {v}" for k, v in value.items())
         else:
             formatted_traits[key] = value
-    
+
     return formatted_traits

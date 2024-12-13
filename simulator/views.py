@@ -51,7 +51,9 @@ from simulator.utils.persona_helper import (
 )
 from simulator.utils.impact_assesment_helper import generate_emotional_response
 from simulator.utils.results_visualization_helper import (
-    create_pie_chart
+    create_pie_chart,
+    _parse_personality_traits,
+    create_demographic_charts
 )
 
 logger = logging.getLogger(__name__)
@@ -72,9 +74,15 @@ def results_summary(request):
 
         if aggregate_emotion.summary and aggregate_emotion.summary.get('total', 0) > 0:
             overall_data = [
-                {'emotion': 'Positive', 'count': aggregate_emotion.summary.get('positive_percentage', 0)},
-                {'emotion': 'Negative', 'count': aggregate_emotion.summary.get('negative_percentage', 0)},
-                {'emotion': 'Neutral', 'count': aggregate_emotion.summary.get('neutral_percentage', 0)}
+                {'emotion': 'Positive',
+                 'count': aggregate_emotion.summary.get('positive_percentage', 0)
+                },
+                {'emotion': 'Negative',
+                'count': aggregate_emotion.summary.get('negative_percentage', 0)
+                },
+                {'emotion': 'Neutral',
+                'count': aggregate_emotion.summary.get('neutral_percentage', 0)
+                }
             ]
             charts['overall'] = create_pie_chart(
                 overall_data,
@@ -82,21 +90,6 @@ def results_summary(request):
             )
 
         demographic_summary = aggregate_emotion.demographic_summary
-
-        def create_demographic_charts(category_type, categories):
-            category_charts = {}
-            for category, data in categories.items():
-                if data.get('total', 0) > 0:
-                    chart_data = [
-                        {'emotion': 'Positive', 'count': data.get('positive_percentage', 0)},
-                        {'emotion': 'Negative', 'count': data.get('negative_percentage', 0)},
-                        {'emotion': 'Neutral', 'count': data.get('neutral_percentage', 0)}
-                    ]
-                    category_charts[category] = create_pie_chart(
-                        chart_data,
-                        f'{category_type.replace("_", " ").title()} - {category}'
-                    )
-            return category_charts
 
         for category_type, categories in demographic_summary.items():
             charts.update(create_demographic_charts(category_type, categories))
@@ -158,7 +151,8 @@ def demographics_input(request):
             if total_percentage != 100:
                 messages.error(
                     request,
-                    f"Subcategory percentages for '{category_data['name']}' must sum to 100. Current total: {total_percentage}."
+                    f"Subcategory percentages for '{category_data['name']}' must sum to 100."
+                    f"Current total: {total_percentage}."
                 )
                 return redirect("demographics_input")
 
@@ -272,19 +266,13 @@ def demographics_input(request):
         return redirect("impact_assessment")
     return render(request, "demographics_input.html")
 
+
 def impact_assessment(request):
     """
-    Assess the emotional impact of a news item on personas.
-    Filters personas by city, generates emotional responses, and stores results.
-    Redirects to the results page after processing.
+    Displays personas by city and processes emotional responses
     """
     city_name = request.GET.get('city', None)
     news_content = request.GET.get('news_item', '')
-
-    if city_name:
-        personas = Persona.objects.filter(city=city_name)
-    else:
-        personas = Persona.objects.all()
 
     cities = (
         Persona.objects.exclude(city__isnull=True)
@@ -293,47 +281,14 @@ def impact_assessment(request):
         .distinct()
         .order_by("city")
     )
+
     if request.method == "GET":
         context = {
-            "personas": personas,
             "cities": cities,
             "selected_city": city_name,
             "news_item_content": news_content,
         }
         return render(request, "impact_assessment.html", context)
-
-    if request.method == "POST":
-        news_content = request.POST.get("news_item", "")
-        persona_ids = request.POST.getlist("persona_ids[]")
-
-        if not news_content or not persona_ids:
-            messages.error(request, "Both news content and persona selection are required.")
-            return redirect('impact_assessment')
-
-        responses = []
-        news_item, created = NewsItem.objects.get_or_create(
-        title=news_content,
-        content=news_content
-        )
-        personas = Persona.objects.filter(id__in=persona_ids)
-        for persona in personas:
-            if EmotionalResponse.objects.filter(news_item=news_item, persona=persona).exists():
-                continue
-
-            emotion, intensity, explanation = generate_emotional_response(persona, news_content)
-
-            if emotion:
-                response=EmotionalResponse.objects.create(
-                    persona=persona,
-                    news_item=news_item,
-                    emotion=emotion,
-                    intensity=intensity,
-                    explanation=explanation,
-                )
-                responses.append(response)
-
-        request.session['news_item'] = news_content
-        return redirect('results', news_item_id=news_item.id)
 
 def aggregate_emotion(request):
     """
@@ -518,21 +473,3 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
         logger.error("Error in fetch_sample_profiles: %s", str(e))
         messages.error(request, "An unexpected error occurred while fetching sample profiles")
         return redirect('results_summary')
-
-def _parse_personality_traits(traits_dict):
-    """
-    Parse and format personality traits for display.
-    """
-    if not traits_dict:
-        return {}
-
-    formatted_traits = {}
-    for key, value in traits_dict.items():
-        if isinstance(value, list):
-            formatted_traits[key] = ", ".join(map(str, value))
-        elif isinstance(value, dict):
-            formatted_traits[key] = ", ".join(f"{k}: {v}" for k, v in value.items())
-        else:
-            formatted_traits[key] = value
-
-    return formatted_traits

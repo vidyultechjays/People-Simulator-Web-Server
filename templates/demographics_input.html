@@ -7,32 +7,53 @@
     <script>
         let categoryCount = 0;
 
+        // Add a new category
         function addCategory() {
             categoryCount++;
             const categoryDiv = document.createElement("div");
             categoryDiv.id = `category_${categoryCount}`;
+            categoryDiv.classList.add("category");
             categoryDiv.innerHTML = `
                 <label>Category Name:</label>
                 <input type="text" name="category_${categoryCount}" required>
                 <button type="button" onclick="addSubCategory(${categoryCount})">+ Add Subcategory</button>
+                <button type="button" onclick="deleteCategory(${categoryCount})">🗑️</button>
                 <div id="subcategories_${categoryCount}"></div>
             `;
             document.getElementById("categories").appendChild(categoryDiv);
         }
 
+        // Add a new subcategory under a specific category
         function addSubCategory(categoryId) {
             const subcategoryDiv = document.createElement("div");
             subcategoryDiv.classList.add("subcategory");
             const subcategoryCount = document.querySelectorAll(`#subcategories_${categoryId} > div`).length + 1;
+            subcategoryDiv.id = `subcategory_${categoryId}_${subcategoryCount}`;
             subcategoryDiv.innerHTML = `
                 <label>Subcategory Name:</label>
                 <input type="text" name="subcategory_${categoryId}_${subcategoryCount}" required>
                 <label>Percentage:</label>
                 <input type="number" name="percentage_${categoryId}_${subcategoryCount}" required>
+                <button type="button" onclick="deleteSubCategory(${categoryId}, ${subcategoryCount})">🗑️</button>
             `;
             document.getElementById(`subcategories_${categoryId}`).appendChild(subcategoryDiv);
         }
 
+        // Delete a specific category
+        function deleteCategory(categoryId) {
+            const categoryDiv = document.getElementById(`category_${categoryId}`);
+            if (categoryDiv) {
+                categoryDiv.remove();
+            }
+        }
+
+        // Delete a specific subcategory
+        function deleteSubCategory(categoryId, subcategoryId) {
+            const subcategoryDiv = document.getElementById(`subcategory_${categoryId}_${subcategoryId}`);
+            if (subcategoryDiv) {
+                subcategoryDiv.remove();
+            }
+        }
     </script>
 </head>
 <body>
@@ -41,6 +62,15 @@
         <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
     </div><br>
     <h1>Define Demographics</h1>
+    {% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         <div id="categories"></div>

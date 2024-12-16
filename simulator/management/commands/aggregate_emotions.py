@@ -5,7 +5,10 @@ a background process in a Django application.
 import threading
 import logging
 import time
+import os
+import sys
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from simulator.models import (
     AggregateEmotion,
     Persona,
@@ -17,7 +20,7 @@ from simulator.utils.impact_assesment_helper import generate_emotional_response
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
-    """Command defining class"""
+    """Command defining class for emotion aggregation"""
     help = 'Run emotion aggregation as a background process'
 
     def add_arguments(self, parser):
@@ -42,6 +45,7 @@ class Command(BaseCommand):
         def process_pending_aggregations():
             while True:
                 try:
+                    logger.info("Fetching pending aggregation requests...")
                     # Find pending aggregation requests
                     pending_query = AggregateEmotion.objects.filter(
                         summary__status='Processing'
@@ -49,26 +53,51 @@ class Command(BaseCommand):
 
                     # Filter by city if specified
                     if specified_city:
+                        logger.info("Filtering aggregation requests for city: %s", specified_city)
                         pending_query = pending_query.filter(city=specified_city)
+
+                    if not pending_query.exists():
+                        logger.info("No pending aggregation requests found.")
+                        time.sleep(interval)
+                        continue
 
                     # Process each pending aggregation
                     for aggregate_emotion in pending_query:
+                        logger.info("Processing aggregation for city: %s, news item: %s, id: %d", 
+                                    aggregate_emotion.city, aggregate_emotion.news_item.title, aggregate_emotion.id)
                         try:
-                            # Your existing emotion aggregation logic
+                            # Call the existing emotion aggregation logic
                             aggregate_emotion_task(
                                 aggregate_emotion.city,
                                 aggregate_emotion.news_item.title,
                                 aggregate_emotion.id
                             )
+                            logger.info("Successfully processed aggregation for city: %s", aggregate_emotion.city)
                         except Exception as e:
                             logger.error("Error processing aggregation for %s: %s", aggregate_emotion.city, e)
 
+                    # Sleep between processing cycles
                     time.sleep(interval)
 
                 except Exception as e:
                     logger.error(f"Unexpected error in aggregation process: {e}")
                     time.sleep(interval)
 
+        # Set up logging to write to a file in the project directory
+        log_dir = os.path.join(settings.BASE_DIR, 'logs')
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, 'emotion_aggregation.log')
+        
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler(sys.stdout)
+            ]
+        )
+
+        # Start the aggregation thread
         aggregation_thread = threading.Thread(
             target=process_pending_aggregations,
             daemon=True
@@ -83,16 +112,18 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS('Stopping emotion aggregation')
             )
-
 def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
     """
     Existing emotion aggregation logic
     """
     try:
+        logger.info("Starting aggregation for city: %s, news item: %s, id: %d", city_name, news_item_title, aggregate_emotion_id)
         aggregate_emotion = AggregateEmotion.objects.get(id=aggregate_emotion_id)
         personas = Persona.objects.filter(city=city_name)
+        logger.info("Found %d personas in city: %s", personas.count(), city_name)
 
         categories = Category.objects.filter(city=city_name).prefetch_related('subcategories')
+        logger.info("Found %d categories in city: %s", categories.count(), city_name)
 
         # Create a more flexible demographic summary initialization
         demographic_summary = {}
@@ -121,8 +152,8 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
         }
 
         for persona in personas:
-            # Generate emotional response
             emotion, intensity, explanation = generate_emotional_response(persona, news_item_title)
+            logger.info("Generated response for persona %d: emotion=%s, intensity=%s", persona.id, emotion, intensity)
 
             emotion_category = next(
                 (cat for cat, emotions in emotion_categories.items() if emotion in emotions),
@@ -132,9 +163,8 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
             overall_summary[emotion_category] += 1
             overall_summary["total"] += 1
 
-            # Update subcategories for the persona (with city filtering)
             subcategory_mappings = persona.subcategory_mappings.select_related('subcategory__category').filter(
-                subcategory__city=city_name  # Ensure subcategories are filtered by city
+                subcategory__city=city_name  
             )
 
             for mapping in subcategory_mappings:
@@ -148,6 +178,8 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
                     subcategory_name in demographic_summary[category_name]):
                     demographic_summary[category_name][subcategory_name][emotion_category] += 1
                     demographic_summary[category_name][subcategory_name]["total"] += 1
+
+        logger.info("Completed processing personas. Calculating percentages...")
 
         # Calculate percentages for demographic summary
         def calculate_demographic_percentages(category_dict):
@@ -178,6 +210,7 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
         logger.info("Saving aggregate emotion for %s", aggregate_emotion.city)
         aggregate_emotion.save()
 
+        logger.info("Aggregation completed successfully for city: %s", city_name)
         return "Aggregation completed successfully"
 
     except Exception as e:

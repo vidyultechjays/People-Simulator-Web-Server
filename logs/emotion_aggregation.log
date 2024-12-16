@@ -1,0 +1,481 @@
+2024-12-16 11:43:35,444 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:43:35,608 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Trivandrum, news item: New age motorbikes coming to market, id: 134
+2024-12-16 11:43:35,609 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Trivandrum, news item: New age motorbikes coming to market, id: 134
+2024-12-16 11:43:35,614 - simulator.management.commands.aggregate_emotions - INFO - Found 35 personas in city: Trivandrum
+2024-12-16 11:43:35,618 - simulator.management.commands.aggregate_emotions - INFO - Found 3 categories in city: Trivandrum
+2024-12-16 11:43:36,952 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2195: emotion=sadness, intensity=0.3
+2024-12-16 11:43:37,831 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2196: emotion=anxiety, intensity=0.7
+2024-12-16 11:43:38,733 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2197: emotion=disgust, intensity=0.2
+2024-12-16 11:43:39,756 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2198: emotion=compassion, intensity=0.2
+2024-12-16 11:43:40,697 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2199: emotion=sadness, intensity=0.3
+2024-12-16 11:43:41,663 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2200: emotion=outrage, intensity=0.8
+2024-12-16 11:43:42,497 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2201: emotion=surprise, intensity=0.6
+2024-12-16 11:43:43,528 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2202: emotion=optimism, intensity=0.7
+2024-12-16 11:43:44,378 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\apps.py changed, reloading.
+2024-12-16 11:43:48,832 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:43:48,883 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Trivandrum, news item: New age motorbikes coming to market, id: 134
+2024-12-16 11:43:48,884 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Trivandrum, news item: New age motorbikes coming to market, id: 134
+2024-12-16 11:43:48,887 - simulator.management.commands.aggregate_emotions - INFO - Found 35 personas in city: Trivandrum
+2024-12-16 11:43:48,889 - simulator.management.commands.aggregate_emotions - INFO - Found 3 categories in city: Trivandrum
+2024-12-16 11:43:50,839 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2195: emotion=sadness, intensity=0.3
+2024-12-16 11:43:51,769 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2196: emotion=anxiety, intensity=0.7
+2024-12-16 11:43:52,718 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2197: emotion=disgust, intensity=0.2
+2024-12-16 11:43:53,726 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2198: emotion=anxiety, intensity=0.3
+2024-12-16 11:43:54,641 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2199: emotion=sadness, intensity=0.3
+2024-12-16 11:43:55,577 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2200: emotion=outrage, intensity=0.8
+2024-12-16 11:43:56,493 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2201: emotion=surprise, intensity=0.7
+2024-12-16 11:43:57,459 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2202: emotion=optimism, intensity=0.3
+2024-12-16 11:43:57,800 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2203: emotion=None, intensity=None
+2024-12-16 11:43:58,744 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2204: emotion=None, intensity=None
+2024-12-16 11:43:59,096 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2205: emotion=None, intensity=None
+2024-12-16 11:44:00,005 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2206: emotion=None, intensity=None
+2024-12-16 11:44:00,360 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2207: emotion=None, intensity=None
+2024-12-16 11:44:01,254 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2208: emotion=None, intensity=None
+2024-12-16 11:44:02,198 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2209: emotion=anxiety, intensity=0.7
+2024-12-16 11:44:03,055 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2210: emotion=disgust, intensity=0.2
+2024-12-16 11:44:03,388 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2211: emotion=None, intensity=None
+2024-12-16 11:44:03,708 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2212: emotion=None, intensity=None
+2024-12-16 11:44:04,042 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2213: emotion=None, intensity=None
+2024-12-16 11:44:04,377 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2214: emotion=None, intensity=None
+2024-12-16 11:44:04,666 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2215: emotion=None, intensity=None
+2024-12-16 11:44:04,978 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2216: emotion=None, intensity=None
+2024-12-16 11:44:05,302 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2217: emotion=None, intensity=None
+2024-12-16 11:44:05,605 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2218: emotion=None, intensity=None
+2024-12-16 11:44:05,894 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2219: emotion=None, intensity=None
+2024-12-16 11:44:06,223 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2220: emotion=None, intensity=None
+2024-12-16 11:44:06,539 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2221: emotion=None, intensity=None
+2024-12-16 11:44:06,865 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2222: emotion=None, intensity=None
+2024-12-16 11:44:07,144 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2223: emotion=None, intensity=None
+2024-12-16 11:44:07,415 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2224: emotion=None, intensity=None
+2024-12-16 11:44:07,755 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2225: emotion=None, intensity=None
+2024-12-16 11:44:08,048 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2226: emotion=None, intensity=None
+2024-12-16 11:44:08,418 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2227: emotion=None, intensity=None
+2024-12-16 11:44:08,803 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2228: emotion=None, intensity=None
+2024-12-16 11:44:09,124 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2229: emotion=None, intensity=None
+2024-12-16 11:44:09,127 - simulator.management.commands.aggregate_emotions - INFO - Completed processing personas. Calculating percentages...
+2024-12-16 11:44:09,127 - simulator.management.commands.aggregate_emotions - INFO - Saving aggregate emotion for Trivandrum
+2024-12-16 11:44:09,133 - simulator.management.commands.aggregate_emotions - INFO - Aggregation completed successfully for city: Trivandrum
+2024-12-16 11:44:09,133 - simulator.management.commands.aggregate_emotions - INFO - Successfully processed aggregation for city: Trivandrum
+2024-12-16 11:44:09,353 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\apps.py changed, reloading.
+2024-12-16 11:44:13,722 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:44:13,775 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:44:21,221 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:44:21,366 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:44:51,372 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:44:51,386 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Trivandrum, news item: New age motorbikes coming to market, id: 134
+2024-12-16 11:44:51,388 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Trivandrum, news item: New age motorbikes coming to market, id: 134
+2024-12-16 11:44:51,398 - simulator.management.commands.aggregate_emotions - INFO - Found 35 personas in city: Trivandrum
+2024-12-16 11:44:51,403 - simulator.management.commands.aggregate_emotions - INFO - Found 3 categories in city: Trivandrum
+2024-12-16 11:44:53,440 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2195: emotion=sadness, intensity=0.2
+2024-12-16 11:44:54,332 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2196: emotion=anxiety, intensity=0.7
+2024-12-16 11:44:55,300 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2197: emotion=disgust, intensity=0.2
+2024-12-16 11:44:56,246 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2198: emotion=anxiety, intensity=0.3
+2024-12-16 11:44:57,249 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2199: emotion=sadness, intensity=0.3
+2024-12-16 11:44:58,161 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2200: emotion=outrage, intensity=0.8
+2024-12-16 11:44:59,113 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2201: emotion=surprise, intensity=0.7
+2024-12-16 11:45:00,010 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2202: emotion=optimism, intensity=0.7
+2024-12-16 11:45:01,042 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2203: emotion=outrage, intensity=0.7
+2024-12-16 11:45:02,013 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2204: emotion=sadness, intensity=0.3
+2024-12-16 11:45:02,931 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2205: emotion=outrage, intensity=0.8
+2024-12-16 11:45:03,885 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2206: emotion=sadness, intensity=0.3
+2024-12-16 11:45:04,791 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2207: emotion=anger, intensity=0.7
+2024-12-16 11:45:05,734 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2208: emotion=outrage, intensity=0.7
+2024-12-16 11:45:06,672 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2209: emotion=anxiety, intensity=0.4
+2024-12-16 11:45:06,992 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2210: emotion=None, intensity=None
+2024-12-16 11:45:07,894 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2211: emotion=optimism, intensity=0.6
+2024-12-16 11:45:08,158 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2212: emotion=None, intensity=None
+2024-12-16 11:45:09,046 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2213: emotion=anxiety, intensity=0.8
+2024-12-16 11:45:09,914 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2214: emotion=surprise, intensity=0.6
+2024-12-16 11:45:10,778 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2215: emotion=surprise, intensity=0.8
+2024-12-16 11:45:11,050 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2216: emotion=None, intensity=None
+2024-12-16 11:45:11,325 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2217: emotion=None, intensity=None
+2024-12-16 11:45:11,592 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2218: emotion=None, intensity=None
+2024-12-16 11:45:11,890 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2219: emotion=None, intensity=None
+2024-12-16 11:45:12,180 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2220: emotion=None, intensity=None
+2024-12-16 11:45:12,472 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2221: emotion=None, intensity=None
+2024-12-16 11:45:12,754 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2222: emotion=None, intensity=None
+2024-12-16 11:45:13,057 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2223: emotion=None, intensity=None
+2024-12-16 11:45:13,357 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2224: emotion=None, intensity=None
+2024-12-16 11:45:13,643 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2225: emotion=None, intensity=None
+2024-12-16 11:45:13,911 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2226: emotion=None, intensity=None
+2024-12-16 11:45:14,187 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2227: emotion=None, intensity=None
+2024-12-16 11:45:14,454 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2228: emotion=None, intensity=None
+2024-12-16 11:45:14,743 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2229: emotion=None, intensity=None
+2024-12-16 11:45:14,747 - simulator.management.commands.aggregate_emotions - INFO - Completed processing personas. Calculating percentages...
+2024-12-16 11:45:14,748 - simulator.management.commands.aggregate_emotions - INFO - Saving aggregate emotion for Trivandrum
+2024-12-16 11:45:14,752 - simulator.management.commands.aggregate_emotions - INFO - Aggregation completed successfully for city: Trivandrum
+2024-12-16 11:45:14,753 - simulator.management.commands.aggregate_emotions - INFO - Successfully processed aggregation for city: Trivandrum
+2024-12-16 11:45:20,584 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\apps.py changed, reloading.
+2024-12-16 11:45:24,956 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:45:25,006 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:45:27,350 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=age group, category_name=50+, city_name=Trivandrum, news_item_title=New age motorbikes coming to market
+2024-12-16 11:45:28,865 - simulator.views - ERROR - Unexpected error in fetch_sample_profiles: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1366, null, null, null, 145, 2198).
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.NotNullViolation: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1366, null, null, null, 145, 2198).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\views.py", line 569, in fetch_sample_profiles
+    EmotionalResponse.objects.create(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 891, in save
+    self.save_base(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 997, in save_base
+    updated = self._save_table(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1160, in _save_table
+    results = self._do_insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1201, in _do_insert
+    return manager._insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1366, null, null, null, 145, 2198).
+
+2024-12-16 11:45:36,528 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=age group, category_name=18-25, city_name=Trivandrum, news_item_title=New age motorbikes coming to market
+2024-12-16 11:45:41,294 - simulator.views - INFO - Successfully fetched sample profiles for city 'Trivandrum' and category '18-25'.
+2024-12-16 11:45:47,216 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\apps.py changed, reloading.
+2024-12-16 11:45:51,544 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:45:51,591 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:45:54,813 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\apps.py changed, reloading.
+2024-12-16 11:45:57,348 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:45:57,398 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:46:09,427 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\management\commands\aggregate_emotions.py changed, reloading.
+2024-12-16 11:46:12,055 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:46:12,109 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:46:23,198 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\management\commands\aggregate_emotions.py changed, reloading.
+2024-12-16 11:46:25,581 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:46:25,628 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:46:33,165 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\management\commands\aggregate_emotions.py changed, reloading.
+2024-12-16 11:46:35,637 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:46:35,695 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:46:41,302 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\management\commands\aggregate_emotions.py changed, reloading.
+2024-12-16 11:46:43,500 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:46:43,554 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:46:46,818 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\management\commands\aggregate_emotions.py changed, reloading.
+2024-12-16 11:46:49,052 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:46:49,102 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:46:52,324 - django.utils.autoreload - INFO - V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\apps.py changed, reloading.
+2024-12-16 11:46:54,802 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:46:54,866 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:47:24,873 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:47:24,884 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Kochikuttam, news item: Heavy snowfall coming, id: 135
+2024-12-16 11:47:24,886 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Kochikuttam, news item: Heavy snowfall coming, id: 135
+2024-12-16 11:47:24,895 - simulator.management.commands.aggregate_emotions - INFO - Found 40 personas in city: Kochikuttam
+2024-12-16 11:47:24,898 - simulator.management.commands.aggregate_emotions - INFO - Found 3 categories in city: Kochikuttam
+2024-12-16 11:47:31,981 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2155: emotion=anxiety, intensity=0.7
+2024-12-16 11:47:35,318 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2156: emotion=anxiety, intensity=0.7
+2024-12-16 11:47:36,212 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2157: emotion=anxiety, intensity=0.7
+2024-12-16 11:47:37,210 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2158: emotion=anxiety, intensity=0.7
+2024-12-16 11:47:38,495 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2159: emotion=anxiety, intensity=0.8
+2024-12-16 11:47:39,331 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2160: emotion=anxiety, intensity=0.6
+2024-12-16 11:47:40,352 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2161: emotion=surprise, intensity=0.7
+2024-12-16 11:47:41,203 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2162: emotion=anxiety, intensity=0.8
+2024-12-16 11:47:42,197 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2163: emotion=optimism, intensity=0.6
+2024-12-16 11:47:43,252 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2164: emotion=anxiety, intensity=0.6
+2024-12-16 11:47:44,426 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2165: emotion=anxiety, intensity=0.8
+2024-12-16 11:47:45,270 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2166: emotion=anxiety, intensity=0.4
+2024-12-16 11:47:46,292 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2167: emotion=anxiety, intensity=0.8
+2024-12-16 11:47:47,122 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2168: emotion=surprise, intensity=0.7
+2024-12-16 11:47:48,222 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2169: emotion=anxiety, intensity=0.7
+2024-12-16 11:47:49,148 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2170: emotion=anxiety, intensity=0.7
+2024-12-16 11:47:50,112 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2171: emotion=anxiety, intensity=0.7
+2024-12-16 11:47:51,076 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2172: emotion=outrage, intensity=0.7
+2024-12-16 11:47:51,386 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2173: emotion=None, intensity=None
+2024-12-16 11:47:51,671 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2174: emotion=None, intensity=None
+2024-12-16 11:47:52,551 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2175: emotion=disgust, intensity=0.2
+2024-12-16 11:47:52,857 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2176: emotion=None, intensity=None
+2024-12-16 11:47:53,742 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2177: emotion=optimism, intensity=0.2
+2024-12-16 11:47:54,017 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2178: emotion=None, intensity=None
+2024-12-16 11:47:54,305 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2179: emotion=None, intensity=None
+2024-12-16 11:47:54,604 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2180: emotion=None, intensity=None
+2024-12-16 11:47:54,909 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2181: emotion=None, intensity=None
+2024-12-16 11:47:55,182 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2182: emotion=None, intensity=None
+2024-12-16 11:47:55,463 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2183: emotion=None, intensity=None
+2024-12-16 11:47:55,746 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2184: emotion=None, intensity=None
+2024-12-16 11:47:56,046 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2185: emotion=None, intensity=None
+2024-12-16 11:47:56,320 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2186: emotion=None, intensity=None
+2024-12-16 11:47:56,610 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2187: emotion=None, intensity=None
+2024-12-16 11:47:56,887 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2188: emotion=None, intensity=None
+2024-12-16 11:47:57,166 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2189: emotion=None, intensity=None
+2024-12-16 11:47:58,112 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2190: emotion=anxiety, intensity=0.8
+2024-12-16 11:47:58,395 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2191: emotion=None, intensity=None
+2024-12-16 11:47:58,663 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2192: emotion=None, intensity=None
+2024-12-16 11:47:58,947 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2193: emotion=None, intensity=None
+2024-12-16 11:47:59,231 - simulator.management.commands.aggregate_emotions - INFO - Generated response for persona 2194: emotion=None, intensity=None
+2024-12-16 11:47:59,233 - simulator.management.commands.aggregate_emotions - INFO - Completed processing personas. Calculating percentages...
+2024-12-16 11:47:59,234 - simulator.management.commands.aggregate_emotions - INFO - Saving aggregate emotion for Kochikuttam
+2024-12-16 11:47:59,240 - simulator.management.commands.aggregate_emotions - INFO - Aggregation completed successfully for city: Kochikuttam
+2024-12-16 11:47:59,240 - simulator.management.commands.aggregate_emotions - INFO - Successfully processed aggregation for city: Kochikuttam
+2024-12-16 11:48:03,372 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=Location, category_name=rural, city_name=Kochikuttam, news_item_title=Heavy snowfall coming
+2024-12-16 11:48:03,843 - simulator.views - ERROR - Unexpected error in fetch_sample_profiles: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1372, null, null, null, 146, 2155).
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.NotNullViolation: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1372, null, null, null, 146, 2155).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\views.py", line 569, in fetch_sample_profiles
+    EmotionalResponse.objects.create(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 891, in save
+    self.save_base(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 997, in save_base
+    updated = self._save_table(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1160, in _save_table
+    results = self._do_insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1201, in _do_insert
+    return manager._insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1372, null, null, null, 146, 2155).
+
+2024-12-16 11:48:07,915 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=Location, category_name=urban, city_name=Kochikuttam, news_item_title=Heavy snowfall coming
+2024-12-16 11:48:08,253 - simulator.views - ERROR - Unexpected error in fetch_sample_profiles: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1373, null, null, null, 146, 2156).
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.NotNullViolation: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1373, null, null, null, 146, 2156).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\views.py", line 569, in fetch_sample_profiles
+    EmotionalResponse.objects.create(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 891, in save
+    self.save_base(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 997, in save_base
+    updated = self._save_table(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1160, in _save_table
+    results = self._do_insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1201, in _do_insert
+    return manager._insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1373, null, null, null, 146, 2156).
+
+2024-12-16 11:48:15,175 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=Religion, category_name=budha, city_name=Kochikuttam, news_item_title=Heavy snowfall coming
+2024-12-16 11:48:15,524 - simulator.views - ERROR - Unexpected error in fetch_sample_profiles: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1374, null, null, null, 146, 2169).
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.NotNullViolation: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1374, null, null, null, 146, 2169).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\views.py", line 569, in fetch_sample_profiles
+    EmotionalResponse.objects.create(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 891, in save
+    self.save_base(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 997, in save_base
+    updated = self._save_table(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1160, in _save_table
+    results = self._do_insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1201, in _do_insert
+    return manager._insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1374, null, null, null, 146, 2169).
+
+2024-12-16 11:48:19,513 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=Religion, category_name=hindu, city_name=Kochikuttam, news_item_title=Heavy snowfall coming
+2024-12-16 11:48:19,871 - simulator.views - ERROR - Unexpected error in fetch_sample_profiles: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1375, null, null, null, 146, 2155).
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.NotNullViolation: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1375, null, null, null, 146, 2155).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\views.py", line 569, in fetch_sample_profiles
+    EmotionalResponse.objects.create(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 891, in save
+    self.save_base(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 997, in save_base
+    updated = self._save_table(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1160, in _save_table
+    results = self._do_insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1201, in _do_insert
+    return manager._insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1375, null, null, null, 146, 2155).
+
+2024-12-16 11:48:24,087 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=Education level, category_name=post doctorate, city_name=Kochikuttam, news_item_title=Heavy snowfall coming
+2024-12-16 11:48:24,539 - simulator.views - ERROR - Unexpected error in fetch_sample_profiles: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1376, null, null, null, 146, 2155).
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.NotNullViolation: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1376, null, null, null, 146, 2155).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\simulator\views.py", line 569, in fetch_sample_profiles
+    EmotionalResponse.objects.create(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 891, in save
+    self.save_base(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 997, in save_base
+    updated = self._save_table(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1160, in _save_table
+    results = self._do_insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\base.py", line 1201, in _do_insert
+    return manager._insert(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "V:\MY DOCS\Techjays internship\People-Simulator-Web-Server\venv\lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: null value in column "emotion" of relation "simulator_emotionalresponse" violates not-null constraint
+DETAIL:  Failing row contains (1376, null, null, null, 146, 2155).
+
+2024-12-16 11:48:29,244 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:48:29,246 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-16 11:48:42,345 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=Location, category_name=rural, city_name=Kochikuttam, news_item_title=Heavy snowfall coming
+2024-12-16 11:48:46,729 - simulator.views - INFO - Successfully fetched sample profiles for city 'Kochikuttam' and category 'rural'.
+2024-12-16 11:48:50,190 - simulator.views - INFO - Starting fetch_sample_profiles with parameters: category_type=Location, category_name=urban, city_name=Kochikuttam, news_item_title=Heavy snowfall coming
+2024-12-16 11:48:54,534 - simulator.views - INFO - Successfully fetched sample profiles for city 'Kochikuttam' and category 'urban'.
+2024-12-16 11:48:59,257 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-16 11:48:59,261 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.

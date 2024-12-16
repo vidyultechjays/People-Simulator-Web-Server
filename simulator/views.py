@@ -372,70 +372,200 @@ def fetch_summary_api(request):
     except AggregateEmotion.DoesNotExist:
         return JsonResponse({"status": "error", "message": "Summary not found"}, status=404)
 
+
+# def fetch_sample_profiles(request, category_type, category_name, city_name, news_item_title):
+#     """
+#     Fetch sample profiles for a given category, subcategory, and city 
+#     based on a specific news item, generating emotional responses as needed.
+#     """
+#     try:
+#         try:
+#             news_item = NewsItem.objects.get(title=news_item_title)
+#         except NewsItem.DoesNotExist:
+#             messages.error(request, "News item not found")
+#             return redirect('results_summary')
+
+#         try:
+#             category = Category.objects.get(
+#                 name__iexact=category_type,
+#                 city__iexact=city_name
+#             )
+#         except Category.DoesNotExist:
+#             messages.error(
+#                 request,
+#                 f"Category '{category_type}' not found for city '{city_name}'."
+#             )
+#             return redirect('results_summary')
+
+#         try:
+#             subcategory = SubCategory.objects.get(
+#                 category=category,
+#                 name__iexact=category_name,
+#                 city__iexact=city_name
+#             )
+#         except SubCategory.DoesNotExist:
+#             messages.error(
+#                 request,
+#                 f"Subcategory '{category_name}' not found for category '{category_type}' in city '{city_name}'."
+#             )
+#             return redirect('results_summary')
+
+#         persona_mappings = PersonaSubCategoryMapping.objects.filter(
+#             subcategory_id=subcategory.id
+#         ).select_related('persona')
+
+#         personas = [
+#             mapping.persona
+#             for mapping in persona_mappings
+#             if mapping.persona.city.lower() == city_name.lower()
+#         ][:5]
+
+#         personas_data = []
+#         for persona in personas:
+#             existing_response = EmotionalResponse.objects.filter(
+#                 persona_id=persona.id,
+#                 news_item_id=news_item.id
+#             ).first()
+
+#             if existing_response:
+#                 emotion = existing_response.emotion
+#                 intensity = existing_response.intensity
+#                 explanation = existing_response.explanation
+#             else:
+#                 emotion, intensity, explanation = generate_emotional_response(
+#                     persona,
+#                     news_item.content
+#                 )
+
+#                 EmotionalResponse.objects.create(
+#                     persona=persona,
+#                     news_item=news_item,
+#                     emotion=emotion,
+#                     intensity=intensity,
+#                     explanation=explanation
+#                 )
+
+#             persona_info = {
+#                 'name': persona.name,
+#                 'city': persona.city,
+#                 'personality_traits': _parse_personality_traits(persona.personality_traits),
+#                 'emotion': emotion,
+#                 'intensity': round(intensity, 2) if intensity is not None else None,
+#                 'explanation': explanation
+#             }
+#             personas_data.append(persona_info)
+
+#         if not personas_data:
+#             messages.warning(
+#                 request,
+#                 f"No personas found for {category_name} in {city_name}. "
+#                 "This might be due to limited data or specific filtering."
+#             )
+
+#         return render(request, 'sample_profiles.html', {
+#             'category_type': category_type,
+#             'category_name': category_name,
+#             'personas_data': personas_data,
+#             'city_name': city_name,
+#             'news_item_title': news_item_title
+#         })
+
+#     except Exception as e:
+#         logger.error("Error in fetch_sample_profiles: %s", str(e))
+#         messages.error(request, "An unexpected error occurred while fetching sample profiles")
+#         return redirect('results_summary')
+
 def fetch_sample_profiles(request, category_type, category_name, city_name, news_item_title):
     """
     Fetch sample profiles for a given category, subcategory, and city 
     based on a specific news item, generating emotional responses as needed.
     """
+    logger.info("Starting fetch_sample_profiles with parameters: "
+                f"category_type={category_type}, category_name={category_name}, "
+                f"city_name={city_name}, news_item_title={news_item_title}")
     try:
+        # Fetch the news item
         try:
             news_item = NewsItem.objects.get(title=news_item_title)
+            logger.debug(f"Fetched NewsItem: {news_item}")
         except NewsItem.DoesNotExist:
+            logger.warning(f"NewsItem with title '{news_item_title}' not found.")
             messages.error(request, "News item not found")
             return redirect('results_summary')
 
+        # Fetch the category
         try:
             category = Category.objects.get(
                 name__iexact=category_type,
                 city__iexact=city_name
             )
+            logger.debug(f"Fetched Category: {category}")
         except Category.DoesNotExist:
+            logger.warning(
+                f"Category '{category_type}' not found for city '{city_name}'."
+            )
             messages.error(
                 request,
                 f"Category '{category_type}' not found for city '{city_name}'."
             )
             return redirect('results_summary')
 
+        # Fetch the subcategory
         try:
             subcategory = SubCategory.objects.get(
                 category=category,
                 name__iexact=category_name,
                 city__iexact=city_name
             )
+            logger.debug(f"Fetched SubCategory: {subcategory}")
         except SubCategory.DoesNotExist:
+            logger.warning(
+                f"Subcategory '{category_name}' not found for category '{category_type}' in city '{city_name}'."
+            )
             messages.error(
                 request,
                 f"Subcategory '{category_name}' not found for category '{category_type}' in city '{city_name}'."
             )
             return redirect('results_summary')
 
+        # Fetch persona mappings
         persona_mappings = PersonaSubCategoryMapping.objects.filter(
             subcategory_id=subcategory.id
         ).select_related('persona')
+        logger.debug(f"Fetched {persona_mappings.count()} persona mappings for SubCategory {subcategory}")
 
+        # Filter personas
         personas = [
             mapping.persona
             for mapping in persona_mappings
             if mapping.persona.city.lower() == city_name.lower()
         ][:5]
+        logger.debug(f"Filtered {len(personas)} personas matching the city '{city_name}'.")
 
         personas_data = []
         for persona in personas:
+            logger.debug(f"Processing persona: {persona}")
+
+            # Check for existing emotional response
             existing_response = EmotionalResponse.objects.filter(
                 persona_id=persona.id,
                 news_item_id=news_item.id
             ).first()
 
             if existing_response:
+                logger.debug(f"Found existing emotional response for Persona {persona}: {existing_response}")
                 emotion = existing_response.emotion
                 intensity = existing_response.intensity
                 explanation = existing_response.explanation
             else:
+                logger.debug(f"Generating emotional response for Persona {persona}")
                 emotion, intensity, explanation = generate_emotional_response(
                     persona,
                     news_item.content
                 )
+                logger.debug(f"Generated emotional response: emotion={emotion}, intensity={intensity}, explanation={explanation}")
 
+                # Save the emotional response
                 EmotionalResponse.objects.create(
                     persona=persona,
                     news_item=news_item,
@@ -444,6 +574,7 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
                     explanation=explanation
                 )
 
+            # Prepare persona data
             persona_info = {
                 'name': persona.name,
                 'city': persona.city,
@@ -455,12 +586,16 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
             personas_data.append(persona_info)
 
         if not personas_data:
+            logger.warning(
+                f"No personas found for SubCategory '{category_name}' in City '{city_name}'."
+            )
             messages.warning(
                 request,
                 f"No personas found for {category_name} in {city_name}. "
                 "This might be due to limited data or specific filtering."
             )
 
+        logger.info(f"Successfully fetched sample profiles for city '{city_name}' and category '{category_name}'.")
         return render(request, 'sample_profiles.html', {
             'category_type': category_type,
             'category_name': category_name,
@@ -470,6 +605,6 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
         })
 
     except Exception as e:
-        logger.error("Error in fetch_sample_profiles: %s", str(e))
+        logger.error("Unexpected error in fetch_sample_profiles: %s", str(e), exc_info=True)
         messages.error(request, "An unexpected error occurred while fetching sample profiles")
         return redirect('results_summary')

@@ -36,7 +36,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--interval',
             type=int,
-            default=30,
+            default=15,
             help='Interval between processing cycles (in seconds)'
         )
 

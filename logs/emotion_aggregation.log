@@ -7404,3 +7404,61 @@ django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 6: 'st
 2024-12-18 22:11:51,383 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
 2024-12-18 22:12:21,399 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
 2024-12-18 22:12:21,402 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:26:40,040 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:26:40,233 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Chavakkad, news item: New Christmas decoration items coming to the market. Who all will buy it?, id: 171
+2024-12-19 12:26:40,234 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Chavakkad, news item: New Christmas decoration items coming to the market. Who all will buy it?, id: 171
+2024-12-19 12:26:40,239 - simulator.management.commands.aggregate_emotions - INFO - Found 10 personas in city: Chavakkad
+2024-12-19 12:26:40,241 - simulator.management.commands.aggregate_emotions - INFO - Found 5 possible responses
+2024-12-19 12:27:57,137 - simulator.management.commands.aggregate_emotions - INFO - Aggregation completed successfully for city: Chavakkad
+2024-12-19 12:27:57,138 - simulator.management.commands.aggregate_emotions - INFO - Successfully processed aggregation for city: Chavakkad
+2024-12-19 12:27:57,140 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Ernakulam, news item: New Christmas decoration items coming to the market. Who all will buy it?, id: 172
+2024-12-19 12:27:57,142 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Ernakulam, news item: New Christmas decoration items coming to the market. Who all will buy it?, id: 172
+2024-12-19 12:27:57,146 - simulator.management.commands.aggregate_emotions - INFO - Found 10 personas in city: Ernakulam
+2024-12-19 12:27:57,147 - simulator.management.commands.aggregate_emotions - INFO - Found 5 possible responses
+2024-12-19 12:29:11,960 - simulator.management.commands.aggregate_emotions - INFO - Aggregation completed successfully for city: Ernakulam
+2024-12-19 12:29:11,961 - simulator.management.commands.aggregate_emotions - INFO - Successfully processed aggregation for city: Ernakulam
+2024-12-19 12:35:59,577 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:35:59,629 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:36:29,636 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:36:29,637 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:36:59,642 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:36:59,644 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:37:29,653 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:37:29,657 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:37:59,672 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:37:59,676 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Test City 2, news item: Heavy rainfall is coming. Government is offering shelter homes. Will you take it?, id: 173
+2024-12-19 12:37:59,677 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Test City 2, news item: Heavy rainfall is coming. Government is offering shelter homes. Will you take it?, id: 173
+2024-12-19 12:37:59,681 - simulator.management.commands.aggregate_emotions - INFO - Found 10 personas in city: Test City 2
+2024-12-19 12:37:59,683 - simulator.management.commands.aggregate_emotions - INFO - Found 2 possible responses
+2024-12-19 12:43:37,257 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:43:37,316 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Test City 2, news item: Heavy rainfall is coming. Government is offering shelter homes. Will you take it?, id: 173
+2024-12-19 12:43:37,317 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Test City 2, news item: Heavy rainfall is coming. Government is offering shelter homes. Will you take it?, id: 173
+2024-12-19 12:43:37,321 - simulator.management.commands.aggregate_emotions - INFO - Found 10 personas in city: Test City 2
+2024-12-19 12:43:37,322 - simulator.management.commands.aggregate_emotions - INFO - Found 2 possible responses
+2024-12-19 12:45:02,091 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:45:02,136 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:45:32,152 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:45:32,154 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:46:02,156 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:46:02,158 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:46:32,164 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:46:32,168 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Kalady, news item: Heavy rainfall is coming, shelter homes are opening.do you want to use shelter homes?, id: 174
+2024-12-19 12:46:32,169 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Kalady, news item: Heavy rainfall is coming, shelter homes are opening.do you want to use shelter homes?, id: 174
+2024-12-19 12:46:32,175 - simulator.management.commands.aggregate_emotions - INFO - Found 10 personas in city: Kalady
+2024-12-19 12:46:32,177 - simulator.management.commands.aggregate_emotions - INFO - Found 2 possible responses
+2024-12-19 12:49:20,320 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:23,424 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:26,313 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:29,336 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:32,293 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:35,293 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:38,291 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:41,492 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:44,320 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:49:47,331 - django.request - WARNING - Not Found: /fetch_summary_api/
+2024-12-19 12:50:11,757 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:50:11,809 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:50:30,125 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:50:30,175 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-19 12:51:01,925 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-19 12:51:01,989 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.

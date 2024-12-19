@@ -5,6 +5,7 @@ from django.urls import path
 from simulator import views
 
 urlpatterns = [
+    path("", views.persona_input, name="persona_input"),
     path("persona_input/", views.persona_input, name="persona_input"),
     path("demographics_input/", views.demographics_input, name="demographics_input"),
     path('impact-assessment/', views.impact_assessment, name='impact_assessment'),

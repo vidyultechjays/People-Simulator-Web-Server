@@ -11,8 +11,11 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from simulator.models import (
     AggregateEmotion,
+    EmotionalResponse,
+    NewsItem,
     Persona,
-    Category
+    Category,
+    PossibleUserResponses
 )
 from simulator.utils.impact_assesment_helper import generate_emotional_response
 
@@ -63,7 +66,7 @@ class Command(BaseCommand):
 
                     # Process each pending aggregation
                     for aggregate_emotion in pending_query:
-                        logger.info("Processing aggregation for city: %s, news item: %s, id: %d", 
+                        logger.info("Processing aggregation for city: %s, news item: %s, id: %d",
                                     aggregate_emotion.city, aggregate_emotion.news_item.title, aggregate_emotion.id)
                         try:
                             # Call the existing emotion aggregation logic
@@ -87,7 +90,7 @@ class Command(BaseCommand):
         log_dir = os.path.join(settings.BASE_DIR, 'logs')
         os.makedirs(log_dir, exist_ok=True)
         log_file = os.path.join(log_dir, 'emotion_aggregation.log')
-        
+
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -114,100 +117,115 @@ class Command(BaseCommand):
             )
 def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
     """
-    Existing emotion aggregation logic
+    Aggregates emotional responses with user response selection and demographic breakdown
     """
     try:
         logger.info("Starting aggregation for city: %s, news item: %s, id: %d", city_name, news_item_title, aggregate_emotion_id)
+        
+        # Fetch the specific objects
         aggregate_emotion = AggregateEmotion.objects.get(id=aggregate_emotion_id)
+        news_item = NewsItem.objects.get(title=news_item_title)
         personas = Persona.objects.filter(city=city_name)
-        logger.info("Found %d personas in city: %s", personas.count(), city_name)
-
+        possible_responses = PossibleUserResponses.objects.filter(news_item=news_item)
         categories = Category.objects.filter(city=city_name).prefetch_related('subcategories')
-        logger.info("Found %d categories in city: %s", categories.count(), city_name)
 
-        # Create a more flexible demographic summary initialization
+        logger.info("Found %d personas in city: %s", personas.count(), city_name)
+        logger.info("Found %d possible responses", possible_responses.count())
+
+        # Initialize demographic summary structure
         demographic_summary = {}
         for category in categories:
             demographic_summary[category.name] = {}
-            for subcategory in category.subcategories.filter(city=city_name):  # Filter subcategories by city
+            for subcategory in category.subcategories.filter(city=city_name):
                 # Use lowercase for consistency
                 demographic_summary[category.name][subcategory.name.lower()] = {
-                    "positive": 0, 
-                    "negative": 0, 
-                    "neutral": 0, 
-                    "total": 0
+                    response.id: {
+                        "response_text": response.response_text,
+                        "count": 0,
+                        "percentage": 0.0
+                    } 
+                    for response in possible_responses
                 }
 
-        overall_summary = {
-            "positive": 0,
-            "negative": 0,
-            "neutral": 0,
-            "total": 0
+        # Initialize response summary
+        response_summary = {
+            response.id: {
+                "response_text": response.response_text, 
+                "count": 0, 
+                "percentage": 0.0
+            } 
+            for response in possible_responses
         }
 
-        emotion_categories = {
-            "positive": {"joy", "optimism", "compassion"},
-            "negative": {"sadness", "anger", "fear", "disgust", "anxiety", "outrage"},
-            "neutral": {"surprise"}
-        }
+        # Track total processed responses
+        total_responses = 0
 
+        # Process each persona
         for persona in personas:
-            emotion, intensity, explanation = generate_emotional_response(persona, news_item_title)
-            logger.info("Generated response for persona %d: emotion=%s, intensity=%s", persona.id, emotion, intensity)
+            try:
+                # Generate response for this persona
+                selected_response, intensity, explanation = generate_emotional_response(persona, news_item)
+                
+                # Create EmotionalResponse
+                emotional_response = EmotionalResponse.objects.create(
+                    persona=persona,
+                    news_item=news_item,
+                    user_response=selected_response,
+                    intensity=intensity,
+                    explanation=explanation
+                )
 
-            emotion_category = next(
-                (cat for cat, emotions in emotion_categories.items() if emotion in emotions),
-                "neutral"
-            )
+                # Update overall response summary
+                response_summary[selected_response.id]['count'] += 1
+                total_responses += 1
 
-            overall_summary[emotion_category] += 1
-            overall_summary["total"] += 1
+                # Update demographic summary
+                # Get the persona's subcategories
+                subcategory_mappings = persona.subcategory_mappings.select_related('subcategory__category').filter(
+                    subcategory__city=city_name  
+                )
 
-            subcategory_mappings = persona.subcategory_mappings.select_related('subcategory__category').filter(
-                subcategory__city=city_name  
-            )
+                for mapping in subcategory_mappings:
+                    subcategory = mapping.subcategory
+                    category_name = subcategory.category.name
+                    # Convert to lowercase for consistent matching
+                    subcategory_name = subcategory.name.lower()
 
-            for mapping in subcategory_mappings:
-                subcategory = mapping.subcategory
-                category_name = subcategory.category.name
-                # Convert to lowercase for consistent matching
-                subcategory_name = subcategory.name.lower()
+                    # Verify the structure exists before updating
+                    if (category_name in demographic_summary and
+                        subcategory_name in demographic_summary[category_name]):
+                        demographic_mapping = demographic_summary[category_name][subcategory_name]
+                        
+                        # Increment count for this response in this demographic group
+                        demographic_mapping[selected_response.id]['count'] += 1
 
-                # Verify the structure exists before updating
-                if (category_name in demographic_summary and
-                    subcategory_name in demographic_summary[category_name]):
-                    demographic_summary[category_name][subcategory_name][emotion_category] += 1
-                    demographic_summary[category_name][subcategory_name]["total"] += 1
+            except Exception as persona_error:
+                logger.error(f"Error processing persona {persona.id}: {persona_error}")
 
-        logger.info("Completed processing personas. Calculating percentages...")
+        # Calculate percentages for overall response summary
+        for response_id, data in response_summary.items():
+            if total_responses > 0:
+                data['percentage'] = round((data['count'] / total_responses) * 100, 2)
 
         # Calculate percentages for demographic summary
-        def calculate_demographic_percentages(category_dict):
-            for subcategory, data in category_dict.items():
-                if data["total"] > 0:
-                    data["positive_percentage"] = round((data["positive"] / data["total"]) * 100, 2)
-                    data["negative_percentage"] = round((data["negative"] / data["total"]) * 100, 2)
-                    data["neutral_percentage"] = round((data["neutral"] / data["total"]) * 100, 2)
+        for category_name, categories in demographic_summary.items():
+            for subcategory_name, responses in categories.items():
+                subcategory_total = sum(response['count'] for response in responses.values())
+                
+                for response_id, response_data in responses.items():
+                    if subcategory_total > 0:
+                        response_data['percentage'] = round(
+                            (response_data['count'] / subcategory_total) * 100, 
+                            2
+                        )
 
-        for category_data in demographic_summary.values():
-            calculate_demographic_percentages(category_data)
-
-        def calculate_overall_percentages(summary):
-            total = summary["total"]
-            if total > 0:
-                summary["positive_percentage"] = round((summary["positive"] / total) * 100, 2)
-                summary["negative_percentage"] = round((summary["negative"] / total) * 100, 2)
-                summary["neutral_percentage"] = round((summary["neutral"] / total) * 100, 2)
-            else:
-                summary["positive_percentage"] = 0
-                summary["negative_percentage"] = 0
-                summary["neutral_percentage"] = 0
-
-        calculate_overall_percentages(overall_summary)
-
-        aggregate_emotion.summary = overall_summary
+        # Update aggregate emotion
+        aggregate_emotion.summary = {
+            "status": "completed",
+            "total_responses": total_responses,
+            "response_summary": response_summary
+        }
         aggregate_emotion.demographic_summary = demographic_summary
-        logger.info("Saving aggregate emotion for %s", aggregate_emotion.city)
         aggregate_emotion.save()
 
         logger.info("Aggregation completed successfully for city: %s", city_name)
@@ -215,6 +233,7 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
 
     except Exception as e:
         logger.error("Emotion aggregation failed: %s", str(e))
+        # Error handling
         try:
             aggregate_emotion = AggregateEmotion.objects.get(id=aggregate_emotion_id)
             aggregate_emotion.summary['status'] = 'failed'
@@ -224,3 +243,4 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
             logger.error("Could not update aggregation status: %s", save_error)
 
         return f"Aggregation failed: {str(e)}"
+ 

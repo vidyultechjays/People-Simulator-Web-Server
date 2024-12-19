@@ -1,11 +1,40 @@
 """
-This module defines the models for the simulator application.
+This module defines the models for the simulator application, which simulates the emotional impact of news items on various personas.
 
-It includes:
-- Persona: Represents an individual with demographic and personality traits.
-- NewsItem: Represents news articles that can elicit emotional responses.
-- EmotionalResponse: Links personas to news items with emotional reactions.
-- AggregateEmotion: Summarizes emotional responses for a news item.
+Models included:
+1. **Category**: 
+   - Represents a demographic category (e.g., Age, Income, Religion).
+   - Includes optional city-specific information.
+
+2. **SubCategory**: 
+   - Represents a demographic subcategory under a specific category.
+   - Includes percentage distribution and optional city-specific information.
+
+3. **Persona**: 
+   - Represents an individual persona with attributes such as name, city, and a description of their personality traits.
+
+4. **PersonaSubCategoryMapping**: 
+   - Maps personas to their associated subcategories for demographic alignment.
+
+5. **NewsItem**: 
+   - Represents a news article with attributes like title, content, and upload date.
+
+6. **AggregateEmotion**: 
+   - Stores aggregated emotional responses to a news item, broken down by city and demographics.
+   - Includes timestamps and JSON fields for detailed summaries.
+
+7. **PersonaGenerationTask**: 
+   - Tracks the status of persona generation tasks for a city based on its population.
+   - Supports statuses like pending, in-progress, completed, and failed.
+
+8. **PossibleUserResponses**: 
+   - Represents predefined possible user responses to a specific news item.
+
+9. **EmotionalResponse**: 
+   - Represents an emotional response or user reaction by a Persona to a specific NewsItem.
+   - Links to PossibleUserResponses for predefined reactions and includes intensity and explanations.
+
+Each model has descriptive methods for string representation to ensure clarity when interacting with instances in the admin interface or during debugging.
 """
 from django.db import models
 
@@ -39,7 +68,8 @@ class Persona(models.Model):
     """
     name = models.CharField(max_length=100)
     city = models.CharField(max_length=255,blank=True, null=True)
-    personality_traits = models.JSONField(default=dict)
+    # personality_traits = models.JSONField(default=dict)
+    personality_description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.city})"
@@ -66,43 +96,66 @@ class NewsItem(models.Model):
     def __str__(self):
         return str(f"News about {self.title}")
 
-class EmotionalResponse(models.Model):
-    """
-    Represents an emotional response by a Persona to a specific NewsItem.
-    Includes the type and intensity of emotion, as well as an optional explanation.
-    """
-    EMOTION_CHOICES = [
-        ('joy', 'Joy'),
-        ('sadness', 'Sadness'),
-        ('anger', 'Anger'),
-        ('fear', 'Fear'),
-        ('disgust', 'Disgust'),
-        ('surprise', 'Surprise'),
-        ('optimism', 'Optimism'),
-        ('anxiety', 'Anxiety'),
-        ('compassion', 'Compassion'),
-        ('outrage', 'Outrage'),
-    ]
-    persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
-    news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE)
-    emotion = models.CharField(max_length=20, choices=EMOTION_CHOICES)
-    intensity = models.FloatField()
-    explanation = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"Response of {self.persona} to {self.news_item}: {self.emotion} ({self.intensity})"
-
 class AggregateEmotion(models.Model):
     """
     Model to store aggregate emotional responses with demographic breakdown
     """
     news_item = models.ForeignKey('NewsItem', on_delete=models.CASCADE)
     city = models.CharField(max_length=255,blank=True, null=True)
-    summary = models.JSONField(default=dict)  # Overall summary
-    demographic_summary = models.JSONField(default=dict,blank=True, null=True)  # Detailed demographic breakdown
+    summary = models.JSONField(default=dict)
+    demographic_summary = models.JSONField(default=dict,blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True,blank=True, null=True)
 
     def __str__(self):
         return f"{self.city} - {self.news_item}"
- 
+
+class PersonaGenerationTask(models.Model):
+    """
+    Model to track persona generation tasks
+    """
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed')
+    ]
+
+    city_name = models.CharField(max_length=100)
+    population = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+    error_message = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.city_name} - {self.status}"
+
+class PossibleUserResponses(models.Model):
+    """
+    Represents possible user responses for a specific news item.
+    """
+    news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE, related_name='possible_responses')
+    response_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.response_text[:50]}"
+
+class EmotionalResponse(models.Model):
+    """
+    Represents a response by a Persona to a specific NewsItem.
+    Now includes user response selection instead of emotion.
+    """
+    persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
+    news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE)
+    user_response = models.ForeignKey(PossibleUserResponses, on_delete=models.CASCADE,blank=True, null=True)
+    intensity = models.FloatField()
+    explanation = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Response of {self.persona} to {self.news_item}: {self.user_response.response_text} ({self.intensity})"

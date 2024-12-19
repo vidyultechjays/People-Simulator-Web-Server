@@ -10,9 +10,10 @@ from simulator.models import (
     AggregateEmotion,
     Category,
     SubCategory,
-    PersonaSubCategoryMapping
+    PersonaSubCategoryMapping,
+    PersonaGenerationTask,
+    PossibleUserResponses
 )
-
 admin.site.register(Persona)
 admin.site.register(Category)
 admin.site.register(SubCategory)
@@ -20,3 +21,5 @@ admin.site.register(PersonaSubCategoryMapping)
 admin.site.register(EmotionalResponse)
 admin.site.register(NewsItem)
 admin.site.register(AggregateEmotion)
+admin.site.register(PersonaGenerationTask)
+admin.site.register(PossibleUserResponses)

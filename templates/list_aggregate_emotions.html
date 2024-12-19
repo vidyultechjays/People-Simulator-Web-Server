@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/list_aggregate_emotions_style.css' %}">
+    <title>Aggregate Emotion Results</title>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'persona_input' %}">Persona Generation</a>
+        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
+        <a href="{% url 'list_aggregate_emotions' %}">List Results</a>
+    </div>
+    <div class="container">
+        <h1>Aggregate Emotion Results</h1>
+
+        {% if aggregate_emotions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>News Item</th>
+                        <th>Created At</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emotion in aggregate_emotions %}
+                        <tr>
+                            <td>{{ emotion.city }}</td>
+                            <td>{{ emotion.news_item.title }}</td>
+                            <td>{{ emotion.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <a href="{% url 'results_summary' %}?city={{ emotion.city }}&news_item={{ emotion.news_item.title }}" class="details-button">
+                                    View Results
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-results">No aggregate emotion records found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

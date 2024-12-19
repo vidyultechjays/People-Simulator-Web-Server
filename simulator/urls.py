@@ -15,5 +15,6 @@ urlpatterns = [
         'sample-profiles/<str:category_type>/<str:category_name>/<str:city_name>/<str:news_item_title>/',
         views.fetch_sample_profiles,
         name='sample_profiles'
-    )
+    ),
+    path('list-aggregate-emotions/', views.list_aggregate_emotions, name='list_aggregate_emotions'),
 ]

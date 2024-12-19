@@ -1,0 +1,101 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e0f7fa;
+    color: #005b96;
+    margin: 10px;
+    padding: 15px;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #007bb5;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.navbar a {
+    color: #ffffff;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+    text-decoration: none;
+    padding: 14px 20px;
+    text-align: center;
+    margin: 0 10px;
+}
+
+.navbar a:hover {
+    background-color: #005b96;
+    color: #e0f7fa;
+}
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Headings */
+h1 {
+    text-align: center;
+    color: #007bb5;
+    margin-bottom: 20px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table thead {
+    background-color: #007bb5;
+    color: #ffffff;
+}
+
+table th,
+table td {
+    text-align: left;
+    padding: 10px 15px;
+    border: 1px solid #b3e5fc;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #f1f9fc;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+/* Buttons */
+.details-button {
+    background-color: #007bb5;
+    color: #ffffff;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.details-button:hover {
+    background-color: #005b96;
+}
+
+/* No Results Message */
+.no-results {
+    text-align: center;
+    color: #007bb5;
+    font-size: 16px;
+    margin: 20px 0;
+}

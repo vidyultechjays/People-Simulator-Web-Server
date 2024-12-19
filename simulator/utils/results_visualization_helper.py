@@ -14,24 +14,6 @@ def create_pie_chart(data, title):
     )
     return pio.plot(fig, output_type='div', include_plotlyjs=True)
 
-def _parse_personality_traits(traits_dict):
-    """
-    Parse and format personality traits for display.
-    """
-    if not traits_dict:
-        return {}
-
-    formatted_traits = {}
-    for key, value in traits_dict.items():
-        if isinstance(value, list):
-            formatted_traits[key] = ", ".join(map(str, value))
-        elif isinstance(value, dict):
-            formatted_traits[key] = ", ".join(f"{k}: {v}" for k, v in value.items())
-        else:
-            formatted_traits[key] = value
-
-    return formatted_traits
-
 def create_demographic_charts(category_type, categories):
     category_charts = {}
     for category, data in categories.items():

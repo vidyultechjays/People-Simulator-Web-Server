@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'simulator',
-    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -87,11 +86,11 @@ WSGI_APPLICATION = 'people_simulator.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'people_web_server',  # Name of the PostgreSQL database
-        'USER': 'postgres',            # PostgreSQL username
-        'PASSWORD': 'Vidyulps@1',      # Your PostgreSQL password
-        'HOST': 'localhost',           # Database host (localhost for local development)
-        'PORT': '5432',                # Port (5432 is the default PostgreSQL port)
+        'NAME': os.environ.get('PGDATABASE'),
+        'USER': os.environ.get('PGUSER'),
+        'PASSWORD': os.environ.get('PGPASSWORD'),
+        'HOST': os.environ.get('PGHOST'),
+        'PORT': os.environ.get('PGPORT'),
     }
 }
 

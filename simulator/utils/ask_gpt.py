@@ -1,13 +1,14 @@
+import time
 import openai
 from django.conf import settings
 
 openai.api_key = settings.OPENAI_API_KEY
 
-def ask_gpt(prompt, model="gpt-4"):
+def ask_gpt(prompt, model_name):
     """Calls the OpenAI GPT model and returns the response."""
     try:
         response = openai.ChatCompletion.create(
-            model=model,
+            model=model_name,
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt},

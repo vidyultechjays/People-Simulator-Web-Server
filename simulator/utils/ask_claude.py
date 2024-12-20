@@ -2,7 +2,7 @@ from anthropic import Anthropic
 from django.conf import settings
 from typing import Optional
 
-def ask_claude(prompt: str, max_tokens: Optional[int] = 1000) -> str:
+def ask_claude(prompt: str,model_name: str, max_tokens: Optional[int] = 1000) -> str:
     """
     Calls the Claude API and returns the response.
     """
@@ -10,7 +10,7 @@ def ask_claude(prompt: str, max_tokens: Optional[int] = 1000) -> str:
         client = Anthropic(api_key=settings.CLAUDE_API_KEY)
         
         message = client.messages.create(
-            model="claude-3-sonnet-20240229",  # You can change this to your preferred Claude model
+            model=model_name,  # You can change this to your preferred Claude model
             max_tokens=max_tokens,
             messages=[
                 {

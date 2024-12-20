@@ -7,8 +7,11 @@ from django.conf import settings
 from faker import Faker
 from itertools import product
 
-from simulator.models import Category, PersonaGenerationTask, SubCategory, Persona, PersonaSubCategoryMapping
+from simulator.models import Category, LLMModelAndKey, PersonaGenerationTask, SubCategory, Persona, PersonaSubCategoryMapping
 from simulator.utils.ask_gemini import ask_gemini
+from simulator.utils.ask_gpt import ask_gpt
+from simulator.utils.ask_claude import ask_claude
+
 
 class Command(BaseCommand):
     help = 'Runs a background thread for persona generation'
@@ -199,6 +202,9 @@ class Command(BaseCommand):
         Simplified personality description generation
         """
         try:
+            active_model = LLMModelAndKey.objects.filter(active=True).first()
+            if not active_model:
+                raise ValueError("No active LLM model found.")
             persona_subcategory_mappings = PersonaSubCategoryMapping.objects.filter(persona=persona)
 
             if not persona_subcategory_mappings.exists():
@@ -230,7 +236,7 @@ class Command(BaseCommand):
             context_summary = "; ".join(demographic_details) if demographic_details else "Diverse background"
 
             prompt = (
-                f"Generate a nuanced, concise 3-line personality description for a person with the following profile:\n\n"
+                f"Generate a nuanced, concise 5-line personality description for a person with the following profile:\n\n"
                 f"Name: {persona.name}\n"
                 f"City: {persona.city}\n"
                 f"Demographic Context: {context_summary}\n\n"
@@ -242,8 +248,14 @@ class Command(BaseCommand):
                 f"- Create diverse personalities\n"
                 f"- Use the format: '[Name] is a [role/profession] who is [key traits]. [Additional detail].'\n"
             )
-
-            description = ask_gemini(prompt)
+            if active_model.provider_name == 'anthropic':
+                description = ask_claude(prompt,active_model.model_name)
+            elif active_model.provider_name == 'openai':
+                description=ask_gpt(prompt,active_model.model_name)
+            elif active_model.provider_name == 'google':
+                description=ask_gemini(prompt,active_model.model_name)
+            else:
+                raise ValueError(f"Unsupported provider: {active_model.provider_name}")
             return description.strip() if description else "A unique individual with diverse characteristics."
 
         except Exception as e:

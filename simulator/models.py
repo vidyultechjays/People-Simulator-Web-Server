@@ -159,3 +159,26 @@ class EmotionalResponse(models.Model):
 
     def __str__(self):
         return f"Response of {self.persona} to {self.news_item}: {self.user_response.response_text} ({self.intensity})"
+
+class LLMModelAndKey(models.Model):
+    """
+    Represents an LLM model and its API key, with additional details.
+    """
+    PROVIDER_CHOICES = [
+        ('openai', 'OpenAI'),
+        ('anthropic', 'Anthropic'),
+        ('google', 'Google Generative AI'),
+    ]
+
+    model_name = models.CharField(max_length=100)
+    active = models.BooleanField(choices=[(True, 'True'), (False, 'False')], default=False)
+    provider_name = models.CharField(max_length=50, choices=PROVIDER_CHOICES)
+
+    def __str__(self):
+        return f"{self.provider_name} ({self.model_name}) - {'Active' if self.active else 'Inactive'}"
+    
+    def save(self, *args, **kwargs):
+        if self.active:
+            LLMModelAndKey.objects.exclude(id=self.id).update(active=False)
+            
+        super().save(*args, **kwargs)

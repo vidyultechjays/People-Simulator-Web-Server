@@ -1,5 +1,7 @@
-from simulator.models import PossibleUserResponses
+from simulator.models import LLMModelAndKey, PossibleUserResponses
 from simulator.utils.ask_gemini import ask_gemini
+from simulator.utils.ask_gpt import ask_gpt
+from simulator.utils.ask_claude import ask_claude
 
 def generate_emotional_response(persona, news_item):
     """
@@ -12,6 +14,8 @@ def generate_emotional_response(persona, news_item):
     Returns:
         tuple: Selected user response, intensity, and explanation
     """
+    active_model = LLMModelAndKey.objects.filter(active=True).first()
+
     personality_description = persona.personality_description or "No description provided."
     
     subcategories = persona.subcategory_mappings.select_related("subcategory").all()
@@ -47,7 +51,15 @@ def generate_emotional_response(persona, news_item):
         "Explanation: {explanation}"
     )
 
-    gemini_response = ask_gemini(prompt)
+    # gemini_response = ask_gemini(prompt)
+    if active_model.provider_name == 'anthropic':
+        gemini_response = ask_claude(prompt,active_model.model_name)
+    elif active_model.provider_name == 'openai':
+        gemini_response=ask_gpt(prompt,active_model.model_name)
+    elif active_model.provider_name == 'google':
+        gemini_response=ask_gemini(prompt,active_model.model_name)
+    else:
+        raise ValueError(f"Unsupported provider: {active_model.provider_name}")
 
     # Extract response number, intensity, and explanation
     response_number = int(gemini_response.split("Selected Response Number:")[1].split("\n")[0].strip())

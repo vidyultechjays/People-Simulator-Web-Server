@@ -1,14 +1,14 @@
 import google.generativeai as genai
 from django.conf import settings
 
-genai.configure(api_key=settings.API_KEY)
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 def ask_gemini(prompt):
     """Calls the Gemini LLM and returns the response."""
     try:
         model = genai.GenerativeModel("gemini-1.5-flash-002")
         response = model.generate_content(prompt)
-        print(response)
+        print(f"Gemini response :{response}")
         if response and hasattr(response, 'text'):
             return response.text  
         elif response and hasattr(response, 'candidates'):
@@ -18,3 +18,4 @@ def ask_gemini(prompt):
     
     except Exception as e:
         return f"Error: {e}"
+

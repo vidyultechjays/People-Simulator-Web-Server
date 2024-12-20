@@ -89,14 +89,13 @@ WSGI_APPLICATION = 'people_simulator.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'people_web_server',  # Name of the PostgreSQL database
-        'USER': 'postgres',            # PostgreSQL username
-        'PASSWORD': 'Vidyulps@1',      # Your PostgreSQL password
-        'HOST': 'localhost',           # Database host (localhost for local development)
-        'PORT': '5432',                # Port (5432 is the default PostgreSQL port)
+        'NAME': os.environ.get('PGDATABASE'),
+        'USER': os.environ.get('PGUSER'),
+        'PASSWORD': os.environ.get('PGPASSWORD'),
+        'HOST': os.environ.get('PGHOST'),
+        'PORT': os.environ.get('PGPORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -143,3 +142,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.replit.dev",
+    "https://*.pike.replit.dev",  # For all subdomains under replit.dev
+    "https://people-simulator-web-server.replit.app",
+    "http://localhost",  # Localhost for development (ensure you need http)
+    "https://localhost",  # Secure localhost (if needed)
+]

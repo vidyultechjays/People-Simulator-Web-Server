@@ -1,2 +1,4 @@
 .env
 venv/
+.replit
+replit.nix

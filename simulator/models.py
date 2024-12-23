@@ -158,7 +158,7 @@ class EmotionalResponse(models.Model):
     explanation = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"Response of {self.persona} to {self.news_item}: {self.user_response.response_text} ({self.intensity})"
+        return f"Response of {self.persona} to {self.news_item}: {self.user_response} ({self.intensity})"
 
 class LLMModelAndKey(models.Model):
     """
@@ -180,5 +180,32 @@ class LLMModelAndKey(models.Model):
     def save(self, *args, **kwargs):
         if self.active:
             LLMModelAndKey.objects.exclude(id=self.id).update(active=False)
-            
+
         super().save(*args, **kwargs)
+
+class PromptModel(models.Model):
+    """
+    Represents a reusable prompt template for various tasks.
+    """
+    TASK_CHOICES = [
+        ('personality_description', 'Personality Description'),
+        ('generate_user_response', 'Generate User Response'),
+        # Add more tasks here if needed
+    ]
+
+    task_name = models.CharField(
+        max_length=50,
+        choices=TASK_CHOICES,
+        default='personality_description',
+        unique=True
+    )
+    prompt_template = models.TextField(
+        help_text="Enter the prompt with placeholders for dynamic fields like {name}, {city}, and {context}."
+    )
+    version = models.CharField(
+        max_length=50,
+        help_text="Enter a version identifier (e.g., 'Elaborate', 'Concise', '3 lines')."
+    )
+
+    def __str__(self):
+        return f"{self.task_name} (Version: {self.version})"

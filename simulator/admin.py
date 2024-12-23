@@ -13,7 +13,8 @@ from simulator.models import (
     PersonaSubCategoryMapping,
     PersonaGenerationTask,
     PossibleUserResponses,
-    LLMModelAndKey
+    LLMModelAndKey,
+    PromptModel
 )
 admin.site.register(Persona)
 admin.site.register(Category)
@@ -25,4 +26,6 @@ admin.site.register(AggregateEmotion)
 admin.site.register(PersonaGenerationTask)
 admin.site.register(PossibleUserResponses)
 admin.site.register(LLMModelAndKey)
+admin.site.register(PromptModel)
+
 

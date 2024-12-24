@@ -2,3 +2,5 @@
 venv/
 .replit
 replit.nix
+__pycache__/
+*.pyc

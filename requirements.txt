@@ -8,8 +8,5 @@ pandas>=1.3.0
 pytest-django>=4.5.2
 pytest>=7.0.0
 Ipython
-<<<<<<< HEAD
-=======
 openai
 anthropic
->>>>>>> modification_branch

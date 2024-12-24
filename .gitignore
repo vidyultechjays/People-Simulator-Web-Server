@@ -4,3 +4,4 @@ venv/
 replit.nix
 __pycache__/
 *.pyc
+persona_csv_files

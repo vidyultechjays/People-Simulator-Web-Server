@@ -1,0 +1,26 @@
+Name,Marital Status,Location,Salary Range,Age Group
+Person_1,Married,Seattle,80k-100k,25-40
+Person_2,Married,Chicago,40k-60k,60+
+Person_3,Divorced,Chicago,25k-35k,40-60
+Person_4,Widowed,Los Angeles,80k-100k,40-60
+Person_5,Widowed,Los Angeles,60k-80k,60+
+Person_6,Married,Phoenix,80k-100k,60+
+Person_7,Widowed,San Francisco,60k-80k,25-40
+Person_8,Divorced,San Diego,25k-35k,Jan-25
+Person_9,Single,Houston,80k-100k,60+
+Person_10,Widowed,Chicago,25k-35k,Jan-25
+Person_11,Divorced,Dallas,40k-60k,60+
+Person_12,Married,Phoenix,40k-60k,Jan-25
+Person_13,Single,San Francisco,60k-80k,25-40
+Person_14,Married,Houston,80k-100k,60+
+Person_15,Divorced,Seattle,80k-100k,Jan-25
+Person_16,Single,Boston,25k-35k,25-40
+Person_17,Divorced,Dallas,40k-60k,40-60
+Person_18,Widowed,Phoenix,60k-80k,25-40
+Person_19,Divorced,San Diego,25k-35k,60+
+Person_20,Divorced,San Diego,25k-35k,60+
+Person_21,Widowed,Dallas,40k-60k,25-40
+Person_22,Married,Phoenix,60k-80k,25-40
+Person_23,Divorced,Boston,25k-35k,25-40
+Person_24,Single,San Diego,40k-60k,Jan-25
+Person_25,Married,Phoenix,25k-35k,60+

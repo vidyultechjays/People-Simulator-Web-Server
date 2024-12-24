@@ -19,6 +19,8 @@ import sys
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") 
+CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -94,7 +96,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -140,3 +141,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.replit.dev",
+    "https://*.pike.replit.dev",  # For all subdomains under replit.dev
+    "https://people-simulator-web-server.replit.app",
+    "http://localhost",  # Localhost for development (ensure you need http)
+    "https://localhost",  # Secure localhost (if needed)
+]

@@ -14,7 +14,8 @@ from simulator.models import (
     PersonaGenerationTask,
     PossibleUserResponses,
     LLMModelAndKey,
-    PromptModel
+    PromptModel,
+    RawPersonaModel
 )
 admin.site.register(Persona)
 admin.site.register(Category)
@@ -27,5 +28,7 @@ admin.site.register(PersonaGenerationTask)
 admin.site.register(PossibleUserResponses)
 admin.site.register(LLMModelAndKey)
 admin.site.register(PromptModel)
+admin.site.register(RawPersonaModel)
+
 
 

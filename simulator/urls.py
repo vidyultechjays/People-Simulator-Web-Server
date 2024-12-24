@@ -7,7 +7,7 @@ from simulator import views
 urlpatterns = [
     path("", views.persona_input, name="persona_input"),
     path("persona_input/", views.persona_input, name="persona_input"),
-    path("demographics_input/", views.demographics_input, name="demographics_input"),
+    # path("demographics_input/", views.demographics_input, name="demographics_input"),
     path('impact-assessment/', views.impact_assessment, name='impact_assessment'),
     path('aggregate-impact/', views.aggregate_emotion, name='aggregate_emotion'),
     path('results-summary/', views.results_summary, name='results_summary'),

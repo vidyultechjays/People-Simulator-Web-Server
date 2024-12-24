@@ -37,6 +37,7 @@ Models included:
 Each model has descriptive methods for string representation to ensure clarity when interacting with instances in the admin interface or during debugging.
 """
 from django.db import models
+from django.db.models import JSONField
 
 class Category(models.Model):
     """
@@ -111,29 +112,22 @@ class AggregateEmotion(models.Model):
         return f"{self.city} - {self.news_item}"
 
 class PersonaGenerationTask(models.Model):
-    """
-    Model to track persona generation tasks
-    """
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed')
-    ]
-
+    """Persona generation Task"""
     city_name = models.CharField(max_length=100)
-    population = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
+        choices=[
+            ('pending', 'Pending'),
+            ('in_progress', 'In Progress'),
+            ('completed', 'Completed'),
+            ('failed', 'Failed')
+        ],
         default='pending'
     )
     error_message = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.city_name} - {self.status}"
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    csv_file = models.FileField(upload_to='persona_csv_files/',blank=True, null=True)
 
 class PossibleUserResponses(models.Model):
     """
@@ -176,7 +170,7 @@ class LLMModelAndKey(models.Model):
 
     def __str__(self):
         return f"{self.provider_name} ({self.model_name}) - {'Active' if self.active else 'Inactive'}"
-    
+
     def save(self, *args, **kwargs):
         if self.active:
             LLMModelAndKey.objects.exclude(id=self.id).update(active=False)
@@ -209,3 +203,13 @@ class PromptModel(models.Model):
 
     def __str__(self):
         return f"{self.task_name} (Version: {self.version})"
+
+class RawPersonaModel(models.Model):
+    """Persona details processed from the csv file"""
+    row_data = JSONField()
+    persona = models.ForeignKey('Persona', on_delete=models.CASCADE, related_name='raw_data')
+    city = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Raw Data for {self.persona.name} in {self.city}"

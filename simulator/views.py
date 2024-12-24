@@ -87,86 +87,121 @@ def results_summary(request):
 
 def persona_input(request):
     """
-    Handles the initial input of city and population for personas.
-    Redirects to demographics_input for further data collection.
+    Handles the CSV file upload and city name input for persona generation
     """
     if request.method == "POST":
         city_name = request.POST.get("city_name")
-        population = int(request.POST.get("population"))
-        request.session["city_name"] = city_name
-        request.session["population"] = population
-        return redirect("demographics_input")
-    return render(request, "persona_input.html")
+        csv_file = request.FILES.get("csv_file")
 
-def demographics_input(request):
-    """
-    Handles the input for categories and subcategories, creates a persona generation task
-    """
-    if request.method == "POST":
-        data = request.POST.dict()
-        categories = {}
-
-        for key, value in data.items():
-            if key.startswith("category_"):
-                _, category_id = key.split("_", 1)
-                if category_id not in categories:
-                    categories[category_id] = {"name": value, "subcategories": []}
-
-            elif key.startswith("subcategory_"):
-                _, category_id, sub_id = key.split("_", 2)
-                subcategory_name = value
-                percentage_key = f"percentage_{category_id}_{sub_id}"
-                percentage = float(data.get(percentage_key, 0))
-                categories[category_id]["subcategories"].append(
-                    {"name": subcategory_name, "percentage": percentage}
-                )
-
-        for category_id, category_data in categories.items():
-            total_percentage = sum(sub["percentage"] for sub in category_data["subcategories"])
-            if total_percentage != 100:
-                messages.error(
-                    request,
-                    f"Subcategory percentages for '{category_data['name']}' must sum to 100."
-                    f"Current total: {total_percentage}."
-                )
-                return redirect("demographics_input")
-
-        saved_categories = []
-        city_name = request.session.get("city_name")
-
-        if not city_name:
-            messages.error(request, "City name is required. Please start from the beginning.")
+        if not csv_file:
+            messages.error(request, "Please upload a CSV file.")
             return redirect("persona_input")
 
-        for category_data in categories.values():
-            category = Category.objects.create(
-                name=category_data["name"],
-                city=city_name
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, "File must be a CSV.")
+            return redirect("persona_input")
+
+        try:
+            # Create a persona generation task with the CSV file
+            task = PersonaGenerationTask.objects.create(
+                city_name=city_name,
+                status='pending',
+                csv_file=csv_file
             )
-            saved_categories.append(category)
-            for subcategory_data in category_data["subcategories"]:
-                SubCategory.objects.create(
-                    name=subcategory_data["name"],
-                    percentage=subcategory_data["percentage"],
-                    category=category,
-                    city=city_name
-                )
 
-        population = request.session.get("population")
-        if not population:
-            messages.error(request, "Population is required. Please start from the beginning.")
+            messages.success(
+                request,
+                f"CSV file uploaded successfully. Processing will begin shortly for {city_name}."
+            )
+            return redirect("impact_assessment")
+
+        except Exception as e:
+            messages.error(request, f"Error processing upload: {str(e)}")
             return redirect("persona_input")
 
-        # Create a persona generation task
-        PersonaGenerationTask.objects.create(
-            city_name=city_name,
-            population=population,
-            status='pending'
-        )
+    return render(request, "persona_input.html")
+# def persona_input(request):
+#     """
+#     Handles the initial input of city and population for personas.
+#     Redirects to demographics_input for further data collection.
+#     """
+#     if request.method == "POST":
+#         city_name = request.POST.get("city_name")
+#         population = int(request.POST.get("population"))
+#         request.session["city_name"] = city_name
+#         request.session["population"] = population
+#         return redirect("demographics_input")
+#     return render(request, "persona_input.html")
 
-        messages.success(request, f"Persona generation task for {city_name} created successfully.")
-        return redirect("impact_assessment")
-    return render(request, "demographics_input.html")
+# def demographics_input(request):
+#     """
+#     Handles the input for categories and subcategories, creates a persona generation task
+#     """
+#     if request.method == "POST":
+#         data = request.POST.dict()
+#         categories = {}
+
+#         for key, value in data.items():
+#             if key.startswith("category_"):
+#                 _, category_id = key.split("_", 1)
+#                 if category_id not in categories:
+#                     categories[category_id] = {"name": value, "subcategories": []}
+
+#             elif key.startswith("subcategory_"):
+#                 _, category_id, sub_id = key.split("_", 2)
+#                 subcategory_name = value
+#                 percentage_key = f"percentage_{category_id}_{sub_id}"
+#                 percentage = float(data.get(percentage_key, 0))
+#                 categories[category_id]["subcategories"].append(
+#                     {"name": subcategory_name, "percentage": percentage}
+#                 )
+
+#         for category_id, category_data in categories.items():
+#             total_percentage = sum(sub["percentage"] for sub in category_data["subcategories"])
+#             if total_percentage != 100:
+#                 messages.error(
+#                     request,
+#                     f"Subcategory percentages for '{category_data['name']}' must sum to 100."
+#                     f"Current total: {total_percentage}."
+#                 )
+#                 return redirect("demographics_input")
+
+#         saved_categories = []
+#         city_name = request.session.get("city_name")
+
+#         if not city_name:
+#             messages.error(request, "City name is required. Please start from the beginning.")
+#             return redirect("persona_input")
+
+#         for category_data in categories.values():
+#             category = Category.objects.create(
+#                 name=category_data["name"],
+#                 city=city_name
+#             )
+#             saved_categories.append(category)
+#             for subcategory_data in category_data["subcategories"]:
+#                 SubCategory.objects.create(
+#                     name=subcategory_data["name"],
+#                     percentage=subcategory_data["percentage"],
+#                     category=category,
+#                     city=city_name
+#                 )
+
+#         population = request.session.get("population")
+#         if not population:
+#             messages.error(request, "Population is required. Please start from the beginning.")
+#             return redirect("persona_input")
+
+#         # Create a persona generation task
+#         PersonaGenerationTask.objects.create(
+#             city_name=city_name,
+#             population=population,
+#             status='pending'
+#         )
+
+#         messages.success(request, f"Persona generation task for {city_name} created successfully.")
+#         return redirect("impact_assessment")
+#     return render(request, "demographics_input.html")
 
 def impact_assessment(request):
     """

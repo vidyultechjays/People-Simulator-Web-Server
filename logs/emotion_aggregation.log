@@ -55,3 +55,83 @@
 2024-12-24 16:43:22,355 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
 2024-12-24 16:43:37,357 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
 2024-12-24 16:43:37,359 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:57:15,939 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:57:16,005 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:57:28,855 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:29,129 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:29,202 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:29,852 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:31,021 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:57:31,023 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:57:31,844 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:31,903 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:32,224 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:32,695 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:34,821 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:35,683 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:35,937 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:36,174 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:38,498 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:39,151 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:39,154 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:40,563 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:41,224 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:42,086 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:42,632 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:44,378 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:44,591 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:45,165 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:45,698 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:46,038 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:57:46,039 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:57:47,541 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:57:49,154 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:01,049 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:58:01,053 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:58:09,710 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:09,783 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:10,296 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:10,369 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:13,321 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:13,675 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:13,806 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:14,095 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:16,059 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:58:16,064 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:58:16,748 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:16,977 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:58:31,070 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:58:31,073 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:58:46,076 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:58:46,078 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:59:01,084 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:59:01,090 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:59:16,098 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:59:16,102 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 16:59:31,111 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 16:59:31,115 - simulator.management.commands.aggregate_emotions - INFO - Processing aggregation for city: Vadakara, news item: Volleyball finals this week, id: 212
+2024-12-24 16:59:31,115 - simulator.management.commands.aggregate_emotions - INFO - Starting aggregation for city: Vadakara, news item: Volleyball finals this week, id: 212
+2024-12-24 16:59:31,122 - simulator.management.commands.aggregate_emotions - INFO - Found 10 personas in city: Vadakara
+2024-12-24 16:59:31,124 - simulator.management.commands.aggregate_emotions - INFO - Found 3 possible responses
+2024-12-24 16:59:34,438 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:59:38,237 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:59:41,773 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:59:45,161 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:59:49,654 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:59:53,170 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 16:59:56,173 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 17:00:00,923 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 17:00:05,041 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 17:00:08,316 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-12-24 17:00:08,330 - simulator.management.commands.aggregate_emotions - INFO - Aggregation completed successfully for city: Vadakara
+2024-12-24 17:00:08,331 - simulator.management.commands.aggregate_emotions - INFO - Successfully processed aggregation for city: Vadakara
+2024-12-24 17:00:23,341 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 17:00:23,346 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 17:00:38,350 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 17:00:38,352 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 17:00:53,358 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 17:00:53,360 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 17:01:08,364 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 17:01:08,370 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.
+2024-12-24 17:01:23,372 - simulator.management.commands.aggregate_emotions - INFO - Fetching pending aggregation requests...
+2024-12-24 17:01:23,374 - simulator.management.commands.aggregate_emotions - INFO - No pending aggregation requests found.

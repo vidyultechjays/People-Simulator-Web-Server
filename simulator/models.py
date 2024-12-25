@@ -46,6 +46,12 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
+    
+    class Meta:
+        unique_together = ['name', 'city']  # Ensure category names are unique per city
+        indexes = [
+            models.Index(fields=['name', 'city'])
+        ]
 
     def __str__(self):
         return self.name
@@ -59,6 +65,12 @@ class SubCategory(models.Model):
     percentage = models.DecimalField(max_digits=5, decimal_places=2)
     description = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        unique_together = ['category', 'name', 'city']  # Ensure subcategory names are unique per category and city
+        indexes = [
+            models.Index(fields=['category', 'name', 'city'])
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.category})"

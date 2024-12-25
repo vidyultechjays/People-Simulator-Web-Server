@@ -148,3 +148,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost",  # Localhost for development (ensure you need http)
     "https://localhost",  # Secure localhost (if needed)
 ]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'persona_csv_files')
+MEDIA_URL = '/persona_csv_files/'

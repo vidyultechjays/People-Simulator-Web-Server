@@ -64,13 +64,11 @@ class Command(BaseCommand):
                 task.status = 'in_progress'
                 task.save()
 
-            # Read CSV file content from task
             df = pd.read_csv(task.csv_file.path)
             
             if 'Name' not in df.columns:
                 raise ValueError("CSV file must contain a 'Name' column")
 
-            # Process each row in parallel
             with ThreadPoolExecutor(max_workers=4) as executor:
                 futures = [
                     executor.submit(

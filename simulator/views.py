@@ -85,41 +85,138 @@ def results_summary(request):
         "possible_responses": possible_responses,
     })
 
+# views.py
+
 def persona_input(request):
     """
-    Handles the CSV file upload and city name input for persona generation
+    Handles both CSV file upload and population-based persona generation options
     """
     if request.method == "POST":
+        generation_type = request.POST.get("generation_type")
         city_name = request.POST.get("city_name")
-        csv_file = request.FILES.get("csv_file")
 
-        if not csv_file:
-            messages.error(request, "Please upload a CSV file.")
+        if not city_name:
+            messages.error(request, "City name is required.")
             return redirect("persona_input")
 
-        if not csv_file.name.endswith('.csv'):
-            messages.error(request, "File must be a CSV.")
-            return redirect("persona_input")
+        if generation_type == "csv":
+            csv_file = request.FILES.get("csv_file")
+            
+            if not csv_file:
+                messages.error(request, "Please upload a CSV file.")
+                return redirect("persona_input")
 
-        try:
-            # Create a persona generation task with the CSV file
-            task = PersonaGenerationTask.objects.create(
-                city_name=city_name,
-                status='pending',
-                csv_file=csv_file
-            )
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, "File must be a CSV.")
+                return redirect("persona_input")
 
-            messages.success(
-                request,
-                f"CSV file uploaded successfully. Processing will begin shortly for {city_name}."
-            )
-            return redirect("impact_assessment")
+            try:
+                task = PersonaGenerationTask.objects.create(
+                    city_name=city_name,
+                    status='pending',
+                    csv_file=csv_file
+                )
+                
+                messages.success(
+                    request,
+                    f"CSV file uploaded successfully. Processing will begin shortly for {city_name}."
+                )
+                return redirect("impact_assessment")
+            
+            except Exception as e:
+                messages.error(request, f"Error processing upload: {str(e)}")
+                return redirect("persona_input")
 
-        except Exception as e:
-            messages.error(request, f"Error processing upload: {str(e)}")
+        elif generation_type == "demographics":
+            try:
+                population = int(request.POST.get("population"))
+                if population <= 0:
+                    messages.error(request, "Population must be a positive number.")
+                    return redirect("persona_input")
+                    
+                request.session["city_name"] = city_name
+                request.session["population"] = population
+                return redirect("demographics_input")
+            
+            except (ValueError, TypeError):
+                messages.error(request, "Please enter a valid population number.")
+                return redirect("persona_input")
+        
+        else:
+            messages.error(request, "Please select a generation type.")
             return redirect("persona_input")
 
     return render(request, "persona_input.html")
+
+def demographics_input(request):
+    """
+    Handles the input for categories and subcategories, creates a persona generation task
+    """
+    if request.method == "POST":
+        data = request.POST.dict()
+        categories = {}
+
+        for key, value in data.items():
+            if key.startswith("category_"):
+                _, category_id = key.split("_", 1)
+                if category_id not in categories:
+                    categories[category_id] = {"name": value, "subcategories": []}
+
+            elif key.startswith("subcategory_"):
+                _, category_id, sub_id = key.split("_", 2)
+                subcategory_name = value
+                percentage_key = f"percentage_{category_id}_{sub_id}"
+                percentage = float(data.get(percentage_key, 0))
+                categories[category_id]["subcategories"].append(
+                    {"name": subcategory_name, "percentage": percentage}
+                )
+
+        for category_id, category_data in categories.items():
+            total_percentage = sum(sub["percentage"] for sub in category_data["subcategories"])
+            if total_percentage != 100:
+                messages.error(
+                    request,
+                    f"Subcategory percentages for '{category_data['name']}' must sum to 100."
+                    f"Current total: {total_percentage}."
+                )
+                return redirect("demographics_input")
+
+        saved_categories = []
+        city_name = request.session.get("city_name")
+
+        if not city_name:
+            messages.error(request, "City name is required. Please start from the beginning.")
+            return redirect("persona_input")
+
+        for category_data in categories.values():
+            category = Category.objects.create(
+                name=category_data["name"],
+                city=city_name
+            )
+            saved_categories.append(category)
+            for subcategory_data in category_data["subcategories"]:
+                SubCategory.objects.create(
+                    name=subcategory_data["name"],
+                    percentage=subcategory_data["percentage"],
+                    category=category,
+                    city=city_name
+                )
+
+        population = request.session.get("population")
+        if not population:
+            messages.error(request, "Population is required. Please start from the beginning.")
+            return redirect("persona_input")
+
+        # Create a persona generation task
+        PersonaGenerationTask.objects.create(
+            city_name=city_name,
+            population=population,
+            status='pending'
+        )
+
+        messages.success(request, f"Persona generation task for {city_name} created successfully.")
+        return redirect("impact_assessment")
+    return render(request, "demographics_input.html")
 
 def impact_assessment(request):
     """

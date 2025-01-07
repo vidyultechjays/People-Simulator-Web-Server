@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Persona Input</title>
+    <title>Persona Generation</title>
     <link rel="stylesheet" href="{% static 'css/persona_generation_style.css' %}">
 </head>
 <body>
@@ -10,29 +10,69 @@
         <a href="{% url 'persona_input' %}">Persona Generation</a>
         <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
         <a href="{% url 'list_aggregate_emotions' %}">List Results</a>
-    </div><br>
-    <h1>Upload CSV for Persona Generation</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="city_name">City Name:</label>
-        <input type="text" id="city_name" name="city_name" required>
-        <br><br>
-
-        <label for="csv_file">Upload CSV File:</label>
-        <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
-        <br><br>
-
-        <button type="submit">Generate Personas</button>
-    </form>
-
-    {% if messages %}
-    <div class="message-container">
-        {% for message in messages %}
-        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-            {{ message }}
-        </div>
-        {% endfor %}
     </div>
-    {% endif %}
+
+    <div class="generation-container">
+        <h1>Persona Generation</h1>
+        
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="city_name">City Name:</label>
+                <input type="text" id="city_name" name="city_name" required>
+            </div>
+
+            <div class="option-selector">
+                <label>
+                    <input type="radio" name="generation_type" value="csv" onclick="showGenerationOption('csv')">
+                    Upload CSV File
+                </label>
+                <label>
+                    <input type="radio" name="generation_type" value="demographics" onclick="showGenerationOption('demographics')">
+                    Input Demographics
+                </label>
+            </div>
+
+            <div id="csvOption" class="generation-option">
+                <div class="form-group">
+                    <label for="csv_file">Upload CSV File:</label>
+                    <input type="file" id="csv_file" name="csv_file" accept=".csv">
+                    <small>File must be in CSV format and include required columns.</small>
+                </div>
+            </div>
+
+            <div id="demographicsOption" class="generation-option">
+                <div class="form-group">
+                    <label for="population">Population Size:</label>
+                    <input type="number" id="population" name="population" min="1">
+                    <small>Enter the number of personas to generate</small>
+                </div>
+            </div>
+
+            <button type="submit">Continue</button>
+        </form>
+    </div>
+
+    <script>
+        function showGenerationOption(option) {
+            document.getElementById('csvOption').style.display = 'none';
+            document.getElementById('demographicsOption').style.display = 'none';
+            
+            if (option) {
+                document.getElementById(option + 'Option').style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>

@@ -137,6 +137,7 @@ class PersonaGenerationTask(models.Model):
         default='pending'
     )
     error_message = models.TextField(null=True, blank=True)
+    population = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     csv_file = models.FileField(upload_to='persona_csv_files/',blank=True, null=True)

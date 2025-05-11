@@ -5,7 +5,11 @@ from django.urls import path
 from simulator import views
 
 urlpatterns = [
-    path("", views.persona_input, name="persona_input"),
+    path("", views.landing_page, name="landing_page"),
+    path("impact-assessment-new/", views.impact_assessment_new, name="impact_assessment_new"),
+    
+    
+    
     path("persona_input/", views.persona_input, name="persona_input"),
     path("demographics_input/", views.demographics_input, name="demographics_input"),
     path('impact-assessment/', views.impact_assessment, name='impact_assessment'),
@@ -18,4 +22,6 @@ urlpatterns = [
         name='sample_profiles'
     ),
     path('list-aggregate-emotions/', views.list_aggregate_emotions, name='list_aggregate_emotions'),
+    path('optimize-content/', views.optimize_content, name='optimize_content'),
+    path('optimize-content-two/', views.optimize_content_two, name='optimize_content_two'),
 ]

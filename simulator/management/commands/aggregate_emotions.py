@@ -165,18 +165,22 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
             try:
                 # Generate response for this persona
                 selected_response, intensity, explanation = generate_emotional_response(persona, news_item)
+                print(f"selected_response: {selected_response} (type: {type(selected_response)}) :: intensity: {intensity} (type: {type(intensity)}) :: explanation: {explanation} (type: {type(explanation)})")
+                
+                # Get the PossibleUserResponses instance using the ID returned by generate_emotional_response
+                selected_response_obj = PossibleUserResponses.objects.get(id=selected_response)
                 
                 # Create EmotionalResponse
                 emotional_response = EmotionalResponse.objects.create(
                     persona=persona,
                     news_item=news_item,
-                    user_response=selected_response,
+                    user_response=selected_response_obj,
                     intensity=intensity,
                     explanation=explanation
                 )
 
-                # Update overall response summary
-                response_summary[selected_response.id]['count'] += 1
+                # Update overall response summary - use the ID directly since that's what our keys are
+                response_summary[selected_response]['count'] += 1
                 total_responses += 1
 
                 # Update demographic summary
@@ -196,10 +200,11 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
                         subcategory_name in demographic_summary[category_name]):
                         demographic_mapping = demographic_summary[category_name][subcategory_name]
                         
-                        # Increment count for this response in this demographic group
-                        demographic_mapping[selected_response.id]['count'] += 1
+                        # Increment count for this response in this demographic group - use the ID directly
+                        demographic_mapping[selected_response]['count'] += 1
 
             except Exception as persona_error:
+                
                 logger.error(f"Error processing persona {persona.id}: {persona_error}")
 
         # Calculate percentages for overall response summary

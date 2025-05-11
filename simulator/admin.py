@@ -15,7 +15,8 @@ from simulator.models import (
     PossibleUserResponses,
     LLMModelAndKey,
     PromptModel,
-    RawPersonaModel
+    RawPersonaModel,
+    OptimizedResponse
 )
 admin.site.register(Persona)
 admin.site.register(Category)
@@ -29,6 +30,7 @@ admin.site.register(PossibleUserResponses)
 admin.site.register(LLMModelAndKey)
 admin.site.register(PromptModel)
 admin.site.register(RawPersonaModel)
+admin.site.register(OptimizedResponse)
 
 
 

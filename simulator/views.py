@@ -32,7 +32,8 @@ to analyze the influence of news items on diverse demographics.
 """
 
 import logging
-from django.shortcuts import render,redirect
+import json
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib import messages
 from simulator.models import (
@@ -41,12 +42,63 @@ from simulator.models import (
     PersonaSubCategoryMapping,
     EmotionalResponse,
     NewsItem,
-    AggregateEmotion
+    AggregateEmotion,
+    OptimizedResponse
 )
 from simulator.utils.results_visualization_helper import create_demographic_charts
+from simulator.utils.impact_assesment_helper import generate_optimal_response
+from simulator.auth_views import login_required
 
 logger = logging.getLogger(__name__)
 
+@login_required
+def landing_page(request):
+    """
+    Landing page for the simulator
+    """
+    city_name = request.GET.get('city', None)
+    cities = (
+        Persona.objects.exclude(city__isnull=True)
+        .exclude(city="")
+        .values_list("city", flat=True)
+        .distinct()
+        .order_by("city")
+    )
+    context = {
+        'cities': cities,
+        'selected_city': city_name
+    }
+    return render(request, 'landing.html', context)
+    # return render(request, 'landing.html')
+
+@login_required
+def impact_assessment_new(request):
+    """
+    Enhanced landing page showing news items analyzed for a specific city
+    """
+    city_name = request.GET.get('city', None)
+    
+    # Get aggregate emotions for the selected city
+    aggregate_emotions = None
+    if city_name:
+        aggregate_emotions = AggregateEmotion.objects.filter(city=city_name).select_related('news_item').order_by('-created_at')
+    
+    # Get list of all cities for dropdown selection
+    cities = (
+        Persona.objects.exclude(city__isnull=True)
+        .exclude(city="")
+        .values_list("city", flat=True)
+        .distinct()
+        .order_by("city")
+    )
+    
+    return render(request, 'impact_assessment_new.html', {
+        'selected_city': city_name,
+        'cities': cities,
+        'aggregate_emotions': aggregate_emotions
+    })
+
+@login_required
 def results_summary(request):
     """
     Display detailed emotional summary with demographic breakdowns and user responses
@@ -218,7 +270,7 @@ def demographics_input(request):
         )
 
         messages.success(request, f"Persona generation task for {city_name} created successfully.")
-        return redirect("impact_assessment")
+        return redirect("landing_page")
     return render(request, "demographics_input.html")
 
 @login_required
@@ -337,15 +389,16 @@ def fetch_summary_api(request):
     Fetches the emotional summary and demographic breakdown for a specific city and news item.
     Returns JSON response with the status, summary, and demographic details.
     """
+    logger.info("Fetch summary API request received")
     city = request.GET.get('city')
     news_item = request.GET.get('news_item')
 
     try:
         aggregate_emotion = AggregateEmotion.objects.get(
             city=city,
-            news_item__title=news_item
+            news_item__title__icontains=news_item.strip()
         )
-
+        
         if aggregate_emotion.summary.get('total_responses', 0) > 0:
             return JsonResponse({
                 "status": "completed",
@@ -357,9 +410,13 @@ def fetch_summary_api(request):
 
         return JsonResponse({"status": "processing"})
 
-    except AggregateEmotion.DoesNotExist:
-        return JsonResponse({"status": "error", "message": "Summary not found"}, status=404)
+    # except AggregateEmotion.DoesNotExist:
+    #     return JsonResponse({"status": "error", "message": "Summary not found"}, status=404)
+    except Exception as e:
+        logger.error(f"Error in fetch_summary_api: {str(e)}")
+        return JsonResponse({"status": "error", "message": "An unexpected error occurred"}, status=500)
 
+@login_required
 def fetch_sample_profiles(request, category_type, category_name, city_name, news_item_title):
     """
     Fetch sample profiles for a given category, subcategory, and city 
@@ -466,3 +523,97 @@ def list_aggregate_emotions(request):
     return render(request, 'list_aggregate_emotions.html', {
         'aggregate_emotions': aggregate_emotions
     })
+
+
+@login_required
+def optimize_content(request):
+    """
+    Generates and returns optimized content for a news item
+    """
+    logger.info("optimize_content request received")
+    if request.method == "POST":
+        city_name = request.POST.get('city')
+        news_item_title = request.POST.get('news_item')
+        demographic_focus = request.POST.getlist('demographic_focus')
+        print(f"demographic_focus: {demographic_focus}")
+        
+        if not city_name or not news_item_title:
+            return JsonResponse({'error': 'City name and news item title are required'}, status=400)
+            
+        # Get or generate optimized content
+        print('before')
+        existing_optimization = OptimizedResponse.objects.filter(
+            city=city_name,
+            news_item__title=news_item_title,
+            demographic_focus=demographic_focus
+        ).first()
+        print('after')
+        
+        if existing_optimization:
+            response_data = {
+                'optimized_content': json.loads(existing_optimization.optimized_content),
+                'optimization_metrics': existing_optimization.optimization_metrics,
+                'success': True,
+                'cached': True
+            }
+        else:
+            # Get the news item content
+            print('inside else statement')
+            news_item = NewsItem.objects.get(title__icontains=news_item_title)
+            
+            
+            # Get demographic breakdown for the city
+            categories = Category.objects.filter(city=city_name)
+            subcategories = SubCategory.objects.filter(city=city_name)
+            
+            
+            
+            
+            # Generate new optimization
+            print('before response data')
+            response_data = generate_optimal_response(city_name, news_item , demographic_focus)
+        
+        return JsonResponse(response_data)
+    
+    return JsonResponse({'error': 'Only POST requests allowed'}, status=405)
+
+@login_required
+def optimize_content_two(request):
+    """
+    View to handle the optimization strategy form submission and processing
+    """
+    
+    city_name = request.GET.get('city')
+    news_item_title = request.GET.get('news_item')
+    
+    logger.info(f"city_name: {city_name} :: news_item_title: {news_item_title}")
+    print(f"city_name: {city_name} :: news_item_title: {news_item_title}")
+    
+    if request.method == "POST":
+            
+        news_item = request.POST.get('news_item')
+        city_name = request.POST.get('city')
+        demographic_focus = request.POST.getlist('demographic_focus')
+
+        if not city_name or not news_item:
+            return JsonResponse({'error': 'City name and news item title are required'}, status=400)
+        
+        print(f"demographic_focus: {demographic_focus}")
+        
+        
+        # Get demographic breakdown for the city
+    categories = Category.objects.filter(city=city_name)
+    subcategories = SubCategory.objects.filter(city=city_name)
+    
+    return render(request, 'optimization_strategy.html', {
+        'messages': None,
+        'city_name': city_name,
+        'news_item': news_item_title,
+        'categories': categories,
+        'subcategories': subcategories,
+        'optimization_strategy': None
+    })
+    
+    
+        
+        

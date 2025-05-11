@@ -3,30 +3,27 @@
 /* General body styling */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f8ff; /* Light blue background */
-    color: #1a1a1a; /* Dark text for readability */
+    background-color: #121212;
+    color: #e0e0e0;
     margin: 0;
     padding: 0;
 }
 
 /* Container styling */
 .container {
-    background-color: #ffffff; /* White background for contrast */
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
-    padding: 20px;
+    max-width: 900px;
+    margin: 50px auto;
+    background-color: #1e1e1e;
+    padding: a0px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Heading styles */
-h1, h3 {
-    text-align: center;
-    color: #1e90ff; /* Dodger blue for headings */
-    font-weight: bold;
-}
-
 h1 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
+    color: #9d4edd;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 h3 {
@@ -36,37 +33,50 @@ h3 {
 
 /* Table styles */
 .table {
-    background-color: #e6f7ff; /* Soft blue for the table */
-    border: 1px solid #b3d9ff; /* Slightly darker border */
+    background-color: #1e1e1e !important; /* Dark background */
+    border: 1px solid #3d3d3d !important; /* Dark border */
     border-radius: 8px;
     overflow: hidden;
     margin-top: 20px;
+    color: #e0e0e0 !important;
 }
 
 .table thead {
-    background-color: #1e90ff; /* Dodger blue for the header */
-    color: #ffffff; /* White text for contrast */
+    background-color: #5a189a !important; /* Violet accent for header */
+    color: #ffffff !important; /* White text for contrast */
     font-weight: bold;
-    text-align: center;
+    text-align: left;
 }
 
 .table thead th {
     padding: 12px;
     font-size: 1.1em;
+    border-bottom: none !important;
+    color: #ffffff !important;
 }
 
-.table tbody tr:nth-child(even) {
-    background-color: #f0f8ff; /* Alternating light blue rows */
+.table-bordered {
+    border: 1px solid #3d3d3d !important;
+}
+
+.table tbody tr {
+    background-color: #1e1e1e !important; /* Dark for even rows */
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #2d2d2d !important; /* Slightly lighter for odd rows */
 }
 
 .table tbody tr:hover {
-    background-color: #d0e7ff; /* Slightly darker blue on hover */
+    background-color: rgba(157, 78, 221, 0.2) !important; /* Violet hover */
 }
 
 .table tbody td {
     padding: 10px;
     vertical-align: top;
-    border: 1px solid #b3d9ff;
+    border: 1px solid #3d3d3d !important;
+    color: #e0e0e0 !important;
+    background-color: transparent !important;
 }
 
 /* Button styling */
@@ -86,6 +96,154 @@ h3 {
     background-color: #0c7ccd; /* Slightly darker blue on hover */
 }
 
+/* Profile Card Styles */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.profile-card {
+    background-color: #2d2d2d;
+    border: 1px solid #3d3d3d;
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.profile-name {
+    font-size: 1.4rem;
+    color: #c77dff;
+    margin: 10px 0;
+}
+
+.profile-details {
+    margin-top: 15px;
+    color: #b0b0b0;
+}
+
+.profile-details p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.profile-details strong {
+    color: #e0e0e0;
+}
+
+/* Button Styles */
+.action-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #9d4edd;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.action-btn:hover {
+    background-color: #7b2cbf;
+}
+
+/* Filter Section */
+.filter-section {
+    margin-bottom: 30px;
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #3d3d3d;
+}
+
+.filter-section label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #c77dff;
+}
+
+.filter-section select {
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: 1px solid #3d3d3d;
+}
+
+.filter-section select:focus {
+    border-color: #9d4edd;
+    outline: none;
+}
+
+.filter-section button {
+    margin-left: 10px;
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: #1e1e1e;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #3d3d3d;
+}
+
+.navbar a {
+    color: #c77dff;
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    text-decoration: none;
+    padding: 14px 20px;
+    display: block;
+    text-align: center;
+}
+
+.navbar a:hover {
+    background-color: #5a189a;
+    color: #ffffff;
+}
+
+/* Emotion Tags */
+.emotion-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    margin: 3px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.tag-positive {
+    background-color: #0d3320;
+    color: #4caf50;
+}
+
+.tag-negative {
+    background-color: #350c0c;
+    color: #f44336;
+}
+
+.tag-neutral {
+    background-color: #0c2331;
+    color: #03a9f4;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     h1 {
@@ -103,5 +261,17 @@ h3 {
     .btn {
         font-size: 0.9em;
         padding: 8px 16px;
+    }
+
+    .profile-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .container {
+        padding: 15px;
+    }
+    
+    .profile-card {
+        padding: 15px;
     }
 }

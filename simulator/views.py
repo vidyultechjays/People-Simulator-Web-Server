@@ -87,11 +87,13 @@ def results_summary(request):
 
 # views.py
 
+@login_required
 def persona_input(request):
     """
     Handles both CSV file upload and population-based persona generation options
     """
     if request.method == "POST":
+        logger.info("POST request received")
         generation_type = request.POST.get("generation_type")
         city_name = request.POST.get("city_name")
 
@@ -121,7 +123,7 @@ def persona_input(request):
                     request,
                     f"CSV file uploaded successfully. Processing will begin shortly for {city_name}."
                 )
-                return redirect("impact_assessment")
+                return redirect("impact_assessment_new")
             
             except Exception as e:
                 messages.error(request, f"Error processing upload: {str(e)}")
@@ -148,6 +150,7 @@ def persona_input(request):
 
     return render(request, "persona_input.html")
 
+@login_required
 def demographics_input(request):
     """
     Handles the input for categories and subcategories, creates a persona generation task
@@ -218,6 +221,7 @@ def demographics_input(request):
         return redirect("impact_assessment")
     return render(request, "demographics_input.html")
 
+@login_required
 def impact_assessment(request):
     """
     Displays personas by city and processes emotional responses
@@ -242,6 +246,7 @@ def impact_assessment(request):
         return render(request, "impact_assessment.html", context)
 
 
+@login_required
 def aggregate_emotion(request):
     """
     Initiates the aggregation of emotional responses for a specific news item and city,
@@ -253,6 +258,7 @@ def aggregate_emotion(request):
         possible_responses = [
             value for key, value in request.POST.items() if key.startswith("possible_response_")
         ]
+        print(f"city_name: {city_name} :: news_item_title: {news_item_title} :: possible_responses: {possible_responses}")
 
         if not city_name or not news_item_title:
             messages.error(request, "Both 'city' and 'news_item' parameters are required.")
@@ -325,6 +331,7 @@ def aggregate_emotion(request):
     return redirect("impact_assessment")
 
 
+@login_required
 def fetch_summary_api(request):
     """
     Fetches the emotional summary and demographic breakdown for a specific city and news item.
@@ -449,6 +456,7 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
         messages.error(request, "An unexpected error occurred while fetching sample profiles")
         return redirect('results_summary')
 
+@login_required
 def list_aggregate_emotions(request):
     """
     View to list all AggregateEmotion objects with links to their respective result summaries.

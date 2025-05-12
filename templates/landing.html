@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>People Simulator - Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="{% static 'css/dark_theme.css' %}" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #9d4edd;
+            --primary-hover: #7b2cbf;
+            --danger-color: #ef476f;
+            --danger-hover: #d64265;
+            --success-color: #06d6a0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #3d3d3d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            --radius: 8px;
+            --transition: all 0.2s ease;
+        }
+        body {
+            background: var(--bg-color);
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+        .navbar a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+        }
+        .navbar a:hover {
+            background-color: #5a189a;
+            color: white;
+        }
+        .logout-btn {
+            background-color: var(--danger-color);
+            color: white !important;
+            margin-left: 10px;
+        }
+        .logout-btn:hover {
+            background-color: var(--danger-hover) !important;
+        }
+        .user-info {
+            color: var(--text-color);
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+        .landing-container {
+            background: var(--card-bg);
+            max-width: 600px;
+            margin: 64px auto 0 auto;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            padding: 48px 40px 40px 40px;
+            text-align: center;
+        }
+        h1 {
+            color: #9d4edd;
+            font-size: 2.5rem;
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+        p {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin-bottom: 32px;
+        }
+        .cta-btn {
+            background: linear-gradient(90deg, #9d4edd 0%, #5a189a 100%);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 36px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(157,78,221,0.3);
+            transition: background 0.2s, transform 0.1s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .cta-btn:hover {
+            background: linear-gradient(90deg, #7b2cbf 0%, #3c096c 100%);
+            transform: translateY(-2px) scale(1.01);
+        }
+        .cta-btn:disabled {
+            background: linear-gradient(90deg, #6b6b6b 0%, #4a4a4a 100%);
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+        .features {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .feature {
+            background: #2d2d2d;
+            border: 1.5px solid #3d3d3d;
+            border-radius: 12px;
+            padding: 18px 24px;
+            text-align: left;
+        }
+        @media (max-width: 700px) {
+            .landing-container { padding: 24px 8px; }
+            .features { gap: 14px; }
+        }
+        select {
+            background-color: #2d2d2d;
+            color: var(--text-color);
+            border: 1.5px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 1.1rem;
+        }
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        label {
+            font-weight: 600;
+            color: #c77dff;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <a href="/" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; vertical-align: middle;">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    People Simulator
+                </a>
+                <a href="/">Home</a>
+            </div>
+            <div class="navbar-right">
+                {% if request.session.username %}
+                    <span class="user-info">Logged in as: {{ request.session.username }}</span>
+                    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="landing-container">
+        <h1>Welcome to People Simulator</h1>
+        <p>Simulate, analyze, and optimize personas for your people group or project. Generate personas, assess impact, and explore aggregate results with ease.</p>
+        <form method="get" action="{% url 'impact_assessment_new' %}" style="margin-bottom: 24px;">
+            <label for="city-select">Select a People Group:</label>
+            <br>
+            <select id="city-select" name="city" style="margin: 16px 0;" onchange="checkSelection()">
+                <option value="" disabled selected>Choose a People Group</option>
+                {% for city in cities %}
+                    <option value="{{ city }}">{{ city }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <button id="assessment-btn" class="cta-btn" type="submit" disabled>View Impact Assessment</button>
+        </form>
+        <a class="cta-btn" href="{% url 'persona_input' %}" style="background: #9d4edd; margin-bottom: 24px;">Create New Demographic</a>
+        <div class="features">
+            <div class="feature"><strong>Persona Generation:</strong> Create personas using demographic input or CSV upload.</div>
+            <div class="feature"><strong>Impact Assessment:</strong> Analyze the effects of different strategies on your personas.</div>
+            <div class="feature"><strong>Results Listing:</strong> View and export aggregate emotions and simulation outcomes.</div>
+        </div>
+    </div>
+
+    <script>
+        function checkSelection() {
+            const selectElement = document.getElementById('city-select');
+            const assessmentButton = document.getElementById('assessment-btn');
+            
+            // Enable the button only if a valid option is selected
+            assessmentButton.disabled = selectElement.value === "";
+        }
+        
+        // Run on page load to ensure initial state is correct
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSelection();
+        });
+    </script>
+</body>
+</html> 

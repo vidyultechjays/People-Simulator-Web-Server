@@ -4,7 +4,85 @@
 <head>
     <title>Impact Assessment</title>
     <link rel="stylesheet" href="{% static 'css/impact_assessment_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --danger-color: #ef476f;
+            --danger-hover: #d64265;
+            --success-color: #06d6a0;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --radius: 8px;
+            --transition: all 0.2s ease;
+        }
+        body {
+            background: #eaf6fb;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+        .navbar a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+        }
+        .navbar a:hover {
+            background-color: #5a189a;
+            color: white;
+        }
+        .logout-btn {
+            background-color: var(--danger-color);
+            color: white !important;
+            margin-left: 10px;
+        }
+        .logout-btn:hover {
+            background-color: var(--danger-hover) !important;
+        }
+        .user-info {
+            color: var(--text-color);
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+    </style>
     <script>
         let responseCount = 0;
 
@@ -30,59 +108,78 @@
         }
     </script>
 </head>
-<body>
+<body class="dark-theme">
     <div class="navbar">
-        <a href="{% url 'persona_input' %}">Persona Generation</a>
-        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
-        <a href="{% url 'list_aggregate_emotions' %}">List Results</a>
-    </div><br>
-
-    {% if messages %}
-    <div class="message-container">
-        {% for message in messages %}
-        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-            {{ message }}
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <a href="/" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; vertical-align: middle;">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    People Simulator
+                </a>
+            </div>
+            <div class="navbar-right">
+                <a href="/">Home</a>
+                {% if request.session.username %}
+                    <span class="user-info">Logged in as: {{ request.session.username }}</span>
+                    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+                {% endif %}
+            </div>
         </div>
-        {% endfor %}
     </div>
-    {% endif %}
 
-    <form method="post" action="{% url 'aggregate_emotion' %}">
-        {% csrf_token %}
-
-        <!-- News Item -->
-        <label for="news_item">News Item:</label>
-        <textarea id="news_item" name="news_item" rows="4" cols="50" placeholder="Enter the news content here..." required>{{ news_item_content|default_if_none:"" }}</textarea>
-        <br><br>
-
-        <!-- City Selector -->
-        <label for="city">Select City:</label>
-        <select name="city" id="city" style="width: 100%;">
-            <option value="">Select a City</option>
-            {% for city in cities %}
-                <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>
-                    {{ city }}
-                </option>
+    <div class="container">
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                {{ message }}
+            </div>
             {% endfor %}
-        </select>
-        <br><br>
-
-        <!-- Possible User Responses -->
-        <div class="response-header">
-            <h3>Possible User Responses</h3>
-            <button type="button" class="add-response-button" onclick="addResponse()">+ Add Response</button>
         </div>
-        <div id="responses"></div>
-        <br><br>
+        {% endif %}
+
+        <form method="post" action="{% url 'aggregate_emotion' %}">
+            {% csrf_token %}
+
+            <!-- News Item -->
+            <label for="news_item">News Item:</label>
+            <textarea id="news_item" name="news_item" rows="4" cols="50" placeholder="Enter the news content here..." required>{{ news_item_content|default_if_none:"" }}</textarea>
+            <br><br>
+
+            <!-- City Selector -->
+            <label for="city">Select City:</label>
+            <select name="city" id="city" style="width: 100%;">
+                <option value="">Select a City</option>
+                {% for city in cities %}
+                    <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>
+                        {{ city }}
+                    </option>
+                {% endfor %}
+            </select>
+            <br><br>
+
+            <!-- Possible User Responses -->
+            <div class="response-header">
+                <h3>Possible User Responses</h3>
+                <button type="button" class="add-response-button" onclick="addResponse()">+ Add Response</button>
+            </div>
+            <div id="responses"></div>
+            <br><br>
 
 
-        <button type="submit" id="aggregate-emotion-button" class="btn-primary">
-            Aggregate Emotional Impact
-        </button>
-    </form>
+            <button type="submit" id="aggregate-emotion-button" class="btn-primary">
+                Aggregate Emotional Impact
+            </button>
+        </form>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="{% static 'js/dark_theme.js' %}"></script>
     <script>
         $(document).ready(function () {
             $('#city').select2({

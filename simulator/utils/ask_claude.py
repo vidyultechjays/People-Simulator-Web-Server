@@ -21,7 +21,7 @@ def ask_claude(prompt: str,model_name: str, max_tokens: Optional[int] = 1000) ->
         )
         # Extract and return the response text
         if message and hasattr(message, 'content'):
-            print(f"Claude response :{message}")
+            print(f'message: {message}')
             # Get the first content block of type 'text'
             for content in message.content:
                 if content.type == 'text':

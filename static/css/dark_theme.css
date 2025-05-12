@@ -1,0 +1,184 @@
+/* Dark Theme with Violet Accents */
+:root {
+    --dark-bg: #121212;
+    --dark-bg-lighter: #1e1e1e;
+    --dark-bg-lightest: #2d2d2d;
+    --dark-text: #e0e0e0;
+    --dark-text-secondary: #b0b0b0;
+    --dark-border: #3d3d3d;
+    
+    /* Violet accent colors */
+    --violet-primary: #9d4edd;
+    --violet-secondary: #7b2cbf;
+    --violet-light: #c77dff;
+    --violet-dark: #5a189a;
+    
+    /* Alert colors for dark mode */
+    --dark-success-bg: #0d3320;
+    --dark-success-text: #4caf50;
+    --dark-danger-bg: #350c0c;
+    --dark-danger-text: #f44336;
+    --dark-warning-bg: #332b0c;
+    --dark-warning-text: #ffeb3b;
+    --dark-info-bg: #0c2331;
+    --dark-info-text: #03a9f4;
+    
+    /* Shadow for dark mode */
+    --dark-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Dark theme base styles */
+body.dark-theme {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+}
+
+.dark-theme .container,
+.dark-theme .generation-container,
+.dark-theme .landing-container {
+    background-color: var(--dark-bg-lighter);
+    box-shadow: var(--dark-shadow);
+}
+
+.dark-theme .navbar {
+    background-color: var(--dark-bg);
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.dark-theme .navbar a {
+    color: var(--violet-light);
+}
+
+.dark-theme .navbar a:hover {
+    background-color: var(--violet-dark);
+    color: white;
+}
+
+.dark-theme h1, 
+.dark-theme h2, 
+.dark-theme h3, 
+.dark-theme h4, 
+.dark-theme h5, 
+.dark-theme h6 {
+    color: var(--violet-primary);
+}
+
+.dark-theme input,
+.dark-theme select,
+.dark-theme textarea,
+.dark-theme .response-field {
+    background-color: var(--dark-bg-lightest);
+    color: var(--dark-text);
+    border: 1px solid var(--dark-border);
+}
+
+.dark-theme input:focus,
+.dark-theme select:focus,
+.dark-theme textarea:focus {
+    border-color: var(--violet-primary);
+    outline: none;
+}
+
+.dark-theme button,
+.dark-theme .btn-primary,
+.dark-theme .cta-btn {
+    background-color: var(--violet-primary);
+    color: white;
+}
+
+.dark-theme button:hover,
+.dark-theme .btn-primary:hover,
+.dark-theme .cta-btn:hover {
+    background-color: var(--violet-secondary);
+}
+
+.dark-theme .feature,
+.dark-theme .generation-option,
+.dark-theme fieldset {
+    background-color: var(--dark-bg-lightest);
+    border-color: var(--dark-border);
+}
+
+.dark-theme legend {
+    color: var(--violet-light);
+}
+
+/* Alert styling for dark theme */
+.dark-theme .alert-success {
+    background-color: var(--dark-success-bg);
+    color: var(--dark-success-text);
+    border-color: var(--dark-success-bg);
+}
+
+.dark-theme .alert-danger,
+.dark-theme .alert-error {
+    background-color: var(--dark-danger-bg);
+    color: var(--dark-danger-text);
+    border-color: var(--dark-danger-bg);
+}
+
+.dark-theme .alert-warning {
+    background-color: var(--dark-warning-bg);
+    color: var(--dark-warning-text);
+    border-color: var(--dark-warning-bg);
+}
+
+.dark-theme .alert-info {
+    background-color: var(--dark-info-bg);
+    color: var(--dark-info-text);
+    border-color: var(--dark-info-bg);
+}
+
+/* Table styling for dark theme */
+.dark-theme table {
+    background-color: var(--dark-bg-lighter);
+    color: var(--dark-text);
+    border-color: var(--dark-border);
+}
+
+.dark-theme th {
+    background-color: var(--dark-bg);
+    color: var(--violet-light);
+}
+
+.dark-theme tr:nth-child(odd) {
+    background-color: var(--dark-bg-lightest);
+}
+
+.dark-theme td {
+    border-color: var(--dark-border);
+}
+
+/* Links in dark theme */
+.dark-theme a {
+    color: var(--violet-light);
+}
+
+.dark-theme a:hover {
+    color: var(--violet-primary);
+}
+
+/* Select2 styling for dark theme */
+.dark-theme .select2-container--default .select2-selection--single {
+    background-color: var(--dark-bg-lightest);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+.dark-theme .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--dark-text);
+}
+
+.dark-theme .select2-dropdown {
+    background-color: var(--dark-bg-lightest);
+    border-color: var(--dark-border);
+}
+
+.dark-theme .select2-results__option {
+    color: var(--dark-text);
+}
+
+.dark-theme .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--violet-dark);
+    color: white;
+} 

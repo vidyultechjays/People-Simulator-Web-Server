@@ -1,30 +1,30 @@
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #e0f7fa;
-    color: #005b96;
-    margin: 10px;
-    padding: 15px;
+    background-color: #121212;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
 }
 
 /* Container */
 .container {
     max-width: 600px;
     margin: 50px auto;
-    background-color: #ffffff;
+    background-color: #1e1e1e;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Headings */
 h1 {
     text-align: center;
-    color: #007bb5;
+    color: #9d4edd;
 }
 
 h3 {
-    color: #005b96;
+    color: #c77dff;
     font-size: 20px;
     margin: 0;
     display: inline-block;
@@ -40,11 +40,18 @@ form {
 textarea, select, input[type="text"] {
     width: 100%;
     padding: 8px;
-    border: 1px solid #b3e5fc;
+    border: 1px solid #3d3d3d;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
     margin-bottom: 15px;
+}
+
+textarea:focus, select:focus, input[type="text"]:focus {
+    border-color: #9d4edd;
+    outline: none;
 }
 
 /* Response Section */
@@ -58,7 +65,9 @@ textarea, select, input[type="text"] {
     flex-grow: 1;
     padding: 8px;
     font-size: 14px;
-    border: 1px solid #b3e5fc;
+    border: 1px solid #3d3d3d;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -89,12 +98,12 @@ textarea, select, input[type="text"] {
 .response-header h3 {
     margin: 0;
     font-size: 20px;
-    color: #005b96;
+    color: #c77dff;
 }
 .add-response-button {
     margin: 0;
     padding: 8px 12px;
-    background-color: #007bb5;
+    background-color: #9d4edd;
     color: #ffffff;
     border: none;
     border-radius: 4px;
@@ -104,21 +113,21 @@ textarea, select, input[type="text"] {
 }
 
 .add-response-button:hover {
-    background-color: #005b96;
+    background-color: #7b2cbf;
 }
 
 .navbar {
-    background-color: #007bb5;
+    background-color: #1e1e1e;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px 0;
+    border-bottom: 1px solid #3d3d3d;
 }
 
 .navbar a {
-    color: #ffffff;
-    font-size: 25px;
+    color: #c77dff;
     font-family: 'Times New Roman', Times, serif;
     text-decoration: none;
     padding: 14px 20px;
@@ -127,8 +136,8 @@ textarea, select, input[type="text"] {
 }
 
 .navbar a:hover {
-    background-color: #005b96;
-    color: #e0f7fa;
+    background-color: #5a189a;
+    color: #ffffff;
 }
 
 .message-container {
@@ -142,18 +151,18 @@ textarea, select, input[type="text"] {
 }
 
 .alert-success {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #0d3320;
+    color: #4caf50;
 }
 
 .alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #350c0c;
+    color: #f44336;
 }
 
 /* Buttons */
 button, .btn-primary {
-    background-color: #007bb5;
+    background-color: #9d4edd;
     color: #ffffff;
     border: none;
     padding: 10px 15px;
@@ -167,12 +176,12 @@ button, .btn-primary {
 }
 
 button:hover, .btn-primary:hover {
-    background-color: #005b96;
+    background-color: #7b2cbf;
     transform: translateY(-2px);
 }
 
 button:focus, .btn-primary:focus {
-    outline: 2px solid #80d0ff;
+    outline: 2px solid #c77dff;
     outline-offset: 2px;
 }
 
@@ -180,7 +189,9 @@ button:focus, .btn-primary:focus {
 .select2-container--default .select2-selection--single {
     height: 36px;
     padding: 5px;
-    border: 1px solid #b3e5fc;
+    border: 1px solid #3d3d3d;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
@@ -188,7 +199,7 @@ button:focus, .btn-primary:focus {
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 24px;
-    color: #005b96;
+    color: #e0e0e0;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -196,7 +207,18 @@ button:focus, .btn-primary:focus {
 }
 
 .select2-dropdown {
-    border: 1px solid #b3e5fc;
+    border: 1px solid #3d3d3d;
+    background-color: #2d2d2d;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #5a189a;
+    color: #ffffff;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #9d4edd;
+    color: #ffffff;
 }
 
 /* Miscellaneous */

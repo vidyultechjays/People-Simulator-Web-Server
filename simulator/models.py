@@ -113,7 +113,7 @@ class AggregateEmotion(models.Model):
     """
     Model to store aggregate emotional responses with demographic breakdown
     """
-    news_item = models.ForeignKey('NewsItem', on_delete=models.CASCADE)
+    news_item = models.ForeignKey(NewsItem, on_delete=models.CASCADE)
     city = models.CharField(max_length=255,blank=True, null=True)
     summary = models.JSONField(default=dict)
     demographic_summary = models.JSONField(default=dict,blank=True, null=True)
@@ -197,6 +197,7 @@ class PromptModel(models.Model):
     TASK_CHOICES = [
         ('personality_description', 'Personality Description'),
         ('generate_user_response', 'Generate User Response'),
+        ('generate_optimal_response', 'Generate Optimal Response'),
         # Add more tasks here if needed
     ]
 
@@ -213,6 +214,12 @@ class PromptModel(models.Model):
         max_length=50,
         help_text="Enter a version identifier (e.g., 'Elaborate', 'Concise', '3 lines')."
     )
+    tools_content = JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        help_text="JSON array of tool configurations like function definitions that can be used with this prompt."
+    )
 
     def __str__(self):
         return f"{self.task_name} (Version: {self.version})"
@@ -226,3 +233,19 @@ class RawPersonaModel(models.Model):
 
     def __str__(self):
         return f"Raw Data for {self.persona.name} in {self.city}"
+
+
+class OptimizedResponse(models.Model):
+    """
+    Stores strategic recommendations to maximize satisfaction for a given news item
+    """
+    news_item = models.ForeignKey('NewsItem', on_delete=models.CASCADE)
+    city = models.CharField(max_length=100)
+    demographic_focus = models.JSONField(default=list)
+    original_content = models.TextField()
+    optimized_content = models.TextField(help_text="Strategic recommendations for maximizing satisfaction")
+    optimization_metrics = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Optimization strategy for {self.news_item.title} - {self.city}"

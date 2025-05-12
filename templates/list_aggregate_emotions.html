@@ -5,13 +5,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/list_aggregate_emotions_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --danger-color: #ef476f;
+            --danger-hover: #d64265;
+            --success-color: #06d6a0;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --radius: 8px;
+            --transition: all 0.2s ease;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+        .navbar a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+        }
+        .navbar a:hover {
+            background-color: #5a189a;
+            color: white;
+        }
+        .logout-btn {
+            background-color: var(--danger-color);
+            color: white !important;
+            margin-left: 10px;
+        }
+        .logout-btn:hover {
+            background-color: var(--danger-hover) !important;
+        }
+        .user-info {
+            color: var(--text-color);
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+    </style>
     <title>Aggregate Emotion Results</title>
 </head>
-<body>
+<body class="dark-theme">
     <div class="navbar">
-        <a href="{% url 'persona_input' %}">Persona Generation</a>
-        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
-        <a href="{% url 'list_aggregate_emotions' %}">List Results</a>
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <a href="/" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; vertical-align: middle;">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    People Simulator
+                </a>
+                <a href="/">Home</a>
+            </div>
+            <div class="navbar-right">
+                {% if request.session.username %}
+                    <span class="user-info">Logged in as: {{ request.session.username }}</span>
+                    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class="container">
         <h1>Aggregate Emotion Results</h1>
@@ -45,5 +141,6 @@
             <p class="no-results">No aggregate emotion records found.</p>
         {% endif %}
     </div>
+    <script src="{% static 'js/dark_theme.js' %}"></script>
 </body>
 </html>

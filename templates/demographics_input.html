@@ -1,9 +1,375 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Define Demographics</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/demographic_input_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+    <style>
+        :root {
+            --primary-color: #0096c7;
+            --primary-hover: #0077b6;
+            --danger-color: #ef476f;
+            --danger-hover: #d64265;
+            --success-color: #43cea2;
+            --bg-color: #eaf6fb;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --border-color: #bcdff1;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --radius: 8px;
+            --transition: all 0.2s ease;
+        }
+
+        /* Dark theme overrides */
+        body.dark-theme {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --subcategory-bg: #2a2a2a;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            --input-bg: #2d2d2d;
+        }
+        
+        /* Target first input in form - visible in screenshot */
+        body.dark-theme input[placeholder="Enter category name"] {
+            background-color: var(--input-bg) !important;
+            color: var(--text-color) !important;
+        }
+        
+        body.dark-theme form,
+        body.dark-theme .container,
+        body.dark-theme .category,
+        body.dark-theme .category-header,
+        body.dark-theme .subcategory {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        body.dark-theme .subcategory {
+            background-color: var(--subcategory-bg);
+        }
+        
+        body.dark-theme input[type="text"],
+        body.dark-theme input[type="number"],
+        body.dark-theme input:not([type]) {
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+        
+        /* Catch-all for any inputs within dark theme */
+        body.dark-theme *[class*="category"] input,
+        body.dark-theme *[id*="category"] input,
+        body.dark-theme form input {
+            background-color: var(--input-bg) !important;
+            color: var(--text-color) !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+        }
+
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #3d3d3d;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-family: 'Inter', Arial, sans-serif !important;
+            font-size: 14px !important;
+        }
+
+        .navbar a:hover {
+            background-color: #5a189a;
+            color: white;
+        }
+        
+        .logout-btn {
+            background-color: var(--danger-color);
+            color: white !important;
+            margin-left: 10px;
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--danger-hover) !important;
+        }
+        
+        .user-info {
+            color: var(--text-color);
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        h1 {
+            margin: 2rem 0;
+            color: var(--primary-color);
+            font-weight: 700;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        .message-container {
+            margin-bottom: 2rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .alert-success {
+            background-color: rgba(67, 206, 162, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 71, 111, 0.1);
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        form {
+            background-color: var(--card-bg);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .category {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1.5px solid var(--border-color);
+            transition: var(--transition);
+            animation: slideIn 0.3s ease;
+        }
+
+        .category:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            background-color: var(--card-bg);
+        }
+
+        .category-name {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 0.75rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+            background-color: var(--input-bg, white);
+            color: var(--text-color);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 150, 199, 0.2);
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius);
+            border: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(0, 150, 199, 0.1);
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(239, 71, 111, 0.1);
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+        }
+
+        .subcategory {
+            background-color: var(--subcategory-bg, white);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1.5px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            grid-gap: 0.75rem;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .generate-btn {
+            background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(67,206,162,0.08);
+        }
+
+        .generate-btn:hover {
+            background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .subcategory {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+    <!-- Immediate script for dark theme styling -->
+    <script>
+        // Immediately apply dark theme to inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            // Direct fix for the Category Name section
+            document.querySelectorAll('input').forEach(function(input) {
+                input.style.backgroundColor = '#2d2d2d';
+                input.style.color = '#e0e0e0';
+            });
+        });
+    </script>
     <script>
         let categoryCount = 0;
 
@@ -14,13 +380,29 @@
             categoryDiv.id = `category_${categoryCount}`;
             categoryDiv.classList.add("category");
             categoryDiv.innerHTML = `
-                <label>Category Name:</label>
-                <input type="text" name="category_${categoryCount}" required>
-                <button type="button" onclick="addSubCategory(${categoryCount})">+ Add Subcategory</button>
-                <button type="button" onclick="deleteCategory(${categoryCount})">🗑️</button>
+                <div class="category-header">
+                    <div class="form-group category-name">
+                        <label>Category Name</label>
+                        <input type="text" name="category_${categoryCount}" placeholder="Enter category name" required>
+                    </div>
+                    <button type="button" class="btn-outline" onclick="addSubCategory(${categoryCount})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Add Subcategory
+                    </button>
+                    <button type="button" class="btn-danger btn-icon" onclick="deleteCategory(${categoryCount})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
                 <div id="subcategories_${categoryCount}"></div>
             `;
             document.getElementById("categories").appendChild(categoryDiv);
+            
+            // Apply dark theme to all inputs
+            applyDarkThemeToInputs();
         }
 
         // Add a new subcategory under a specific category
@@ -30,20 +412,35 @@
             const subcategoryCount = document.querySelectorAll(`#subcategories_${categoryId} > div`).length + 1;
             subcategoryDiv.id = `subcategory_${categoryId}_${subcategoryCount}`;
             subcategoryDiv.innerHTML = `
-                <label>Subcategory Name:</label>
-                <input type="text" name="subcategory_${categoryId}_${subcategoryCount}" required>
-                <label>Percentage:</label>
-                <input type="number" name="percentage_${categoryId}_${subcategoryCount}" required>
-                <button type="button" onclick="deleteSubCategory(${categoryId}, ${subcategoryCount})">🗑️</button>
+                <div class="form-group">
+                    <label>Subcategory Name</label>
+                    <input type="text" name="subcategory_${categoryId}_${subcategoryCount}" placeholder="Enter subcategory name" required>
+                </div>
+                <div class="form-group">
+                    <label>Percentage (%)</label>
+                    <input type="number" name="percentage_${categoryId}_${subcategoryCount}" min="0" max="100" placeholder="0-100" required>
+                </div>
+                <button type="button" class="btn-danger btn-icon" onclick="deleteSubCategory(${categoryId}, ${subcategoryCount})">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+                    </svg>
+                </button>
             `;
             document.getElementById(`subcategories_${categoryId}`).appendChild(subcategoryDiv);
+            
+            // Apply dark theme to all inputs
+            applyDarkThemeToInputs();
         }
 
         // Delete a specific category
         function deleteCategory(categoryId) {
             const categoryDiv = document.getElementById(`category_${categoryId}`);
             if (categoryDiv) {
-                categoryDiv.remove();
+                categoryDiv.style.opacity = '0';
+                categoryDiv.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    categoryDiv.remove();
+                }, 300);
             }
         }
 
@@ -51,33 +448,172 @@
         function deleteSubCategory(categoryId, subcategoryId) {
             const subcategoryDiv = document.getElementById(`subcategory_${categoryId}_${subcategoryId}`);
             if (subcategoryDiv) {
-                subcategoryDiv.remove();
+                subcategoryDiv.style.opacity = '0';
+                setTimeout(() => {
+                    subcategoryDiv.remove();
+                }, 300);
             }
         }
     </script>
 </head>
-<body>
+<body class="dark-theme">
     <div class="navbar">
-        <a href="{% url 'persona_input' %}">Persona Generation</a>
-        <a href="{% url 'impact_assessment' %}">Impact Assessment</a>
-        <a href="{% url 'list_aggregate_emotions' %}">List Results</a>
-    </div><br>
-    <h1>Define Demographics</h1>
-    {% if messages %}
-    <div class="message-container">
-        {% for message in messages %}
-        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-            {{ message }}
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <a href="/" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; vertical-align: middle;">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    People Simulator
+                </a>
+                <a href="/">Home</a>
+            </div>
+            
+            <div class="navbar-right">
+                {% if request.session.username %}
+                    <span class="user-info">Logged in as: {{ request.session.username }}</span>
+                    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+                {% endif %}
+            </div>
         </div>
-        {% endfor %}
     </div>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        <div id="categories"></div>
-        <button type="button" onclick="addCategory()">+ Add Category</button>
-        <br><br>
-        <button type="submit">Generate Personas</button>
-    </form>
+    
+    <div class="container">
+        <h1>Define Demographics</h1>
+        
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <form method="post" style="background-color: #1e1e1e; color: #e0e0e0;">
+            {% csrf_token %}
+            
+            <div id="categories" style="background-color: #1e1e1e; color: #e0e0e0;"></div>
+            
+            <button type="button" class="btn-primary" onclick="addCategory()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Add Category
+            </button>
+            
+            <div class="form-actions">
+                <button type="submit" class="generate-btn">
+                    Generate Personas
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 8px;">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+        
+        <!-- Immediate styling script -->
+        <script>
+            // Force dark styling on all inputs immediately
+            (function() {
+                // Set background color for all inputs
+                var inputs = document.querySelectorAll('input');
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].style.backgroundColor = '#2d2d2d';
+                    inputs[i].style.color = '#e0e0e0';
+                    inputs[i].style.borderColor = '#333333';
+                }
+                
+                // Also style any elements with 'category' in their ID or class
+                var categoryElements = document.querySelectorAll('[id*="category"], [class*="category"]');
+                for (var i = 0; i < categoryElements.length; i++) {
+                    categoryElements[i].style.backgroundColor = '#1e1e1e';
+                    categoryElements[i].style.color = '#e0e0e0';
+                }
+            })();
+        </script>
+    </div>
+    
+    <script src="{% static 'js/dark_theme.js' %}"></script>
+    <script>
+        // Function to apply dark theme to all inputs - More aggressive version
+        function applyDarkThemeToInputs() {
+            if (document.body.classList.contains('dark-theme')) {
+                // Select all types of inputs
+                const inputs = document.querySelectorAll('input');
+                const inputBgColor = '#2d2d2d';
+                const textColor = '#e0e0e0';
+                
+                inputs.forEach(input => {
+                    // Force the styling with !important via style attribute
+                    input.style.setProperty('background-color', inputBgColor, 'important');
+                    input.style.setProperty('color', textColor, 'important');
+                    input.style.setProperty('border-color', '#333333', 'important');
+                });
+                
+                // Also apply to any category or subcategory divs for extra safety
+                const categoryDivs = document.querySelectorAll('.category, .category-header, [id*="category"]');
+                categoryDivs.forEach(div => {
+                    div.style.setProperty('background-color', '#1e1e1e', 'important');
+                });
+                
+                const subcategoryDivs = document.querySelectorAll('.subcategory, [id*="subcategory"]');
+                subcategoryDivs.forEach(div => {
+                    div.style.setProperty('background-color', '#2a2a2a', 'important');
+                });
+            }
+        }
+
+        // Run immediately
+        applyDarkThemeToInputs();
+
+        // Also run when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            applyDarkThemeToInputs();
+            
+            // Direct fix for elements seen in the screenshot
+            const topLevelInputs = document.querySelectorAll('input');
+            topLevelInputs.forEach(input => {
+                input.style.setProperty('background-color', '#2d2d2d', 'important');
+                input.style.setProperty('color', '#e0e0e0', 'important');
+            });
+            
+            // Target specific card elements visible in screenshot
+            const cardElements = document.querySelectorAll('[class*="category"], [id*="category"]');
+            cardElements.forEach(element => {
+                element.style.setProperty('background-color', '#1e1e1e', 'important');
+            });
+            
+            // Set up a small delay reapplication to catch any late-rendered elements
+            setTimeout(applyDarkThemeToInputs, 100);
+            setTimeout(applyDarkThemeToInputs, 500);
+        });
+        
+        // Create a MutationObserver to watch for new inputs being added to the DOM
+        const observer = new MutationObserver(function(mutations) {
+            applyDarkThemeToInputs();
+        });
+        
+        // Start observing when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            observer.observe(document.body, { 
+                childList: true, 
+                subtree: true 
+            });
+        });
+        
+        // JavaScript to validate percentages add up to 100%
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            
+            form.addEventListener('submit', function(event) {
+                // Validation removed - no need to check for 100% distribution
+                // Let the form submit normally
+            });
+        });
+    </script>
 </body>
 </html>

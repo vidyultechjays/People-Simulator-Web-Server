@@ -9,6 +9,7 @@ import os
 import sys
 from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.db.models import F
 from simulator.models import (
     AggregateEmotion,
     EmotionalResponse,
@@ -126,6 +127,7 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
         aggregate_emotion = AggregateEmotion.objects.get(id=aggregate_emotion_id)
         news_item = NewsItem.objects.get(title=news_item_title)
         personas = Persona.objects.filter(city=city_name)
+        print(f"personas count: {personas.count()}")
         possible_responses = PossibleUserResponses.objects.filter(news_item=news_item)
         categories = Category.objects.filter(city=city_name).prefetch_related('subcategories')
 
@@ -202,7 +204,13 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
                         
                         # Increment count for this response in this demographic group - use the ID directly
                         demographic_mapping[selected_response]['count'] += 1
-
+                
+                # Update processed_responses atomically using F() expression to avoid race conditions
+                AggregateEmotion.objects.filter(id=aggregate_emotion_id).update(
+                    processed_responses=F('processed_responses') + 1
+                )
+                # Refresh the aggregate_emotion object to get the updated processed_responses value
+                aggregate_emotion.refresh_from_db()
             except Exception as persona_error:
                 
                 logger.error(f"Error processing persona {persona.id}: {persona_error}")
@@ -232,6 +240,7 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
         }
         aggregate_emotion.demographic_summary = demographic_summary
         aggregate_emotion.save()
+
 
         logger.info("Aggregation completed successfully for city: %s", city_name)
         return "Aggregation completed successfully"

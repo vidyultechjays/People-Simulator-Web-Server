@@ -348,14 +348,23 @@ def generate_optimal_response(city_name, news_item, demographic_focus):
         
         print(f"llm_response type: {type(llm_response)}  :: end")
         
-        if isinstance(llm_response, dict) and len(llm_response) == 1 and "optimized_content" in llm_response:
-            llm_response = llm_response["optimized_content"]
-        if isinstance(llm_response, dict) and "recommendations" in llm_response and isinstance(llm_response["recommendations"], str):
+        # Handle different response formats from LLMs
+        if isinstance(llm_response, dict):
+            if len(llm_response) == 1 and "optimized_content" in llm_response:
+                llm_response = llm_response["optimized_content"]
+            if "recommendations" in llm_response and isinstance(llm_response["recommendations"], str):
+                try:
+                    llm_response = json.loads(llm_response["recommendations"])
+                except json.JSONDecodeError:
+                    pass
+        
+        # If llm_response is a string, parse it as JSON
+        if isinstance(llm_response, str):
             try:
-                llm_response = json.loads(llm_response["recommendations"])
-            except json.JSONDecodeError:
-                pass
-        llm_response = json.loads(llm_response)
+                llm_response = json.loads(llm_response)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Failed to parse LLM response as JSON: {e}")
+        
         # Parse strategic recommendations
         optimization_metrics = {
             "original_sentiment_breakdown": current_responses,
@@ -367,13 +376,13 @@ def generate_optimal_response(city_name, news_item, demographic_focus):
             city=city_name,
             defaults={
                 'original_content': news_item.content,
-                'optimized_content': llm_response,
+                'optimized_content': json.dumps(llm_response) if not isinstance(llm_response, str) else llm_response,
                 'optimization_metrics': optimization_metrics,
                 'demographic_focus': demographic_focus
             }
         )
         return {
-            "optimized_content": json.loads(llm_response),
+            "optimized_content": llm_response,
             "optimization_metrics": optimization_metrics,
             "success": True
         }

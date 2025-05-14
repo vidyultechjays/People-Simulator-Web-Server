@@ -117,8 +117,11 @@ class AggregateEmotion(models.Model):
     city = models.CharField(max_length=255,blank=True, null=True)
     summary = models.JSONField(default=dict)
     demographic_summary = models.JSONField(default=dict,blank=True, null=True)
+    total_responses = models.IntegerField(default=0)
+    processed_responses = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True,blank=True, null=True)
+    
 
     def __str__(self):
         return f"{self.city} - {self.news_item}"

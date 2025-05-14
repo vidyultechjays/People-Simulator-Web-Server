@@ -48,7 +48,9 @@ from simulator.models import (
 from simulator.utils.results_visualization_helper import create_demographic_charts
 from simulator.utils.impact_assesment_helper import generate_optimal_response
 from simulator.auth_views import login_required
-
+import time
+from django.urls import reverse
+from urllib.parse import urlencode
 logger = logging.getLogger(__name__)
 
 @login_required
@@ -77,7 +79,7 @@ def impact_assessment_new(request):
     Enhanced landing page showing news items analyzed for a specific city
     """
     city_name = request.GET.get('city', None)
-    
+    print(f"city_name: {city_name}")
     # Get aggregate emotions for the selected city
     aggregate_emotions = None
     if city_name:
@@ -87,15 +89,38 @@ def impact_assessment_new(request):
     cities = (
         Persona.objects.exclude(city__isnull=True)
         .exclude(city="")
+        .exclude(city__icontains=city_name)
         .values_list("city", flat=True)
         .distinct()
         .order_by("city")
     )
     
+    persona_in_cities = Persona.objects.filter(city__contains=city_name)
+    
+    categories = Category.objects.filter(city=city_name)
+    demographic_summary = []
+    for category in categories:
+        subcategories_for_category = SubCategory.objects.filter(category=category)
+        subcategories_for_category_list = []
+        for subcategory in subcategories_for_category:
+            subcategories_for_category_list.append(subcategory.name)
+        demographic_summary.append({
+            'category': category.name,
+            'subcategories': subcategories_for_category_list
+        })
+    
+    print(f"demographic_summary: {demographic_summary}")
+    
+    
+    
+    
     return render(request, 'impact_assessment_new.html', {
         'selected_city': city_name,
         'cities': cities,
-        'aggregate_emotions': aggregate_emotions
+        'aggregate_emotions': aggregate_emotions,
+        'population_count': persona_in_cities.count(),
+        'demographic_summary': demographic_summary,
+        'categories_count': categories.count(),
     })
 
 @login_required
@@ -105,7 +130,17 @@ def results_summary(request):
     """
     city_name = request.GET.get('city', request.session.get('city_name'))
     news_item_title = request.GET.get('news_item', request.session.get('news_item'))
+    print(f"city_name: {city_name}")
     try:
+        cities = (
+        Persona.objects.exclude(city__isnull=True)
+        .exclude(city="")
+        .exclude(city__icontains=city_name)
+        .values_list("city", flat=True)
+        .distinct()
+        .order_by("city")
+    )
+        
         aggregate_emotion = AggregateEmotion.objects.get(
             city=city_name,
             news_item__title=news_item_title
@@ -127,7 +162,8 @@ def results_summary(request):
         charts = {}
         possible_responses = []
         demographic_summary = {}
-
+    for city in cities:
+        print(f"city: {city}")
     return render(request, "results_summary.html", {
         "summary": aggregate_emotion.summary if aggregate_emotion else {},
         "demographic_summary": demographic_summary,
@@ -135,6 +171,7 @@ def results_summary(request):
         "city_name": city_name,
         "charts": charts,
         "possible_responses": possible_responses,
+        "cities": cities,
     })
 
 # views.py
@@ -175,7 +212,10 @@ def persona_input(request):
                     request,
                     f"CSV file uploaded successfully. Processing will begin shortly for {city_name}."
                 )
-                return redirect("impact_assessment_new")
+                base_url = reverse("impact_assessment_new")
+                query_string = urlencode({"city": city_name})
+                url = f"{base_url}?{query_string}"
+                return redirect(url)
             
             except Exception as e:
                 messages.error(request, f"Error processing upload: {str(e)}")
@@ -268,9 +308,14 @@ def demographics_input(request):
             population=population,
             status='pending'
         )
+        
+        time.sleep(2)
 
         messages.success(request, f"Persona generation task for {city_name} created successfully.")
-        return redirect("landing_page")
+        base_url = reverse("impact_assessment_new")
+        query_string = urlencode({"city": city_name})
+        url = f"{base_url}?{query_string}"
+        return redirect(url)
     return render(request, "demographics_input.html")
 
 @login_required
@@ -358,6 +403,7 @@ def aggregate_emotion(request):
                 }
                 for category in categories
             }
+            persona_in_cities = Persona.objects.filter(city__contains=city_name)
 
             # Create or update the AggregateEmotion object with the initial values
             aggregate_emotion_obj, _ = AggregateEmotion.objects.update_or_create(
@@ -366,6 +412,7 @@ def aggregate_emotion(request):
                 defaults={
                     "summary": initial_summary,
                     "demographic_summary": initial_demographic_summary,
+                    "total_responses": persona_in_cities.count(),
                 },
             )
 
@@ -408,7 +455,14 @@ def fetch_summary_api(request):
                 "news_item": news_item
             })
 
-        return JsonResponse({"status": "processing"})
+        total_responses = aggregate_emotion.total_responses
+        processed_responses = aggregate_emotion.processed_responses
+        context = {
+            "status": "processing",
+            "total_responses": total_responses,
+            "processed_responses": processed_responses
+        }
+        return JsonResponse(context)
 
     # except AggregateEmotion.DoesNotExist:
     #     return JsonResponse({"status": "error", "message": "Summary not found"}, status=404)
@@ -423,6 +477,19 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
     based on a specific news item, generating user responses as needed.
     """
     try:
+        try:
+            cities = (
+                Persona.objects.exclude(city__isnull=True)
+                .exclude(city="")
+                .exclude(city__icontains=city_name)
+                .values_list("city", flat=True)
+                .distinct()
+                .order_by("city")
+            )
+        except Persona.DoesNotExist:
+            messages.error(request, "City not found")
+            return redirect('results_summary')
+        
         try:
             news_item = NewsItem.objects.get(title=news_item_title)
         except NewsItem.DoesNotExist:
@@ -505,8 +572,12 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
             'category_name': category_name,
             'personas_data': personas_data,
             'city_name': city_name,
-            'news_item_title': news_item_title
+            'news_item_title': news_item_title,
+            'cities': cities
         })
+        
+        for city in cities:
+            print(f"city: {city}")
 
     except Exception as e:
         logger.error("Error in fetch_sample_profiles: %s", str(e))
@@ -550,12 +621,25 @@ def optimize_content(request):
         print('after')
         
         if existing_optimization:
-            response_data = {
-                'optimized_content': json.loads(existing_optimization.optimized_content),
-                'optimization_metrics': existing_optimization.optimization_metrics,
-                'success': True,
-                'cached': True
-            }
+            try:
+                # Try to parse the optimized_content as JSON if it's a string
+                optimized_content = existing_optimization.optimized_content
+                if isinstance(optimized_content, str):
+                    try:
+                        optimized_content = json.loads(optimized_content)
+                    except json.JSONDecodeError:
+                        # If it's not valid JSON, use it as is
+                        pass
+                
+                response_data = {
+                    'optimized_content': optimized_content,
+                    'optimization_metrics': existing_optimization.optimization_metrics,
+                    'success': True,
+                    'cached': True
+                }
+            except Exception as e:
+                logger.error(f"Error processing existing optimization: {str(e)}")
+                return JsonResponse({'error': f'Error processing optimization: {str(e)}'}, status=500)
         else:
             # Get the news item content
             print('inside else statement')
@@ -600,10 +684,18 @@ def optimize_content_two(request):
         
         print(f"demographic_focus: {demographic_focus}")
         
-        
+    cities = (
+        Persona.objects.exclude(city__isnull=True)
+        .exclude(city="")
+        .exclude(city__icontains=city_name)
+        .values_list("city", flat=True)
+        .distinct()
+        .order_by("city")
+    )
         # Get demographic breakdown for the city
     categories = Category.objects.filter(city=city_name)
     subcategories = SubCategory.objects.filter(city=city_name)
+    
     
     return render(request, 'optimization_strategy.html', {
         'messages': None,
@@ -611,7 +703,8 @@ def optimize_content_two(request):
         'news_item': news_item_title,
         'categories': categories,
         'subcategories': subcategories,
-        'optimization_strategy': None
+        'optimization_strategy': None,
+        'cities': cities
     })
     
     

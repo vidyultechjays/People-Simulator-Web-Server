@@ -36,6 +36,7 @@
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
             --transition: all 0.3s ease;
             --border-radius: 8px;
+            --sidebar-width: 280px;
         }
 
         body {
@@ -146,7 +147,7 @@
         }
 
         .dashboard-container {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 2rem auto;
             padding: 0 1rem;
         }
@@ -159,6 +160,7 @@
             margin-bottom: 2rem;
             border: 1px solid var(--border-color);
             overflow: hidden;
+            padding: 10px 40px;
         }
 
         .card:hover {
@@ -459,7 +461,7 @@
         /* Create a special style for the optimize button */
         .optimize-btn {
             background: linear-gradient(90deg, #9d4edd 0%, #5a189a 100%);
-            color: white;
+            color: white !important;
             border: none;
             font-weight: 600;
             padding: 0.75rem 1.5rem;
@@ -514,6 +516,321 @@
         .form-switch .form-check-input {
             height: 1.5em;
         }
+
+        /* Add side panel and main content layout styles */
+        .app-container {
+            display: flex;
+            min-height: calc(100vh - 64px); /* Subtract navbar height */
+        }
+
+        /* Side panel styles */
+        .side-panel {
+            width: var(--sidebar-width);
+            background: #1a1a1a;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            position: fixed;
+            top: 64px; /* Height of navbar */
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.3);
+            z-index: 90;
+            padding: 0;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .city-header {
+            background: #232323;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .city-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .city-header-left {
+            flex: 1;
+        }
+
+        .city-selector {
+            position: relative;
+            z-index: 10;
+            margin-left: 15px;
+        }
+
+        .city-dropdown {
+            width: 100%;
+            background: #2d2d2d;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 32px 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239d4edd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        .city-dropdown:hover, .city-dropdown:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(157, 78, 221, 0.2);
+        }
+
+        .city-name {
+            color: var(--text-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            position: relative;
+            text-align: left;
+        }
+
+        .news-item-title {
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin: 0;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            padding-top: 5px;
+        }
+
+        .news-item-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .responses-section {
+            padding: 20px;
+        }
+
+        .responses-title {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .responses-title::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 2px;
+            background-color: var(--primary);
+            margin-right: 8px;
+        }
+
+        .response-category {
+            background: #232323;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .response-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .response-item:last-child {
+            border-bottom: none;
+        }
+
+        .response-item:hover {
+            background: rgba(0,0,0,0.1);
+            border-left-color: var(--primary);
+        }
+
+        .response-item::before {
+            content: "";
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin-right: 10px;
+            background-color: var(--primary);
+            opacity: 0.7;
+            border-radius: 50%;
+        }
+
+        /* Custom scrollbar for side panel */
+        .side-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .side-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .side-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .side-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Stats indicators */
+        .response-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #232323;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            opacity: 0.7;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 16px;
+            width: calc(100% - var(--sidebar-width));
+            box-sizing: border-box;
+        }
+
+        /* Toggle sidebar button for mobile */
+        .toggle-sidebar {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 110;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Back button styles */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--card-bg);
+            color: var(--primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .back-button:hover {
+            background: rgba(157, 78, 221, 0.1);
+            color: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .back-button svg {
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .side-panel {
+                transform: translateX(calc(-1 * var(--sidebar-width)));
+                transition: transform 0.3s ease;
+            }
+            
+            .side-panel.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .toggle-sidebar {
+                display: flex;
+            }
+            
+            body.sidebar-open .main-content::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 80;
+            }
+            
+            .dashboard-container {
+                margin: 0;
+                max-width: 100%;
+                padding: 16px;
+            }
+        }
     </style>
 </head>
 <body class="dark-theme">
@@ -529,6 +846,8 @@
                     People Simulator
                 </a>
                 <a href="/">Home</a>
+                <a href="{% url 'persona_input' %}">Create People Group</a>
+
             </div>
             <div class="navbar-right">
                 {% if request.session.username %}
@@ -539,64 +858,140 @@
         </div>
     </div>
 
-    <div class="dashboard-container">
-        <div class="data-header">
-            <h1 class="page-title">Results Summary</h1>
-            <div>
-                <span class="info-badge"><i class="fas fa-newspaper"></i> {{ news_item }}</span>
-                <span class="info-badge"><i class="fas fa-city"></i> {{ city_name }}</span>
-                <a id="optimize-button" class="optimize-btn disabled" href="{% url 'optimize_content_two' %}?city={{ city_name|urlencode }}&news_item={{ news_item|urlencode }}">
-                    <i class="fas fa-magic"></i> Optimize
-                </a>
-            </div>
-        </div>
-
-        <div id="status-message" class="alert alert-info" role="alert">
-            <i class="fas fa-spinner fa-spin"></i> Fetching summary...
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="section-title">Overall Summary</h2>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="table-responsive">
-                            <table class="table overall-summary-table">
-                                <thead>
-                                    <tr>
-                                        <th>User Responses</th>
-                                        <th>Count</th>
-                                        <th>Percentage</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for response in possible_responses %}
-                                    <tr class="{% cycle 'even-row' 'odd-row' %}">
-                                        <td>{{ response.response_text }}</td>
-                                        <td>0</td>
-                                        <td>0%</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+    <div class="app-container">
+        <!-- Side Panel -->
+        <aside class="side-panel">
+            <div class="city-header">
+                <div class="city-header-left">
+                    <h2 class="city-name">{{ city_name }}</h2>
+                    <div class="city-selector">
+                        <select id="city-select" class="city-dropdown" onchange="changeCity()">
+                            <option value="">Select City</option>
+                            {% for city in cities %}
+                                <option value="{{ city }}" {% if city == city_name %}selected{% endif %}>{{ city }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="col-md-6">
-                        <canvas id="overall-summary-chart"></canvas>
+                    <p class="news-item-title">{{ news_item }}</p>
+                </div>
+            </div>
+            
+            <div class="responses-section">
+                <h3 class="responses-title">Available Responses</h3>
+                
+                <div class="response-category">
+                    <div id="available-responses">
+                        {% for response in possible_responses %}
+                            <div class="response-item">{{ response.response_text }}</div>
+                        {% empty %}
+                            <div class="response-item">No responses available</div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-        </div>
-    
-        <div id="demographic-breakdown">
-            <!-- Demographic breakdown content will be dynamically populated -->
-        </div>  
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="dashboard-container">
+                <button onclick="goBack()" class="back-button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Back
+                </button>
+                
+                <div class="data-header">
+                    <h1 class="page-title">Results Summary</h1>
+                    <div>
+                        <span class="info-badge"><i class="fas fa-newspaper"></i> {{ news_item }}</span>
+                        <span class="info-badge"><i class="fas fa-city"></i> {{ city_name }}</span>
+                        <a id="optimize-button" class="optimize-btn disabled" href="{% url 'optimize_content_two' %}?city={{ city_name|urlencode }}&news_item={{ news_item|urlencode }}">
+                            <i class="fas fa-magic"></i> Optimize
+                        </a>
+                    </div>
+                </div>
+
+                <div id="status-message" class="alert alert-info" role="alert">
+                    <i class="fas fa-spinner fa-spin"></i> Fetching summary...
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="section-title">Overall Summary</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="table-responsive">
+                                    <table class="table overall-summary-table">
+                                        <thead>
+                                            <tr>
+                                                <th>User Responses</th>
+                                                <th>Count</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for response in possible_responses %}
+                                            <tr class="{% cycle 'even-row' 'odd-row' %}">
+                                                <td>{{ response.response_text }}</td>
+                                                <td>0</td>
+                                                <td>0%</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="overall-summary-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="demographic-breakdown">
+                    <!-- Demographic breakdown content will be dynamically populated -->
+                </div>  
+            </div>
+        </main>
+        
+        <!-- Toggle sidebar button for mobile -->
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12H21M3 6H21M3 18H21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
     </div>
     
     <script src="{% static 'js/dark_theme.js' %}"></script>
     <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.side-panel');
+            const body = document.body;
+            
+            sidebar.classList.toggle('active');
+            body.classList.toggle('sidebar-open');
+        }
+        
+        // City selection handler
+        function changeCity() {
+            const selectedCity = document.getElementById('city-select').value;
+            const currentNewsItem = "{{ news_item|escapejs }}";
+            
+            if (selectedCity) {
+                window.location.href = `/impact-assessment-new/?city=${encodeURIComponent(selectedCity)}`;
+            }
+        }
+        
+        // Back button handler
+        function goBack() {
+            window.history.back();
+        }
+
         function createResponsePieChart(ctx, responseData) {
             const labels = responseData.map(response => response.response_text);
             const counts = responseData.map(response => response.count);
@@ -757,8 +1152,11 @@
 
                         // Demographic User Responses
                         const demographicSummary = response.demographic_summary;
+                        let categoryCount = 0;
+                        
                         for (const [categoryType, categories] of Object.entries(demographicSummary)) {
                             for (const [categoryName, subcategoryData] of Object.entries(categories)) {
+                                categoryCount++;
                                 // Transform subcategory data into array
                                 const responseData = Object.values(subcategoryData).map(item => ({
                                     response_text: item.response_text,
@@ -781,7 +1179,7 @@
                                 }
                             }
                         }
-
+                        
                         // Add sample profile links after tables and charts
                         categoriesWithData.forEach(category => {
                             const categoryCard = $(`h3:contains("${category.type.replace("_", " ").toUpperCase()} - ${category.name}")`).closest('.card');
@@ -797,10 +1195,15 @@
                         });
 
                     } else if (response.status === "processing") {
+                        // Show processing progress
+                        const processedResponses = response.processed_responses || 0;
+                        const totalResponses = response.total_responses || 0;
+                        const progressPercentage = totalResponses > 0 ? Math.round((processedResponses / totalResponses) * 100) : 0;
+                        
                         $("#status-message")
                             .removeClass("alert-success alert-danger")
                             .addClass("alert-info")
-                            .html('<i class="fas fa-spinner fa-spin"></i> Processing... Please wait.');
+                            .html(`<i class="fas fa-spinner fa-spin"></i> Processing... ${processedResponses}/${totalResponses} responses generated (${progressPercentage}% complete)`);
                         
                         // Keep optimize button disabled while processing
                         $("#optimize-button").addClass("disabled");

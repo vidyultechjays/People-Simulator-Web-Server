@@ -113,6 +113,7 @@
         .cta-btn:hover {
             background: linear-gradient(90deg, #7b2cbf 0%, #3c096c 100%);
             transform: translateY(-2px) scale(1.01);
+            color: white !important;
         }
         .cta-btn:disabled {
             background: linear-gradient(90deg, #6b6b6b 0%, #4a4a4a 100%);
@@ -192,7 +193,7 @@
             <br>
             <button id="assessment-btn" class="cta-btn" type="submit" disabled>View Impact Assessment</button>
         </form>
-        <a class="cta-btn" href="{% url 'persona_input' %}" style="background: #9d4edd; margin-bottom: 24px;">Create New Demographic</a>
+        <a class="cta-btn" href="{% url 'persona_input' %}" style="background: #9d4edd; margin-bottom: 24px;">Create People Group</a>
         <div class="features">
             <div class="feature"><strong>Persona Generation:</strong> Create personas using demographic input or CSV upload.</div>
             <div class="feature"><strong>Impact Assessment:</strong> Analyze the effects of different strategies on your personas.</div>

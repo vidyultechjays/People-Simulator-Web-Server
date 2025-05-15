@@ -112,6 +112,62 @@ class Command(BaseCommand):
                 task.city_name,
                 categories
             )
+            
+            # Final adjustment to ensure exact population count
+            actual_count = len(personas)
+            if actual_count != task.population:
+                self.stdout.write(self.style.WARNING(
+                    f'Adjusting persona count: have {actual_count}, need {task.population}'
+                ))
+                
+                if actual_count > task.population:
+                    # Too many personas, remove excess
+                    excess = actual_count - task.population
+                    self.stdout.write(self.style.WARNING(f'Removing {excess} excess personas'))
+                    excess_personas = personas[-excess:]
+                    for persona in excess_personas:
+                        persona.delete()
+                    personas = personas[:-excess]
+                    
+                elif actual_count < task.population:
+                    # Too few personas, add more
+                    deficit = task.population - actual_count
+                    self.stdout.write(self.style.WARNING(f'Adding {deficit} additional personas'))
+                    faker = Faker()
+                    
+                    # Use the first persona's subcategories as a template for new ones
+                    if personas:
+                        template_persona = personas[0]
+                        template_subcategories = [
+                            mapping.subcategory for mapping in 
+                            PersonaSubCategoryMapping.objects.filter(persona=template_persona)
+                        ]
+                        
+                        for _ in range(deficit):
+                            persona = Persona(
+                                name=faker.name(),
+                                city=task.city_name
+                            )
+                            persona.save()
+                            
+                            for subcategory in template_subcategories:
+                                PersonaSubCategoryMapping.objects.create(
+                                    persona=persona,
+                                    subcategory=subcategory
+                                )
+                                
+                            description = self.generate_personality_description(
+                                persona.name,
+                                task.city_name,
+                                self.get_demographic_context(template_subcategories)
+                            )
+                            persona.personality_description = description
+                            persona.save()
+                            personas.append(persona)
+            
+            self.stdout.write(self.style.SUCCESS(
+                f'Final persona count: {len(personas)} (requested: {task.population})'
+            ))
 
             with transaction.atomic():
                 task.status = 'completed'
@@ -146,11 +202,24 @@ class Command(BaseCommand):
         subcategory_combinations = generate_all_subcategory_combinations(saved_categories)
 
         combination_weights = []
+        total_weight = 0
         for combination in subcategory_combinations:
             weight = population
             for subcategory in combination:
                 weight *= (subcategory.percentage / 100)
             combination_weights.append({'combination': combination, 'weight': weight})
+            total_weight += weight
+            
+        # Normalize weights to ensure they sum to exactly the population
+        self.stdout.write(self.style.SUCCESS(f'Total weight before normalization: {total_weight}, Target: {population}'))
+        if total_weight > 0:  # Prevent division by zero
+            normalization_factor = population / total_weight
+            for combo in combination_weights:
+                combo['weight'] = combo['weight'] * normalization_factor
+                
+        # Verify the total after normalization
+        total_after = sum(combo['weight'] for combo in combination_weights)
+        self.stdout.write(self.style.SUCCESS(f'Total weight after normalization: {total_after}'))
 
         combination_weights.sort(key=lambda x: x['weight'] % 1, reverse=True)
 
@@ -171,6 +240,9 @@ class Command(BaseCommand):
 
             for future in futures:
                 personas.extend(future.result())
+                
+        # Final verification
+        self.stdout.write(self.style.SUCCESS(f'Requested population: {population}, Generated personas: {len(personas)}'))
 
         return personas
 
@@ -178,13 +250,19 @@ class Command(BaseCommand):
         """Process a chunk of demographic-based persona generation"""
         personas = []
         total_assigned = 0
+        
+        # Keep track of how many personas were generated from this chunk
+        chunk_total = sum(round(combo_data['weight']) for combo_data in chunk)
+        self.stdout.write(self.style.SUCCESS(f'Chunk expected personas: {chunk_total}'))
 
         for combo_data in chunk:
             combination = combo_data['combination']
             exact_count = round(combo_data['weight'])
-
+            
+            # Safeguard to ensure we don't exceed the population limit
             if total_assigned + exact_count > population:
                 exact_count = population - total_assigned
+                self.stdout.write(self.style.WARNING(f'Limiting persona count to stay within population limit'))
 
             for _ in range(exact_count):
                 persona = Persona(
@@ -214,11 +292,13 @@ class Command(BaseCommand):
 
                 total_assigned += 1
                 if total_assigned >= population:
+                    self.stdout.write(self.style.WARNING(f'Reached population limit of {population}, stopping generation'))
                     break
 
             if total_assigned >= population:
                 break
 
+        self.stdout.write(self.style.SUCCESS(f'Chunk generated personas: {total_assigned}'))
         return personas
 
     def process_single_persona(self, row_data, city_name):

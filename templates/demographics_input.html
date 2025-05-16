@@ -386,12 +386,6 @@
                         <label>Category Name</label>
                         <input type="text" name="category_${categoryCount}" placeholder="Enter category name" required>
                     </div>
-                    <button type="button" class="btn-outline" onclick="addSubCategory(${categoryCount})">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Add Subcategory
-                    </button>
                     <button type="button" class="btn-danger btn-icon" onclick="deleteCategory(${categoryCount})">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
@@ -399,6 +393,14 @@
                     </button>
                 </div>
                 <div id="subcategories_${categoryCount}"></div>
+                <div class="add-subcategory-container" style="margin-top: 1rem; text-align: left;">
+                    <button type="button" class="btn-outline" onclick="addSubCategory(${categoryCount})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Add Subcategory
+                    </button>
+                </div>
             `;
             document.getElementById("categories").appendChild(categoryDiv);
             
@@ -611,8 +613,61 @@
             const form = document.querySelector('form');
             
             form.addEventListener('submit', function(event) {
-                // Validation removed - no need to check for 100% distribution
-                // Let the form submit normally
+                // Get all categories
+                const categories = document.querySelectorAll('[id^="category_"]');
+                let validationFailed = false;
+                
+                // Clear any previous error messages
+                const existingErrors = document.querySelectorAll('.validation-error');
+                existingErrors.forEach(error => error.remove());
+                
+                // Check each category
+                categories.forEach(category => {
+                    const categoryId = category.id.split('_')[1];
+                    const subcategories = document.querySelectorAll(`#subcategories_${categoryId} .subcategory`);
+                    
+                    // Skip validation if no subcategories
+                    if (subcategories.length === 0) return;
+                    
+                    // Calculate sum of percentages
+                    let sum = 0;
+                    subcategories.forEach(subcategory => {
+                        const percentageInput = subcategory.querySelector(`input[name^="percentage_${categoryId}_"]`);
+                        if (percentageInput && percentageInput.value) {
+                            sum += parseFloat(percentageInput.value);
+                        }
+                    });
+                    
+                    // Check if sum is 100%
+                    if (Math.abs(sum - 100) > 0.01) { // Allow for small floating point errors
+                        validationFailed = true;
+                        
+                        // Create error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.classList.add('alert', 'alert-danger', 'validation-error');
+                        errorDiv.style.marginTop = '10px';
+                        
+                        const categoryNameInput = category.querySelector(`input[name="category_${categoryId}"]`);
+                        const categoryName = categoryNameInput ? categoryNameInput.value || 'This category' : 'This category';
+                        
+                        errorDiv.textContent = `${categoryName}'s subcategories must add up to 100% (current total: ${sum}%)`;
+                        
+                        // Insert error after the subcategories
+                        const subcategoriesContainer = document.getElementById(`subcategories_${categoryId}`);
+                        subcategoriesContainer.appendChild(errorDiv);
+                    }
+                });
+                
+                // Prevent form submission if validation failed
+                if (validationFailed) {
+                    event.preventDefault();
+                    
+                    // Scroll to the first error
+                    const firstError = document.querySelector('.validation-error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
             });
         });
     </script>

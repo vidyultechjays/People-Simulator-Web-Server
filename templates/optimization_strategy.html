@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/results_summary_style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/left_panel.css' %}">
     <style>
         :root {
             --primary: #9d4edd;
@@ -80,12 +81,13 @@
             background: #232323;
             padding: 24px;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 200;
         }
         
         .city-header::before {
@@ -108,28 +110,80 @@
             margin-left: 15px;
         }
         
-        .city-dropdown {
+        .city-dropdown-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .city-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .city-arrow::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-right: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .city-arrow.active::after {
+            transform: rotate(-135deg);
+            margin-top: 6px;
+        }
+        
+        /* City dropdown */
+        #cityDropdown {
+            position: absolute;
+            top: calc(100% - 1px); /* Overlap the border slightly */
+            left: 24px;
+            right: 24px;
             background: #2d2d2d;
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 8px 32px 8px 12px;
-            border-radius: 6px;
+            padding: 0;
+            border-radius: 0 0 6px 6px;
             font-size: 0.9rem;
             cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239d4edd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            transition: all 0.2s ease;
-            width: 100%;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 10000;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
-        .city-dropdown:hover, .city-dropdown:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(157, 78, 221, 0.2);
+        #cityDropdown.active {
+            display: block;
+        }
+        
+        .city-dropdown-item {
+            padding: 12px 16px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+            color: var(--text-color);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .city-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .city-dropdown-item:hover {
+            background: rgba(157, 78, 221, 0.2);
+        }
+        
+        .city-dropdown-item.selected {
+            background: rgba(157, 78, 221, 0.3);
+            font-weight: 500;
         }
         
         .city-name {
@@ -225,21 +279,57 @@
             color: var(--text-color);
             font-weight: 600;
             padding: 12px 16px;
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 0.95rem;
             background: rgba(0,0,0,0.2);
             border-left: 3px solid var(--primary);
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+        
+        .category-name:hover {
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .category-name::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+            margin-right: 5px;
+        }
+        
+        .category-name.collapsed::after {
+            transform: rotate(-45deg);
         }
         
         .subcategory-list {
             list-style: none;
             padding: 8px 0;
             margin: 0;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .subcategory-list.collapsed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+            border-top: none;
         }
         
         .subcategory-item {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 8px 16px;
             color: var(--text-color);
             font-size: 0.9rem;
@@ -252,7 +342,13 @@
             border-left-color: var(--primary);
         }
         
-        .subcategory-item::before {
+        .subcategory-name {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .subcategory-name::before {
             content: "";
             display: inline-block;
             width: 6px;
@@ -261,6 +357,15 @@
             background-color: var(--primary);
             opacity: 0.7;
             border-radius: 50%;
+        }
+        
+        .subcategory-percentage {
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(157, 78, 221, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
         }
         
         /* Custom scrollbar for side panel */
@@ -1066,7 +1171,71 @@
             justify-content: center;
             font-size: 12px;
         }
+        
+        /* Super optimized content section styling */
+        .super-optimized-section {
+            background-color: #232323;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .super-optimized-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--success));
+        }
+        
+        .super-optimized-title {
+            color: var(--primary-light);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .super-optimized-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .super-optimized-content {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            border-left: 3px solid var(--success);
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        
+        .super-optimized-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--success);
+            color: #121212;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .super-optimized-badge i {
+            margin-right: 6px;
+        }
     </style>
+    <script src="{% static 'js/left_panel.js' %}" defer></script>
 </head>
 <body class="dark-theme">
     <div class="navbar">
@@ -1081,6 +1250,8 @@
                     People Simulator
                 </a>
                 <a href="/">Home</a>
+                <a href="{% url 'persona_input' %}">Create People Group</a>
+
             </div>
             
             
@@ -1094,50 +1265,8 @@
     </div>
 
     <div class="app-container">
-        <!-- Side Panel -->
-        <aside class="side-panel">
-            <div class="city-header">
-                <div class="city-header-left">
-                    <h2 class="city-name">{{ city_name }}</h2>
-                    <div class="city-selector">
-                        <select id="city-select" class="city-dropdown" onchange="changeCity()">
-                            <option value="">Select City</option>
-                            {% for city in cities %}
-                                <option value="{{ city }}" {% if city == city_name %}selected{% endif %}>{{ city }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <p class="news-item-title">{{ news_item }}</p>
-                </div>
-            </div>
-            
-            <div class="demographic-section">
-                <h3 class="demographic-title">Demographic Summary</h3>
-                
-                {% if demographic_summary %}
-                    {% for category in demographic_summary %}
-                        <div class="demographic-category">
-                            <span class="category-name">{{ category.category }}</span>
-                            <ul class="subcategory-list">
-                                {% for subcategory in category.subcategories %}
-                                    <li class="subcategory-item">{{ subcategory }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="no-demographics">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.5 21H6.5C5.83696 21 5.20107 20.7366 4.73223 20.2678C4.26339 19.7989 4 19.163 4 18.5V5.5C4 4.83696 4.26339 4.20107 4.73223 3.73223C5.20107 3.26339 5.83696 3 6.5 3H14.5L20 8.5V18.5C20 19.163 19.7366 19.7989 19.2678 20.2678C18.7989 20.7366 18.163 21 17.5 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M14 3V9H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9.5 13H14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9.5 17H14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        No demographic data available for this city.
-                    </div>
-                {% endif %}
-            </div>
-        </aside>
+        <!-- Include the left panel template -->
+        {% include 'left_panel.html' with selected_city=city_name cities=cities population_count=population_count categories_count=categories_count demographic_details=demographic_details %}
         
         <!-- Main Content -->
         <main class="main-content">
@@ -1161,9 +1290,7 @@
                     </div>
                 </div>
 
-                <div id="status-message" class="alert blue-alert" role="alert">
-                    <i class="fas fa-info-circle me-2"></i>Please select demographic groups for optimization
-                </div>
+                
 
                 <div class="row">
                     <div class="col-12">
@@ -1225,8 +1352,12 @@
                                 </form>
                             </div>
                         </div>
+                        <div id="status-message" class="alert blue-alert" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>Please select demographic groups for optimization
+                        </div>
                     </div>
                 </div>
+                
 
                 {% if strategy_task %}
                 <div class="row mt-4">
@@ -1260,6 +1391,20 @@
                             <h2 class="strategy-recommendation-title">
                                 <i class="fas fa-lightbulb"></i>Strategic Recommendations
                             </h2>
+                            
+                            <!-- Super Optimized Content Section -->
+                            <div class="super-optimized-section mb-4">
+                                <h3 class="super-optimized-title">
+                                    <i class="fas fa-star"></i>Super Optimized Content
+                                </h3>
+                                <div class="super-optimized-badge">
+                                    <i class="fas fa-award"></i>Best Overall Performance
+                                </div>
+                                <div class="super-optimized-content" id="super-optimized-content-text">
+                                    <!-- Super optimized content will be rendered here -->
+                                </div>
+                            </div>
+                            
                             <div class="row" id="recommendations-container">
                                 <!-- Recommendations will be rendered here -->
                             </div>
@@ -1279,7 +1424,17 @@
     </div>
 
     <script>
+        // Back button handler
+        window.goBack = function() {
+            window.history.back();
+        };
+
         $(document).ready(function() {
+            // Hide super optimized section by default unless we have content
+            if ($('#super-optimized-content-text').text().trim() === '') {
+                $('.super-optimized-section').hide();
+            }
+            
             // When a demographic-specific checkbox is clicked
             $('.demographic-checkbox').change(function() {
                 if($(this).is(':checked')) {
@@ -1303,7 +1458,7 @@
                     $('#status-message').removeClass('alert-success').addClass('blue-alert').html('<i class="fas fa-info-circle me-2"></i>All demographics selected');
                 }
             });
-
+            
             // Form submission handler
             $('#optimization-form').submit(function(e) {
                 e.preventDefault(); // Prevent default form submission
@@ -1374,6 +1529,20 @@
                                     <h2 class="strategy-recommendation-title">
                                         <i class="fas fa-lightbulb"></i>Strategic Recommendations
                                     </h2>
+                                    
+                                    <!-- Super Optimized Content Section -->
+                                    <div class="super-optimized-section mb-4">
+                                        <h3 class="super-optimized-title">
+                                            <i class="fas fa-star"></i>Super Optimized Content
+                                        </h3>
+                                        <div class="super-optimized-badge">
+                                            <i class="fas fa-award"></i>Best Overall Performance
+                                        </div>
+                                        <div class="super-optimized-content" id="super-optimized-content-text">
+                                            <!-- Super optimized content will be rendered here -->
+                                        </div>
+                                    </div>
+                                    
                                     <div class="row" id="recommendations-container"></div>
                                 </div>
                             </div>
@@ -1397,6 +1566,18 @@
                     
                     // If we have structured data with recommendations
                     if (data.optimized_content && data.optimized_content.recommendations) {
+                        // Display super optimized content if available
+                        if (data.super_optimized_content) {
+                            $('#super-optimized-content-text').text(data.super_optimized_content);
+                            $('.super-optimized-section').show();
+                        } else if (data.optimized_content.super_optimized_content) {
+                            $('#super-optimized-content-text').text(data.optimized_content.super_optimized_content);
+                            $('.super-optimized-section').show();
+                        } else {
+                            // Hide the section if no super optimized content
+                            $('.super-optimized-section').hide();
+                        }
+                        
                         // Display recommendations
                         const recommendationsContainer = $('#recommendations-container');
                         recommendationsContainer.empty();
@@ -1449,6 +1630,9 @@
                         $('#recommendations-container').html('<div class="col-12"><pre class="strategy-content">' + 
                             (typeof data.optimized_content === 'string' ? data.optimized_content : JSON.stringify(data.optimized_content, null, 2)) + 
                             '</pre></div>');
+                        
+                        // Hide super optimized section for unstructured response
+                        $('.super-optimized-section').hide();
                     }
                 } catch (error) {
                     // Fallback for any errors
@@ -1456,6 +1640,9 @@
                     $('#recommendations-container').html('<div class="col-12"><pre class="strategy-content">' + 
                         (typeof response === 'string' ? response : JSON.stringify(response, null, 2)) + 
                         '</pre></div>');
+                    
+                    // Hide super optimized section on error
+                    $('.super-optimized-section').hide();
                 }
             }
             
@@ -1468,37 +1655,6 @@
                     console.error("Error processing initial results:", e);
                 }
             {% endif %}
-
-            // City selection handler
-            function changeCity() {
-                const selectedCity = document.getElementById('city-select').value;
-                if (selectedCity) {
-                    window.location.href = `/optimization-strategy/?city=${encodeURIComponent(selectedCity)}&news_item={{ news_item|urlencode }}`;
-                }
-            }
-            
-            // Make changeCity function globally accessible
-            window.changeCity = changeCity;
-            
-            // Toggle sidebar on mobile
-            function toggleSidebar() {
-                const sidebar = document.querySelector('.side-panel');
-                const body = document.body;
-                
-                sidebar.classList.toggle('active');
-                body.classList.toggle('sidebar-open');
-            }
-            
-            // Make toggleSidebar function globally accessible
-            window.toggleSidebar = toggleSidebar;
-            
-            // Back button handler
-            function goBack() {
-                window.history.back();
-            }
-            
-            // Make goBack function globally accessible
-            window.goBack = goBack;
         });
     </script>
     <script src="{% static 'js/dark_theme.js' %}"></script>

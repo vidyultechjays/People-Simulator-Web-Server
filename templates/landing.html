@@ -77,13 +77,46 @@
             font-size: 0.9rem;
         }
         .landing-container {
-            background: var(--card-bg);
-            max-width: 600px;
+            background: transparent !important;
+            max-width: 1200px;
             margin: 64px auto 0 auto;
+            display: flex;
+            gap: 40px;
+            box-shadow: none !important;
+        }
+        .landing-left {
+            flex: 4;
+            text-align: left;
+            padding-right: 40px;
+            padding: 40px;
+            background: var(--card-bg);
             border-radius: 18px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-            padding: 48px 40px 40px 40px;
+        }
+        .landing-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-left: 1px solid var(--border-color);
+            padding-left: 40px;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        }
+        .landing-right .cta-btn {
+            width: 100%;
             text-align: center;
+            padding: 16px 10px;
+            font-size: 1.2rem;
+        }
+        .create-group-text {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
         h1 {
             color: #9d4edd;
@@ -138,6 +171,22 @@
             .landing-container { padding: 24px 8px; }
             .features { gap: 14px; }
         }
+        @media (max-width: 900px) {
+            .landing-container {
+                flex-direction: column;
+                padding: 30px 20px;
+            }
+            .landing-left {
+                padding-right: 0;
+                margin-bottom: 30px;
+            }
+            .landing-right {
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                padding-left: 0;
+                padding-top: 30px;
+            }
+        }
         select {
             background-color: #2d2d2d;
             color: var(--text-color);
@@ -153,6 +202,62 @@
         label {
             font-weight: 600;
             color: #c77dff;
+        }
+        /* New styles for city cards */
+        .cities-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .city-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            padding: 24px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .city-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            border-color: var(--primary-color);
+        }
+        .city-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #9d4edd 0%, #5a189a 100%);
+        }
+        .city-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+        .city-card a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .section-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 24px;
         }
     </style>
 </head>
@@ -179,41 +284,37 @@
         </div>
     </div>
     <div class="landing-container">
-        <h1>Welcome to People Simulator</h1>
-        <p>Simulate, analyze, and optimize personas for your people group or project. Generate personas, assess impact, and explore aggregate results with ease.</p>
-        <form method="get" action="{% url 'impact_assessment_new' %}" style="margin-bottom: 24px;">
-            <label for="city-select">Select a People Group:</label>
-            <br>
-            <select id="city-select" name="city" style="margin: 16px 0;" onchange="checkSelection()">
-                <option value="" disabled selected>Choose a People Group</option>
-                {% for city in cities %}
-                    <option value="{{ city }}">{{ city }}</option>
-                {% endfor %}
-            </select>
-            <br>
-            <button id="assessment-btn" class="cta-btn" type="submit" disabled>View Impact Assessment</button>
-        </form>
-        <a class="cta-btn" href="{% url 'persona_input' %}" style="background: #9d4edd; margin-bottom: 24px;">Create People Group</a>
-        <div class="features">
-            <div class="feature"><strong>Persona Generation:</strong> Create personas using demographic input or CSV upload.</div>
-            <div class="feature"><strong>Impact Assessment:</strong> Analyze the effects of different strategies on your personas.</div>
-            <div class="feature"><strong>Results Listing:</strong> View and export aggregate emotions and simulation outcomes.</div>
+        <div class="landing-left">
+            <h1>Welcome to People Simulator</h1>
+            <p>Simulate, analyze, and optimize personas for your people group or project. Generate personas, assess impact, and explore aggregate results with ease.</p>
+            <div class="features">
+                <div class="feature"><strong>Persona Generation:</strong> Create personas using demographic input or CSV upload.</div>
+                <div class="feature"><strong>Impact Assessment:</strong> Analyze the effects of different strategies on your personas.</div>
+                <div class="feature"><strong>Results Listing:</strong> View and export aggregate emotions and simulation outcomes.</div>
+            </div>
+        </div>
+        <div class="landing-right">
+            <div class="create-group-text">Start by creating a new people group for your simulation</div>
+            <a class="cta-btn" href="{% url 'persona_input' %}">Create People Group</a>
         </div>
     </div>
 
-    <script>
-        function checkSelection() {
-            const selectElement = document.getElementById('city-select');
-            const assessmentButton = document.getElementById('assessment-btn');
-            
-            // Enable the button only if a valid option is selected
-            assessmentButton.disabled = selectElement.value === "";
-        }
-        
-        // Run on page load to ensure initial state is correct
-        document.addEventListener('DOMContentLoaded', function() {
-            checkSelection();
-        });
-    </script>
+    <div class="cities-container">
+        <h2 class="section-title">Available People Groups</h2>
+        <div class="cities-grid">
+            {% for city in cities %}
+            <div class="city-card">
+                <a href="{% url 'impact_assessment_new' %}?city={{ city }}">
+                    <div class="city-name">{{ city }}</div>
+                    <div class="city-info">View impact assessment and personas</div>
+                </a>
+            </div>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <p>No people groups available yet. Create your first group!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html> 

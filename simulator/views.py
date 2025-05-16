@@ -98,18 +98,21 @@ def impact_assessment_new(request):
     persona_in_cities = Persona.objects.filter(city__contains=city_name)
     
     categories = Category.objects.filter(city=city_name)
-    demographic_summary = []
+    demographic_details = []
     for category in categories:
         subcategories_for_category = SubCategory.objects.filter(category=category)
-        subcategories_for_category_list = []
-        for subcategory in subcategories_for_category:
-            subcategories_for_category_list.append(subcategory.name)
-        demographic_summary.append({
+        demographic_details.append({
             'category': category.name,
-            'subcategories': subcategories_for_category_list
+            'subcategories': [
+                {
+                    'name': subcategory.name,
+                    'percentage': subcategory.percentage
+                }
+                for subcategory in subcategories_for_category
+            ]
         })
     
-    print(f"demographic_summary: {demographic_summary}")
+    print(f"demographic_details: {demographic_details}")
     
     
     
@@ -119,7 +122,7 @@ def impact_assessment_new(request):
         'cities': cities,
         'aggregate_emotions': aggregate_emotions,
         'population_count': persona_in_cities.count(),
-        'demographic_summary': demographic_summary,
+        'demographic_details': demographic_details,
         'categories_count': categories.count(),
     })
 
@@ -162,16 +165,36 @@ def results_summary(request):
         charts = {}
         possible_responses = []
         demographic_summary = {}
-    for city in cities:
-        print(f"city: {city}")
+    
+    categories = Category.objects.filter(city=city_name)
+
+    demographic_details = []
+    for category in categories:
+        subcategories_for_category = SubCategory.objects.filter(category=category)
+        demographic_details.append({
+            'category': category.name,
+            'subcategories': [
+                {
+                    'name': subcategory.name,
+                    'percentage': subcategory.percentage
+                }
+                for subcategory in subcategories_for_category
+            ]
+        })
+    
+    persona_in_cities = Persona.objects.filter(city__contains=city_name)
+    
     return render(request, "results_summary.html", {
         "summary": aggregate_emotion.summary if aggregate_emotion else {},
         "demographic_summary": demographic_summary,
+        "demographic_details": demographic_details,
         "news_item": news_item_title,
         "city_name": city_name,
         "charts": charts,
         "possible_responses": possible_responses,
         "cities": cities,
+        "population_count": persona_in_cities.count(),
+        "categories_count": categories.count(),
     })
 
 # views.py
@@ -566,6 +589,23 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
                 f"No personas found for {category_name} in {city_name}. "
                 "This might be due to limited data or specific filtering."
             )
+        categories = Category.objects.filter(city=city_name)
+        
+        demographic_details = []
+        for category in categories:
+            subcategories_for_category = SubCategory.objects.filter(category=category)
+            demographic_details.append({
+                'category': category.name,
+                'subcategories': [
+                    {
+                        'name': subcategory.name,
+                        'percentage': subcategory.percentage
+                    }
+                    for subcategory in subcategories_for_category
+                ]
+            })
+
+        persona_in_cities = Persona.objects.filter(city__contains=city_name)
 
         return render(request, 'sample_profiles.html', {
             'category_type': category_type,
@@ -573,7 +613,10 @@ def fetch_sample_profiles(request, category_type, category_name, city_name, news
             'personas_data': personas_data,
             'city_name': city_name,
             'news_item_title': news_item_title,
-            'cities': cities
+            'cities': cities,
+            'demographic_details': demographic_details,
+            "population_count": persona_in_cities.count(),
+            "categories_count": categories.count(),
         })
         
         for city in cities:
@@ -696,6 +739,22 @@ def optimize_content_two(request):
     categories = Category.objects.filter(city=city_name)
     subcategories = SubCategory.objects.filter(city=city_name)
     
+    categories = Category.objects.filter(city=city_name)
+    demographic_details = []
+    for category in categories:
+        subcategories_for_category = SubCategory.objects.filter(category=category)
+        demographic_details.append({
+            'category': category.name,
+            'subcategories': [
+                {
+                    'name': subcategory.name,
+                    'percentage': subcategory.percentage
+                }
+                for subcategory in subcategories_for_category
+            ]
+        })
+    
+    persona_in_cities = Persona.objects.filter(city__contains=city_name)
     
     return render(request, 'optimization_strategy.html', {
         'messages': None,
@@ -704,7 +763,10 @@ def optimize_content_two(request):
         'categories': categories,
         'subcategories': subcategories,
         'optimization_strategy': None,
-        'cities': cities
+        'cities': cities,
+        'demographic_details': demographic_details,
+        "population_count": persona_in_cities.count(),
+        "categories_count": categories.count(),
     })
     
     

@@ -14,18 +14,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/results_summary_style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/left_panel.css' %}">
+
 
     <style>
         :root {
+            --primary-color: #9d4edd;
+            --primary-hover: #7b2cbf;
             --primary: #9d4edd;
             --primary-light: #c77dff;
             --secondary: #7b2cbf;
             --accent: #5a189a;
             --success: #06d6a0;
+            --success-color: #06d6a0;
             --warning: #ffbe0b;
             --danger: #ef476f;
+            --danger-color: #ef476f;
+            --danger-hover: #d64265;
             --light: #e0e0e0;
             --dark: #121212;
+            --bg-color: #121212;
             --card-bg: #1e1e1e;
             --input-bg: #2d2d2d;
             --border-color: #3d3d3d;
@@ -36,6 +44,7 @@
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
             --transition: all 0.3s ease;
             --border-radius: 8px;
+            --radius: 8px;
             --sidebar-width: 280px;
         }
 
@@ -60,7 +69,6 @@
         }
         
         .navbar-content {
-            
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -82,12 +90,12 @@
         .navbar a {
             font-family: 'Inter', Arial, sans-serif !important;
             font-size: 14px !important;
-            color: var(--primary);
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition);
             padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
+            border-radius: var(--radius);
         }
 
         .navbar a:hover {
@@ -96,13 +104,13 @@
         }
         
         .logout-btn {
-            background-color: var(--danger);
+            background-color: var(--danger-color);
             color: white !important;
             margin-left: 10px;
         }
         
         .logout-btn:hover {
-            background-color: #d64265 !important;
+            background-color: var(--danger-hover) !important;
         }
         
         .user-info {
@@ -123,18 +131,18 @@
         .navbar-brand {
             font-weight: 700;
             font-size: 1.5rem;
-            color: var(--primary);
+            color: var(--primary-color);
             text-decoration: none;
         }
 
         .navbar-menu {
             display: flex;
             gap: 1.5rem;
-            color: var(--primary);
+            color: var(--primary-color);
         }
 
         .navbar-menu a {
-            color: var(--primary);
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition);
@@ -209,7 +217,7 @@
             left: 0;
             width: 70px;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
             border-radius: 3px;
         }
 
@@ -228,7 +236,7 @@
         }
 
         .info-badge:hover {
-            border-color: var(--primary);
+            border-color: var(--primary-color);
             background-color: rgba(157, 78, 221, 0.1);
         }
 
@@ -243,11 +251,11 @@
             padding: 1rem;
             margin-bottom: 2rem;
             transition: var(--transition);
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid var(--primary-color);
         }
 
         .btn-primary {
-            background-color: var(--primary);
+            background-color: var(--primary-color);
             border: none;
             font-weight: 500;
             padding: 0.75rem 1.5rem;
@@ -271,8 +279,33 @@
         }
 
         .btn-secondary:hover {
-            background-color: var(--primary);
+            background-color: var(--primary-color);
             transform: translateY(-2px);
+        }
+
+
+        .news-item-box {
+            background-color: var(--input-bg);
+            border-radius: var(--border-radius);
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .news-item-label {
+            background-color: rgba(0,0,0,0.2);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .news-item-content {
+            padding: 16px;
+            font-size: 1rem;
+            color: var(--text-color);
         }
 
         .alert {
@@ -285,19 +318,19 @@
         .alert-info {
             background-color: rgba(157, 78, 221, 0.2);
             color: var(--primary-light);
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid var(--primary-color);
         }
 
         .alert-success {
             background-color: rgba(6, 214, 160, 0.2);
-            color: var(--success);
-            border-left: 4px solid var(--success);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
         }
 
         .alert-danger {
             background-color: rgba(239, 71, 111, 0.2);
-            color: var(--danger);
-            border-left: 4px solid var(--danger);
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
         }
 
         .table {
@@ -343,10 +376,9 @@
 
         .section-title {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--primary-color);
             margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
         }
 
         .summary-stats {
@@ -379,7 +411,7 @@
 
         .stat-icon {
             font-size: 2rem;
-            color: var(--primary);
+            color: var(--primary-color);
             margin-bottom: 1rem;
         }
 
@@ -401,6 +433,7 @@
             gap: 0.5rem;
             margin-top: 1rem;
             text-decoration: none;
+            color: white !important;
         }
 
         canvas {
@@ -543,12 +576,13 @@
             background: #232323;
             padding: 24px;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 200;
         }
 
         .city-header::before {
@@ -558,7 +592,7 @@
             left: 0;
             width: 6px;
             height: 100%;
-            background: var(--primary);
+            background: var(--primary-color);
         }
 
         .city-header-left {
@@ -571,29 +605,80 @@
             margin-left: 15px;
         }
 
-        .city-dropdown {
+        .city-dropdown-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
             width: 100%;
+            justify-content: space-between;
+        }
+
+        .city-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .city-arrow::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-right: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+
+        .city-arrow.active::after {
+            transform: rotate(-135deg);
+            margin-top: 6px;
+        }
+
+        /* City dropdown */
+        #cityDropdown {
+            position: absolute;
+            top: calc(100% - 1px);
+            left: 24px;
+            right: 24px;
             background: #2d2d2d;
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 8px 32px 8px 12px;
-            border-radius: 6px;
+            padding: 0;
+            border-radius: 0 0 6px 6px;
             font-size: 0.9rem;
             cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239d4edd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            transition: all 0.2s ease;
-            min-width: 120px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 10000;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .city-dropdown:hover, .city-dropdown:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(157, 78, 221, 0.2);
+        #cityDropdown.active {
+            display: block;
+        }
+
+        .city-dropdown-item {
+            padding: 12px 16px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+            color: var(--text-color);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .city-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .city-dropdown-item:hover {
+            background: rgba(157, 78, 221, 0.2);
+        }
+
+        .city-dropdown-item.selected {
+            background: rgba(157, 78, 221, 0.3);
+            font-weight: 500;
         }
 
         .city-name {
@@ -621,7 +706,7 @@
             display: inline-block;
             width: 8px;
             height: 8px;
-            background-color: var(--primary);
+            background-color: var(--primary-color);
             border-radius: 50%;
             margin-right: 8px;
         }
@@ -648,7 +733,7 @@
             display: inline-block;
             width: 16px;
             height: 2px;
-            background-color: var(--primary);
+            background-color: var(--primary-color);
             margin-right: 8px;
         }
 
@@ -678,7 +763,7 @@
 
         .response-item:hover {
             background: rgba(0,0,0,0.1);
-            border-left-color: var(--primary);
+            border-left-color: var(--primary-color);
         }
 
         .response-item::before {
@@ -687,7 +772,7 @@
             width: 6px;
             height: 6px;
             margin-right: 10px;
-            background-color: var(--primary);
+            background-color: var(--primary-color);
             opacity: 0.7;
             border-radius: 50%;
         }
@@ -735,7 +820,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: var(--primary);
+            background: var(--primary-color);
             opacity: 0.7;
         }
 
@@ -753,7 +838,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: var(--primary);
+            background: var(--primary-color);
             color: white;
             width: 50px;
             height: 50px;
@@ -771,7 +856,7 @@
             display: inline-flex;
             align-items: center;
             background: var(--card-bg);
-            color: var(--primary);
+            color: var(--primary-color);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             padding: 0.5rem 1rem;
@@ -786,7 +871,7 @@
         .back-button:hover {
             background: rgba(157, 78, 221, 0.1);
             color: var(--primary-light);
-            border-color: var(--primary);
+            border-color: var(--primary-color);
             transform: translateY(-2px);
         }
         
@@ -831,7 +916,213 @@
                 padding: 16px;
             }
         }
+
+        /* Stats indicators in the left panel */
+        .demographic-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .demographic-section .stat-card {
+            background: #232323;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            min-width: unset;
+            box-shadow: none;
+            margin-bottom: 0;
+            transform: none;
+            flex: unset;
+            display: block;
+        }
+
+        .demographic-section .stat-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .demographic-section .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .demographic-section .stat-value {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .demographic-section .stat-label {
+            color: var(--text-color);
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .demographic-title {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .demographic-title::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 2px;
+            background-color: var(--primary-color);
+            margin-right: 8px;
+        }
+
+        .demographic-category {
+            background: #232323;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .demographic-category:hover {
+            transform: translateY(-2px);
+        }
+
+        .category-name {
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            background: rgba(0,0,0,0.2);
+            border-left: 3px solid var(--primary-color);
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .category-name:hover {
+            background: rgba(0,0,0,0.3);
+        }
+
+        .category-name::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .category-name.collapsed::after {
+            transform: rotate(-45deg);
+        }
+
+        .subcategory-list {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .subcategory-list.collapsed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+            border-top: none;
+        }
+
+        .subcategory-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .subcategory-item:hover {
+            background: rgba(0,0,0,0.1);
+            border-left-color: var(--primary-color);
+        }
+
+        /* No demographics message */
+        .no-demographics {
+            background: #232323;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .no-demographics svg {
+            display: block;
+            margin: 0 auto 16px;
+            opacity: 0.5;
+        }
+
+        .demographic-section {
+            padding: 20px;
+        }
+
+        /* Fix conflicting styles between stat cards in main content and sidebar */
+        .summary-stats .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-stats .stat-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .summary-stats .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light);
+        }
     </style>
+    <script src="{% static 'js/left_panel.js' %}"></script>
 </head>
 <body class="dark-theme">
     <div class="navbar">
@@ -859,37 +1150,8 @@
     </div>
 
     <div class="app-container">
-        <!-- Side Panel -->
-        <aside class="side-panel">
-            <div class="city-header">
-                <div class="city-header-left">
-                    <h2 class="city-name">{{ city_name }}</h2>
-                    <div class="city-selector">
-                        <select id="city-select" class="city-dropdown" onchange="changeCity()">
-                            <option value="">Select City</option>
-                            {% for city in cities %}
-                                <option value="{{ city }}" {% if city == city_name %}selected{% endif %}>{{ city }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <p class="news-item-title">{{ news_item }}</p>
-                </div>
-            </div>
-            
-            <div class="responses-section">
-                <h3 class="responses-title">Available Responses</h3>
-                
-                <div class="response-category">
-                    <div id="available-responses">
-                        {% for response in possible_responses %}
-                            <div class="response-item">{{ response.response_text }}</div>
-                        {% empty %}
-                            <div class="response-item">No responses available</div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <!-- Include the left panel template -->
+        {% include 'left_panel.html' with selected_city=city_name cities=cities population_count=population_count categories_count=categories_count demographic_details=demographic_details %}
         
         <!-- Main Content -->
         <main class="main-content">
@@ -905,11 +1167,18 @@
                 <div class="data-header">
                     <h1 class="page-title">Results Summary</h1>
                     <div>
-                        <span class="info-badge"><i class="fas fa-newspaper"></i> {{ news_item }}</span>
-                        <span class="info-badge"><i class="fas fa-city"></i> {{ city_name }}</span>
                         <a id="optimize-button" class="optimize-btn disabled" href="{% url 'optimize_content_two' %}?city={{ city_name|urlencode }}&news_item={{ news_item|urlencode }}">
                             <i class="fas fa-magic"></i> Optimize
                         </a>
+                    </div>
+                </div>
+
+                <div class="news-item-box mb-4">
+                    <div class="news-item-label">
+                        <i class="fas fa-newspaper me-2"></i> NEWS ITEM
+                    </div>
+                    <div class="news-item-content">
+                        {{ news_item }}
                     </div>
                 </div>
 
@@ -968,29 +1237,19 @@
     
     <script src="{% static 'js/dark_theme.js' %}"></script>
     <script>
-        // Toggle sidebar on mobile
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.side-panel');
-            const body = document.body;
-            
-            sidebar.classList.toggle('active');
-            body.classList.toggle('sidebar-open');
-        }
-        
-        // City selection handler
-        function changeCity() {
-            const selectedCity = document.getElementById('city-select').value;
-            const currentNewsItem = "{{ news_item|escapejs }}";
-            
-            if (selectedCity) {
-                window.location.href = `/impact-assessment-new/?city=${encodeURIComponent(selectedCity)}`;
-            }
-        }
-        
         // Back button handler
         function goBack() {
             window.history.back();
         }
+
+        // Initialize dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make sure dropdown is hidden initially
+            const dropdown = document.getElementById('cityDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('active');
+            }
+        });
 
         function createResponsePieChart(ctx, responseData) {
             const labels = responseData.map(response => response.response_text);

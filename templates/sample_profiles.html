@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/sample_profiles_style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dark_theme.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/left_panel.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -29,6 +30,10 @@
             --transition: all 0.3s ease;
             --border-radius: 8px;
             --sidebar-width: 280px;
+            --primary-color: #9d4edd;
+            --danger-color: #ef476f;
+            --danger-hover: #d64265;
+            --radius: 8px;
         }
         
         body {
@@ -66,12 +71,13 @@
             background: #232323;
             padding: 24px;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 200;
         }
         
         .city-header::before {
@@ -94,29 +100,80 @@
             margin-top: 15px;
         }
         
-        .city-dropdown {
+        .city-dropdown-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .city-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .city-arrow::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-right: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .city-arrow.active::after {
+            transform: rotate(-135deg);
+            margin-top: 6px;
+        }
+        
+        /* City dropdown */
+        #cityDropdown {
+            position: absolute;
+            top: calc(100% - 1px);
+            left: 24px;
+            right: 24px;
             background: #2d2d2d;
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 8px 32px 8px 12px;
-            border-radius: 6px;
+            padding: 0;
+            border-radius: 0 0 6px 6px;
             font-size: 0.9rem;
             cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239d4edd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            transition: all 0.2s ease;
-            min-width: 120px;
-            width: 100%;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 10000;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
-        .city-dropdown:hover, .city-dropdown:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(157, 78, 221, 0.2);
+        #cityDropdown.active {
+            display: block;
+        }
+        
+        .city-dropdown-item {
+            padding: 12px 16px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+            color: var(--text-color);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .city-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .city-dropdown-item:hover {
+            background: rgba(157, 78, 221, 0.2);
+        }
+        
+        .city-dropdown-item.selected {
+            background: rgba(157, 78, 221, 0.3);
+            font-weight: 500;
         }
         
         .city-name {
@@ -231,20 +288,49 @@
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
+            width: 100%;
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
         }
         
         .navbar a {
-            color: var(--primary);
+            font-family: 'Inter', Arial, sans-serif !important;
+            font-size: 14px !important;
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition);
             padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
+            border-radius: var(--radius);
         }
         
         .navbar a:hover {
-            background-color: rgba(157, 78, 221, 0.2);
-            color: var(--primary-light);
+            background-color: #5a189a;
+            color: white;
+        }
+        
+        .logout-btn {
+            background-color: var(--danger-color);
+            color: white !important;
+            margin-left: 10px;
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--danger-hover) !important;
+        }
+        
+        .user-info {
+            color: var(--text-color);
+            margin-right: 15px;
+            font-size: 0.9rem;
         }
         
         h1, h3 {
@@ -449,20 +535,101 @@
         .table td:nth-child(5) {
             width: 30%;
         }
+        
+        /* Additional styles to match impact_assessment_new.html */
+        .demographic-category {
+            background: #232323;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .demographic-category:hover {
+            transform: translateY(-2px);
+        }
+        
+        .category-name {
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            background: rgba(0,0,0,0.2);
+            border-left: 3px solid var(--primary-color);
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+        
+        .category-name:hover {
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .toggle-icon::after {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-icon.collapsed::after {
+            transform: rotate(-45deg);
+        }
+        
+        .demographic-title {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .demographic-title::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 2px;
+            background-color: var(--primary-color);
+            margin-right: 8px;
+        }
     </style>
+    <script src="{% static 'js/left_panel.js' %}" defer></script>
+
 </head>
 <body class="dark-theme">
     <div class="navbar">
         <div class="navbar-content">
-            <a href="/" class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; vertical-align: middle;">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                People Simulator
-            </a>
-            <a href="/">Home</a>
+            <div class="navbar-left">
+                <a href="/" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; vertical-align: middle;">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    People Simulator
+                </a>
+                <a href="/">Home</a>
+                <a href="{% url 'persona_input' %}">Create People Group</a>
+            </div>
+            <div class="navbar-right">
+                {% if request.session.username %}
+                    <span class="user-info">Logged in as: {{ request.session.username }}</span>
+                    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+                {% endif %}
+            </div>
         </div>
     </div>
     
@@ -470,33 +637,64 @@
         <!-- Side Panel -->
         <aside class="side-panel">
             <div class="city-header">
-                <div class="city-header-left">
+                <div class="city-dropdown-container" onclick="toggleCityDropdown(event)">
                     <h2 class="city-name">{{ city_name }}</h2>
-                    <div class="city-selector">
-                        <select id="city-select" class="city-dropdown" onchange="changeCity()">
-                            <option value="">Select City</option>
-                            {% for city in cities %}
-                                <option value="{{ city }}" {% if city == city_name %}selected{% endif %}>{{ city }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                    <div class="city-arrow"></div>
+                </div>
+                <div id="cityDropdown">
+                    {% for city in cities %}
+                        <div class="city-dropdown-item {% if city == city_name %}selected{% endif %}" onclick="selectCity('{{ city }}', event)">
+                            {{ city }}
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
             
-            <div class="news-item-section">
-                <h3 class="news-item-title">News Item</h3>
-                <div class="news-item-card">
-                    <div class="news-item-content">
-                        {{ news_item_title }}
+            <div class="demographic-section">
+                <!-- Statistics Cards -->
+                <div class="demographic-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ population_count|default:"50" }}</div>
+                        <div class="stat-label">POPULATION</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ categories_count|default:"2" }}</div>
+                        <div class="stat-label">CATEGORIES</div>
                     </div>
                 </div>
                 
-                <h3 class="news-item-title">Category</h3>
-                <div class="news-item-card">
-                    <div class="news-item-content">
-                        {{ category_type|title }} - {{ category_name }}
+                <h3 class="demographic-title">DEMOGRAPHIC SUMMARY</h3>
+                
+                {% if demographic_details %}
+                    {% for category in demographic_details %}
+                        <div class="demographic-category">
+                            <div class="category-name">
+                                <span>{{ category.category }}</span>
+                            </div>
+                            <ul class="subcategory-list">
+                                {% for subcategory in category.subcategories %}
+                                    <li class="subcategory-item">
+                                        <span class="subcategory-name">{{ subcategory.name }} </span>
+                                        <span class="subcategory-percentage"> {{ subcategory.percentage }} %</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="demographic-category">
+                        <div class="category-name">
+                            <span>Gender</span>
+                            <span class="toggle-icon"></span>
+                        </div>
                     </div>
-                </div>
+                    <div class="demographic-category">
+                        <div class="category-name">
+                            <span>Financial Status</span>
+                            <span class="toggle-icon"></span>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </aside>
         
@@ -546,7 +744,6 @@
                     </table>
                 </div>
 
-                <a href="/" class="btn btn-secondary mt-4">Back to Home</a>
             </div>
         </main>
         
@@ -573,6 +770,12 @@
                     row.style.backgroundColor = 'var(--card-bg)';
                 }
             });
+            
+            // Make sure dropdown is hidden initially
+            const dropdown = document.getElementById('cityDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('active');
+            }
         });
         
         // Toggle sidebar on mobile
@@ -589,12 +792,48 @@
             window.history.back();
         }
         
+        // Toggle city dropdown
+        function toggleCityDropdown(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            const dropdown = document.getElementById('cityDropdown');
+            const arrow = document.querySelector('.city-arrow');
+            
+            dropdown.classList.toggle('active');
+            arrow.classList.toggle('active');
+            
+            // Add click outside listener to close dropdown
+            if (dropdown.classList.contains('active')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeCityDropdownOnClickOutside);
+                }, 10);
+            }
+        }
+        
+        // Close dropdown when clicking outside
+        function closeCityDropdownOnClickOutside(event) {
+            const dropdown = document.getElementById('cityDropdown');
+            const container = document.querySelector('.city-dropdown-container');
+            const arrow = document.querySelector('.city-arrow');
+            
+            if (!container.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+                arrow.classList.remove('active');
+                document.removeEventListener('click', closeCityDropdownOnClickOutside);
+            }
+        }
+        
         // City selection handler
-        function changeCity() {
-            const selectedCity = document.getElementById('city-select').value;
-            if (selectedCity) {
+        function selectCity(city, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            if (city) {
                 // Redirect to the impact-assessment-new page with the selected city
-                window.location.href = `/impact-assessment-new/?city=${encodeURIComponent(selectedCity)}`;
+                window.location.href = `/impact-assessment-new/?city=${encodeURIComponent(city)}`;
             }
         }
     </script>

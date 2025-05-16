@@ -1,0 +1,62 @@
+{% load static %}
+<!-- Side Panel -->
+<aside class="side-panel">
+    <div class="city-header">
+        <div class="city-dropdown-container" onclick="toggleCityDropdown(event)">
+            <h2 class="city-name">{{ selected_city }}</h2>
+            <div class="city-arrow"></div>
+        </div>
+        <div id="cityDropdown">
+            {% for city in cities %}
+                <div class="city-dropdown-item {% if city == selected_city %}selected{% endif %}" onclick="selectCity('{{ city }}', event)">
+                    {{ city }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="demographic-section">
+        <!-- Statistics Cards -->
+        <div class="demographic-stats">
+            <div class="stat-card">
+                <div class="stat-value">{{ population_count|default:"--" }}</div>
+                <div class="stat-label">Population</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ categories_count|default:"4" }}</div>
+                <div class="stat-label">Categories</div>
+            </div>
+        </div>
+        
+        <h3 class="demographic-title">Demographic Summary</h3>
+        
+        {% if demographic_details %}
+            {% for category in demographic_details %}
+                <div class="demographic-category">
+                    <div class="category-name">
+                        <span>{{ category.category }}</span>
+                        <span class="toggle-icon"></span>
+                    </div>
+                    <ul class="subcategory-list">
+                        {% for subcategory in category.subcategories %}
+                            <li class="subcategory-item">
+                                <span class="subcategory-name">{{ subcategory.name }} </span>
+                                <span class="subcategory-percentage"> {{ subcategory.percentage }} %</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-demographics">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.5 21H6.5C5.83696 21 5.20107 20.7366 4.73223 20.2678C4.26339 19.7989 4 19.163 4 18.5V5.5C4 4.83696 4.26339 4.20107 4.73223 3.73223C5.20107 3.26339 5.83696 3 6.5 3H14.5L20 8.5V18.5C20 19.163 19.7366 19.7989 19.2678 20.2678C18.7989 20.7366 18.163 21 17.5 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 3V9H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.5 13H14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.5 17H14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                No demographic data available for this city.
+            </div>
+        {% endif %}
+    </div>
+</aside> 

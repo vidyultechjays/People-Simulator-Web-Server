@@ -1,0 +1,405 @@
+/* Left side panel styles */
+.side-panel {
+    width: var(--sidebar-width);
+    background: #1a1a1a;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    position: fixed;
+    top: 64px; /* Height of navbar */
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.3);
+    z-index: 90;
+    padding: 0;
+    border-right: 1px solid var(--border-color);
+}
+
+/* City header */
+.city-header {
+    background: #232323;
+    padding: 24px;
+    position: relative;
+    overflow: visible;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 200;
+}
+
+.city-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--primary-color);
+}
+
+.city-header-left {
+    flex: 1;
+    position: relative;
+    z-index: 101;
+}
+
+.city-dropdown-container {
+    position: static;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.city-name {
+    color: var(--text-color);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.city-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.city-arrow::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.city-arrow.active::after {
+    transform: rotate(-135deg);
+    margin-top: 6px;
+}
+
+.city-subtitle {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+}
+
+.city-subtitle::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+/* Demographic section */
+.demographic-section {
+    padding: 20px;
+}
+
+.demographic-title {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.demographic-title::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 2px;
+    background-color: var(--primary-color);
+    margin-right: 8px;
+}
+
+.demographic-category {
+    background: #232323;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.demographic-category:hover {
+    transform: translateY(-2px);
+}
+
+.category-name {
+    color: var(--text-color);
+    font-weight: 600;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    background: rgba(0,0,0,0.2);
+    border-left: 3px solid var(--primary-color);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+.category-name:hover {
+    background: rgba(0,0,0,0.3);
+}
+
+.category-name::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+    margin-right: 5px;
+}
+
+.category-name.collapsed::after {
+    transform: rotate(-45deg);
+}
+
+.subcategory-list {
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.subcategory-list.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+    border-top: none;
+}
+
+.subcategory-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.subcategory-item:hover {
+    background: rgba(0,0,0,0.1);
+    border-left-color: var(--primary-color);
+}
+
+.subcategory-name {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.subcategory-name::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 10px;
+    background-color: var(--primary-color);
+    opacity: 0.7;
+    border-radius: 50%;
+}
+
+.subcategory-percentage {
+    font-weight: 600;
+    color: var(--primary-color);
+    background: rgba(157, 78, 221, 0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+/* Custom scrollbar for side panel */
+.side-panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+.side-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.side-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.side-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Empty state styling */
+.no-demographics {
+    background: #232323;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.no-demographics svg {
+    display: block;
+    margin: 0 auto 16px;
+    opacity: 0.5;
+}
+
+/* Stats indicators */
+.demographic-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: #232323;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+    opacity: 0.7;
+}
+
+.stat-value {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.stat-label {
+    color: var(--text-color);
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Sidebar actions */
+.sidebar-actions {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* City dropdown */
+#cityDropdown {
+    position: absolute;
+    top: calc(100% - 1px); /* Overlap the border slightly */
+    left: 24px;
+    right: 24px;
+    background: #2d2d2d;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0;
+    border-radius: 0 0 6px 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 10000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#cityDropdown.active {
+    display: block;
+}
+
+.city-dropdown-item {
+    padding: 12px 16px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+    color: var(--text-color);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.city-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.city-dropdown-item:hover {
+    background: rgba(157, 78, 221, 0.2);
+}
+
+.city-dropdown-item.selected {
+    background: rgba(157, 78, 221, 0.3);
+    font-weight: 500;
+}
+
+/* Responsive adjustments for sidebar */
+@media (max-width: 992px) {
+    :root {
+        --sidebar-width: 240px;
+    }
+    
+    .side-panel {
+        transform: translateX(calc(-1 * var(--sidebar-width)));
+        transition: transform 0.3s ease;
+    }
+    
+    .side-panel.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .toggle-sidebar {
+        display: flex;
+    }
+    
+    body.sidebar-open .main-content::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 80;
+    }
+}

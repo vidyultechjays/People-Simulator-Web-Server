@@ -201,6 +201,7 @@ class PromptModel(models.Model):
         ('personality_description', 'Personality Description'),
         ('generate_user_response', 'Generate User Response'),
         ('generate_optimal_response', 'Generate Optimal Response'),
+        ('generate_combined_optimal_response', 'Generate Combined Optimal Response'),
         # Add more tasks here if needed
     ]
 

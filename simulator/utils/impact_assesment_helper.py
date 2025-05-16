@@ -328,7 +328,6 @@ def generate_optimal_response(city_name, news_item, demographic_focus):
                         for sub in subs
                     ]
                 })
-        print(f"demographic_breakdown: {demographic_breakdown}")
         # Prepare the prompt
         prompt = prompt_template.format(
             original_content=news_item.content,
@@ -346,7 +345,9 @@ def generate_optimal_response(city_name, news_item, demographic_focus):
         else:
             raise ValueError(f"Unsupported provider: {active_model.provider_name}")
         
-        print(f"llm_response type: {type(llm_response)}  :: end")
+        recommendations = llm_response["recommendations"]
+        combined_response = generate_combined_optimal_response(city_name, news_item, recommendations)
+        llm_response["super_optimized_content"] = combined_response["super_optimized_content"]
         
         # Handle different response formats from LLMs
         if isinstance(llm_response, dict):
@@ -393,3 +394,42 @@ def generate_optimal_response(city_name, news_item, demographic_focus):
             "success": False,
             "error": str(e)
         }
+
+def generate_combined_optimal_response(city_name, news_item, recommendations):
+    """
+    Generates combined optimal response for a news item across multiple personas
+    
+    Args:
+        city_name (str): The name of the city
+    """
+    try:
+        # Get the active LLM model
+        active_model = LLMModelAndKey.objects.filter(active=True).first()
+        if not active_model:
+            raise ValueError("No active LLM model found.")
+        
+        # Fetch the prompt template for optimization
+        prompt_entry = PromptModel.objects.filter(task_name="generate_combined_optimal_response").first()
+        prompt_template = prompt_entry.prompt_template
+        prompt_tools = prompt_entry.tools_content
+        
+        # Prepare the prompt
+        prompt = prompt_template.format(
+            original_content=news_item.content,
+            recommendations=recommendations
+        )
+        
+        # Send the prompt to the LLM    
+        if active_model.provider_name == 'anthropic':
+            llm_response = ask_claude_tools(prompt, active_model.model_name, prompt_tools)
+        elif active_model.provider_name == 'openai':
+            llm_response = ask_gpt(prompt, active_model.model_name)
+        elif active_model.provider_name == 'google':
+            llm_response = ask_gemini(prompt, active_model.model_name)
+        else:
+            raise ValueError(f"Unsupported provider: {active_model.provider_name}")
+        print(f"llm_response: {llm_response}")
+        return llm_response
+    except Exception as e:
+        print(f"Error generating combined optimal response: {e}")
+        return None

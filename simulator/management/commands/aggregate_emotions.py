@@ -16,7 +16,8 @@ from simulator.models import (
     NewsItem,
     Persona,
     Category,
-    PossibleUserResponses
+    PossibleUserResponses,
+    PersonaGenerationTask
 )
 from simulator.utils.impact_assesment_helper import generate_emotional_response
 
@@ -126,12 +127,35 @@ def aggregate_emotion_task(city_name, news_item_title, aggregate_emotion_id):
         # Fetch the specific objects
         aggregate_emotion = AggregateEmotion.objects.get(id=aggregate_emotion_id)
         news_item = NewsItem.objects.get(title=news_item_title)
-        personas = Persona.objects.filter(city=city_name)
+        
+        # Find the original task to get the intended population size
+        original_task = PersonaGenerationTask.objects.filter(
+            city_name=city_name, 
+            status='completed'
+        ).order_by('-created_at').first()
+        
+        # Get all personas for this city
+        all_personas = Persona.objects.filter(city=city_name)
+        
+        # If we found the original task with a population count, limit personas to that number
+        if original_task and original_task.population:
+            logger.info(f"Found original task with population {original_task.population}, limiting personas")
+            # Take only the first N personas matching the original requested population
+            personas = all_personas[:original_task.population]
+            # Update the total_responses in aggregate_emotion to match the correct count
+            aggregate_emotion.total_responses = original_task.population
+            aggregate_emotion.save()
+        else:
+            # Fallback if no task is found
+            logger.warning(f"No original task found for {city_name}, using all personas")
+            personas = all_personas
+        
         print(f"personas count: {personas.count()}")
         possible_responses = PossibleUserResponses.objects.filter(news_item=news_item)
         categories = Category.objects.filter(city=city_name).prefetch_related('subcategories')
 
-        logger.info("Found %d personas in city: %s", personas.count(), city_name)
+        logger.info("Using %d personas in city: %s (total available: %d)", 
+                   personas.count(), city_name, all_personas.count())
         logger.info("Found %d possible responses", possible_responses.count())
 
         # Initialize demographic summary structure

@@ -426,7 +426,19 @@ def aggregate_emotion(request):
                 }
                 for category in categories
             }
-            persona_in_cities = Persona.objects.filter(city__contains=city_name)
+            
+            # Find the original task to get the intended population size
+            original_task = PersonaGenerationTask.objects.filter(
+                city_name=city_name, 
+                status='completed'
+            ).order_by('-created_at').first()
+            
+            # Get correct count of personas
+            all_personas = Persona.objects.filter(city__contains=city_name)
+            
+            # If we have an original task with population count, use that number
+            # Otherwise, use the count of all personas
+            total_persona_count = original_task.population if original_task and original_task.population else all_personas.count()
 
             # Create or update the AggregateEmotion object with the initial values
             aggregate_emotion_obj, _ = AggregateEmotion.objects.update_or_create(
@@ -435,7 +447,7 @@ def aggregate_emotion(request):
                 defaults={
                     "summary": initial_summary,
                     "demographic_summary": initial_demographic_summary,
-                    "total_responses": persona_in_cities.count(),
+                    "total_responses": total_persona_count,
                 },
             )
 
